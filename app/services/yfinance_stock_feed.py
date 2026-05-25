@@ -1,10 +1,11 @@
 import pandas as pd
-import yfinance as yf
+from pathlib import Path
 import requests
 from enum import Enum
 import json
 from dotenv import load_dotenv
 import time
+import yfinance as yf
 
 load_dotenv()
 
@@ -34,7 +35,11 @@ def read_yfinance_data(ticker: list[str], stock: str, period: str) -> pd.DataFra
 
 def load_ticekrs(index: GPW_Indexes) -> list[str]:
     try:
-        with open('app\gpw_tickers.json', 'r', encoding='utf-8') as file:
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        file_path = BASE_DIR  / "gpw_tickers.json"
+        print(file_path)
+        
+        with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
             tickers = data[index].keys()
             return tickers
@@ -47,7 +52,12 @@ def load_ticekrs(index: GPW_Indexes) -> list[str]:
 
 def load_WIG20() -> pd.DataFrame:
     tickers = load_ticekrs('WIG20')
-    
+    print(tickers)
+
+    if len(tickers) == 0:
+        return {"status": "failed", "status_code": 404, "response": "No tickers"}
+
+    data = {}
     for ticker in tickers:
         print(ticker)
         data += read_yfinance_data(ticker, "WA", "1d")
@@ -56,7 +66,7 @@ def load_WIG20() -> pd.DataFrame:
 
     return {"status": "success", "status_code": 200, "response": data}
 
-load_WIG20()
+#load_WIG20()
 
 
 
