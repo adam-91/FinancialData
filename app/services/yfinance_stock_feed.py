@@ -1,13 +1,17 @@
-import datetime as dt
 import pandas as pd
 import yfinance as yf
 import requests
+from enum import Enum
+import json
 from dotenv import load_dotenv
+import time
 
 load_dotenv()
 
-url_stooq = "https://stooq.pl"
-tickers = ["KGH"]
+class GPW_Indexes(str, Enum):
+    WIG20 = 'WIG20'
+    mWIG40 = 'mWIG40'
+    sWIG80 = 'sWIG80'
 
 def read_yfinance_data(ticker: list[str], stock: str, period: str) -> pd.DataFrame:
     try:
@@ -28,11 +32,31 @@ def read_yfinance_data(ticker: list[str], stock: str, period: str) -> pd.DataFra
         print({"status": "failed", "status_code": "-", "error": err})
         return  {"status": "failed", "status_code": "-", "error": err}
 
- 
+def load_ticekrs(index: GPW_Indexes) -> list[str]:
+    try:
+        with open('app\gpw_tickers.json', 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            tickers = data[index].keys()
+            return tickers
+    except FileNotFoundError:
+        print('Error: The file path is incorrect.')
+        return None
+    except json.JSONDecodeError:
+        print('Error: The file contains invalid JSON syntax')
+        return None
 
+def load_WIG20() -> pd.DataFrame:
+    tickers = load_ticekrs('WIG20')
+    
+    for ticker in tickers:
+        print(ticker)
+        data += read_yfinance_data(ticker, "WA", "1d")
+        print(data)
+        time.sleep(60)
 
-read_yfinance_data(tickers[0], "WA", "1y")
- 
+    return {"status": "success", "status_code": 200, "response": data}
+
+load_WIG20()
 
 
 

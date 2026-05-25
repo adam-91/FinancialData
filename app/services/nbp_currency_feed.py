@@ -1,10 +1,9 @@
+import os
 import httpx 
 from httpx_retries import RetryTransport, Retry
 import asyncio
-import os
 from dotenv import load_dotenv
 from typing import TypeAlias
-from pprint import pprint
 
 JSON: TypeAlias = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 

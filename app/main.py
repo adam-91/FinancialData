@@ -1,5 +1,7 @@
 import services.nbp_currency_feed as nbp
 import services.currency_data_validation as cdv
+import services.yfinance_stock_feed as ysf
+import services.stock_data_validation as sdv
 from typing import TypeAlias
 import asyncio
 
@@ -30,7 +32,15 @@ def main():
                     print('saved!')
             else:
                 print(f'Error with fetching NBP data, table {table}')
-         
+
+        wig_20 = ysf.load_WIG20() 
+        if wig_20['status'] == 'success':
+            if sdv.validate(wig_20['response']):
+                    save_nbp_data(wig_20)
+                    print('saved!')
+            else:
+                print(f'Error with WIG20 yfinance data')
+
         print(f'Sleep {UPDATE_INTERVAL} s')
         break
         #time.sleep(UPDATE_INTERVAL)
