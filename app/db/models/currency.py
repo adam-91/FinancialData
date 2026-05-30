@@ -4,7 +4,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from db.database import Base
 
 if TYPE_CHECKING:
-    from models.exchange_rate_model import ExchangeRate
+    from db.models.exchange_mid_rate import ExchangeMidRate
+    from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
 
 class Currency(Base):
     __tablename__ = "currencies"
@@ -16,7 +17,7 @@ class Currency(Base):
         index=True
     )
     name: Mapped[str] = mapped_column(String(100))
-    rates: Mapped[list["ExchangeRate"]] = relationship(
+    rates: Mapped[list["ExchangeMidRate", "ExchangeBuyAndSellRate"]] = relationship(
         back_populates="currency",
         cascade="all, delete-orphan"
     )

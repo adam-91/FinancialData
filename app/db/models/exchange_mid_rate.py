@@ -7,11 +7,11 @@ from db.database import Base
 
 
 if TYPE_CHECKING:
-    from db.models.currency_model import Currency
+    from db.models.currency import Currency
 
 
-class ExchangeRate(Base):
-    __tablename__ = "exchange_rates"
+class ExchangeMidRate(Base):
+    __tablename__ = "exchange_mid_rates"
 
     __table_args__ = (
         UniqueConstraint(
@@ -32,13 +32,6 @@ class ExchangeRate(Base):
     )
 
     mid_rate: Mapped[Decimal] = mapped_column(
-        Numeric(10, 4)
-    )
-
-    bid_rate:  Mapped[Decimal] = mapped_column(
-        Numeric(10, 4)
-    )
-    ask_rate:  Mapped[Decimal] = mapped_column(
         Numeric(10, 4)
     )
 

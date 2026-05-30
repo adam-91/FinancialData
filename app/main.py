@@ -4,10 +4,10 @@ import time
 from typing import TypeAlias
 from dotenv import load_dotenv
 from db.database import Base, engine
-import services.nbp_currency_feed as nbp
-import services.currency_data_validation as cdv
-import services.yfinance_stock_feed as ysf
-import services.stock_data_validation as sdv
+import integrations.NBP.currency_feed as nbp
+import integrations.NBP.currency_schema as cdv
+import integrations.yfinance.yfinance_stock_feed as ysf
+import integrations.yfinance.stock_data_validation as sdv
 
 JSON: TypeAlias = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 

@@ -1,22 +1,25 @@
 from datetime import date
 from typing import TypeAlias
-from pydantic import BaseModel, Field, ValidationError
+from decimal import Decimal
+from pydantic import BaseModel, Field, ValidationError, ConfigDict
 
 
 #table A - average currency rates
 #table A - less often changes - average currency rates 
 #table C - buy and sell currency rates
 
+JSON: TypeAlias = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
+
 class NBP_currency_mean(BaseModel):
     currency: str
     code: str = Field(length=3)
-    mid: float
+    mid: Decimal
 
 class NBP_currency_buy_and_Sell(BaseModel):
     currency: str
     code: str = Field(length=3)
-    bid: float
-    ask: float
+    bid: Decimal
+    ask: Decimal
 
 class NBP_AB_table(BaseModel):
     table: str
@@ -30,8 +33,6 @@ class NBP_C_table(BaseModel):
     tradingDate: date
     effectiveDate: date
     rates: list[NBP_currency_buy_and_Sell]
-
-JSON: TypeAlias = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 
 def validate(table: str, data: JSON) -> JSON | bool:
     if table == "NBP_API_TABLE_A":

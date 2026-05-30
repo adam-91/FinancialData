@@ -6,8 +6,9 @@ from alembic import context
 from core.config import settings
 
 from db.database import Base
-from db.models.currency_model import Currency
-from db.models.exchange_rate_model import ExchangeRate
+from db.models.currency import Currency
+from db.models.exchange_mid_rate import ExchangeMidRate
+from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
 
 config = context.config
 
