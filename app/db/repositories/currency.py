@@ -15,6 +15,12 @@ class CurrencyRepository:
             select(Currency).where(Currency.code == code)
         )
         return result.scalar_one_or_none()
+    
+    async def get_by_id(self, session: AsyncSession, id: int) -> Currency:
+        result = await session.execute(
+            select(Currency).where(Currency.id == id)
+        )
+        return result.scalar_one_or_none()
 
     async def create(self, session: AsyncSession, code: str, name: str):
         obj = Currency(code=code, name=name)
