@@ -1,7 +1,7 @@
-#import pandas as pd
+from datetime import date
 from typing import TypeAlias
 from pydantic import BaseModel, Field, ValidationError
-from datetime import date
+
 
 #table A - average currency rates
 #table A - less often changes - average currency rates 
