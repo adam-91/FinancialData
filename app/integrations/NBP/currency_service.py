@@ -1,7 +1,7 @@
 from decimal import Decimal
-from app.integrations.NBP.currency_schema import NBP_AB_table, NBP_C_table
-from app.db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
-from app.db.models.exchange_mid_rate import ExchangeMidRate
+from integrations.NBP.currency_schema import NBP_AB_table, NBP_C_table
+from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
+from db.models.exchange_mid_rate import ExchangeMidRate
 
 
 def parse_nbp_ab_data(data: list) -> NBP_AB_table:

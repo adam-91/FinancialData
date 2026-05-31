@@ -10,6 +10,14 @@ from pydantic import BaseModel, Field, ValidationError, ConfigDict
 
 JSON: TypeAlias = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 
+class ExchangeResponse(BaseModel):
+    code: str
+    currency: str
+    effectiveDate: date
+    mid: Decimal
+    bid: Decimal
+    ask: Decimal
+
 class NBP_currency_mean(BaseModel):
     currency: str
     code: str = Field(length=3)

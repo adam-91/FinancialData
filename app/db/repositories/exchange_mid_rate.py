@@ -1,13 +1,33 @@
+from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import delete
+from sqlalchemy import select
 from db.models.exchange_mid_rate import ExchangeMidRate
+from db.repositories.base import AsyncRepository
 
-class ExchangeRateMidRepository:
+class ExchangeMidRateRepository(
+    AsyncRepository[ExchangeMidRate]
+):
+    model = ExchangeMidRate
 
-    async def save_mid_rates(self, session: AsyncSession, rates: list[ExchangeMidRate]):
-        session.add_all(rates)
-        await session.commit()
-        
-    async def clear_mid_rates(session: AsyncSession):
-        await session.execute(delete(ExchangeMidRate))
-        await session.commit()
+    async def get_currency_rates(self,currency_id: int,) -> list[ExchangeMidRate]:
+        stmt = (
+            select(ExchangeMidRate)
+            .where(ExchangeMidRate.currency_id == currency_id)
+            .order_by(ExchangeMidRate.effective_date.desc())
+        )
+
+        result = await self.session.scalars(stmt)
+
+        return list(result.all())
+
+    async def get_rate(self, currency_id: int, effective_date: date,) -> ExchangeMidRate | None:
+
+        stmt = (
+            select(ExchangeMidRate)
+            .where(
+                ExchangeMidRate.currency_id == currency_id,
+                ExchangeMidRate.effective_date == effective_date,
+            )
+        )
+
+        return await self.session.scalar(stmt)

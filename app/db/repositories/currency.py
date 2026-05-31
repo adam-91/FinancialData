@@ -1,30 +1,43 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from db.models.currency import Currency
+from db.repositories.base import AsyncRepository
+ 
+class CurrencyRepository(AsyncRepository):
 
+    async def create(self, currency: Currency) -> Currency:
+        self.session.add(currency)
+        await self.session.commit()
+        return currency
 
-class CurrencyRepository:
+    async def create_many(self, currencies: list[Currency]) -> list[Currency]:
+        self.session.add_all(currencies)
+        await self.session.commit()
+        return currencies
 
-   
-    async def get_all_currencies(self, session: AsyncSession) -> list[Currency]:
-        result = await session.get_all()
-        return result
-    
-    async def get_by_code(self, session: AsyncSession, code: str) -> Currency:
-        result = await session.execute(
-            select(Currency).where(Currency.code == code)
-        )
-        return result.scalar_one_or_none()
-    
-    async def get_by_id(self, session: AsyncSession, id: int) -> Currency:
-        result = await session.execute(
-            select(Currency).where(Currency.id == id)
-        )
-        return result.scalar_one_or_none()
+    async def get_by_id(self, currency_id: int) -> Currency | None:
+        stmt = select(Currency).where(Currency.id == currency_id)
+        return await self.session.scalar(stmt)
 
-    async def create(self, session: AsyncSession, code: str, name: str):
-        obj = Currency(code=code, name=name)
-        session.add(obj)
-        await session.flush()
-        return obj
-    
+    async def get_by_code(self, code: str) -> Currency | None:
+        stmt = select(Currency).where(Currency.code == code)
+        return await self.session.scalar(stmt)
+
+    async def get_all(self) -> list[Currency]:
+        stmt = select(Currency)
+        return await list(self.session.scalars(stmt).all())
+
+    async def update(self, currency: Currency) -> Currency:
+        return await self.session.merge(currency)
+
+    async def delete(self, currency: Currency) -> None:
+        await self.session.delete(currency)
+
+    async def delete_by_id(self, currency_id: int) -> bool:
+        currency = self.get_by_id(currency_id)
+
+        if not currency:
+            return False
+
+        await self.session.delete(currency)
+        return True
+
