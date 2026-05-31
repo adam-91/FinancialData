@@ -1,3 +1,4 @@
+from app.db.repositories.exchange_rate import ExchangeRateService
 from db.models.currency import Currency
 
 from db.repositories.currency import (
@@ -5,11 +6,13 @@ from db.repositories.currency import (
 )
 
 from db.repositories.exchange_mid_rate import (
-    ExchangeRateMidRepository,
+    ExchangeMidRateRepository,
 )
 from db.repositories.exchange_buy_and_sell_rate import (
-    ExchangeRateBuyAndSellRepository,
+    ExchangeBuySellRateRepository,
 )
+
+
 
 
 class ExchangeRateSyncService:
@@ -22,11 +25,11 @@ class ExchangeRateSyncService:
             session
         )
 
-        self.rate_mid_repo = ExchangeRateMidRepository(
+        self.rate_mid_repo = ExchangeMidRateRepository(
             session
         )
 
-        self.rate_bas_repo = ExchangeRateBuyAndSellRepository(
+        self.rate_bas_repo = ExchangeBuySellRateRepository(
             session
         )
 
@@ -59,7 +62,7 @@ class ExchangeRateSyncService:
 
         if missing:
 
-            await self.currency_repo.add_many(
+            await self.currency_repo.create_many(
                 missing
             )
 
@@ -85,7 +88,7 @@ class ExchangeRateSyncService:
             for rate in dto.rates if hasattr(rate, 'mid')
         ]
 
-        await self.rate_repo.upsert(rows_mid)
+        await self.rate_mid_repo.upsert(rows_mid)
 
         rows_bas = [
             {
@@ -99,7 +102,7 @@ class ExchangeRateSyncService:
             for rate in dto.rates if hasattr(rate, 'bid')
         ]
 
-        await self.rate_repo.upsert(rows_bas)
+        await self.rate_bas_repo.upsert(rows_bas)
 
         await self.session.commit()
 

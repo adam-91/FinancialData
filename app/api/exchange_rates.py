@@ -1,40 +1,57 @@
+import datetime
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from db.repositories.currency import CurrencyRepository
+from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
+from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
 from db.repositories.exchange_rate import ExchangeRateService
-from db.database import get_db
-from integrations.NBP.currency_schema import ExchangeResponse, NBP_AB_table
-from integrations.NBP.currency_service import map_to_bas_models
+from db.database import get_session
+from integrations.NBP.currency_schema import ExchangeResponse
 
 router = APIRouter(
     prefix="/api/rates",
     tags=["rates"]
 )
 
+def get_exchange_rate_service(
+    db: AsyncSession = Depends(get_session),
+) -> ExchangeRateService:
 
-@router.get(
-    "/latest",
-    response_model=list[ExchangeResponse]
-)
-def get_latest_rates(
-    db: Session = Depends(get_db)
-):
-    return ExchangeRateService.get_rate(get_db) 
+    return ExchangeRateService(
+        CurrencyRepository(db),
+        ExchangeMidRateRepository(db),
+        ExchangeBuySellRateRepository(db),
+    )
 
-
-@router.get(
-    "/history/{currency_code}",
-    response_model=list[ExchangeResponse]
-)
-def get_rate_history(
+@router.get("/latest/{currency_code}")
+async def get_latest_rates(
     currency_code: str,
-    db: Session = Depends(get_db)
+    service: ExchangeRateService = Depends(
+        get_exchange_rate_service
+    ),
 ):
-    rates = ExchangeRateService.get_rate(get_db, db,  currency_code)
+    return await service.get_rate(
+        currency_code,
+        datetime.date.today(),
+    )
+
+@router.get("/history/{currency_code}/date/{date}",response_model=ExchangeResponse)
+async def get_rate_history(
+    currency_code: str,
+    date: datetime.date,
+    service: ExchangeRateService = Depends(
+        get_exchange_rate_service
+    ),
+):
+    rates = await service.get_rate(
+        currency_code,
+        date,
+    )
 
     if not rates:
         raise HTTPException(
             status_code=404,
-            detail="Currency not found"
+            detail="Currency not found",
         )
 
     return rates

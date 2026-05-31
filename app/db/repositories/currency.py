@@ -6,12 +6,12 @@ class CurrencyRepository(AsyncRepository):
 
     async def create(self, currency: Currency) -> Currency:
         self.session.add(currency)
-        await self.session.commit()
+        await self.session.flush()
         return currency
 
     async def create_many(self, currencies: list[Currency]) -> list[Currency]:
         self.session.add_all(currencies)
-        await self.session.commit()
+        await self.session.flush()
         return currencies
 
     async def get_by_id(self, currency_id: int) -> Currency | None:
@@ -24,7 +24,8 @@ class CurrencyRepository(AsyncRepository):
 
     async def get_all(self) -> list[Currency]:
         stmt = select(Currency)
-        return await list(self.session.scalars(stmt).all())
+        result = await self.session.scalars(stmt)
+        return list(result.all())
 
     async def update(self, currency: Currency) -> Currency:
         return await self.session.merge(currency)
@@ -33,7 +34,7 @@ class CurrencyRepository(AsyncRepository):
         await self.session.delete(currency)
 
     async def delete_by_id(self, currency_id: int) -> bool:
-        currency = self.get_by_id(currency_id)
+        currency = await self.get_by_id(currency_id)
 
         if not currency:
             return False

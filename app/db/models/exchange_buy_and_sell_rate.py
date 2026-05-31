@@ -31,13 +31,13 @@ class ExchangeBuyAndSellRate(Base):
         index=True
     )
 
-    bid_rate:  Mapped[Decimal] = mapped_column(
+    bid:  Mapped[Decimal] = mapped_column(
         Numeric(10, 4)
     )
-    ask_rate:  Mapped[Decimal] = mapped_column(
+    ask:  Mapped[Decimal] = mapped_column(
         Numeric(10, 4)
     )
 
     currency: Mapped["Currency"] = relationship(
-        back_populates="rates"
+        back_populates="buy_and_sell_rates"
     )

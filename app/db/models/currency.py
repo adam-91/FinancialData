@@ -17,7 +17,11 @@ class Currency(Base):
         index=True
     )
     name: Mapped[str] = mapped_column(String(100))
-    rates: Mapped[list["ExchangeMidRate", "ExchangeBuyAndSellRate"]] = relationship(
+    mid_rates: Mapped[list["ExchangeMidRate" ]] = relationship(
+        back_populates="currency",
+        cascade="all, delete-orphan"
+    )
+    buy_and_sell_rates: Mapped[list["ExchangeBuyAndSellRate"]] = relationship(
         back_populates="currency",
         cascade="all, delete-orphan"
     )
