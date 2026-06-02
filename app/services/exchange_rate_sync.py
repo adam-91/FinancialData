@@ -48,31 +48,31 @@ class ExchangeRateSyncService:
 
             await self.session.flush()
 
-            currencies = (await self.currency_repo.get_all())
+        currencies = (await self.currency_repo.get_all())
 
-            currency_map = {
-                c.code: c
-                for c in currencies
-            }
+        currency_map = {
+            c.code: c
+            for c in currencies
+        }
 
-            for rate in dto.rates:
-                if hasattr(rate, 'mid'):
-                    rows_mid = ExchangeMidRate(
-                        currency_id=currency_map[rate.code].id,
-                        effective_date=dto.effectiveDate,
-                        mid=rate.mid
-                    )
-                    await self.rate_mid_repo.upsert(rows_mid)
+        for rate in dto.rates:
+            if hasattr(rate, 'mid'):
+                rows_mid = ExchangeMidRate(
+                    currency_id=currency_map[rate.code].id,
+                    effective_date=dto.effectiveDate,
+                    mid=rate.mid
+                )
+                await self.rate_mid_repo.upsert(rows_mid)
 
-            for rate in dto.rates:
-                if hasattr(rate, 'bid'):
-                    rows_bas = ExchangeBuyAndSellRate(
-                        currency_id=currency_map[rate.code].id,
-                        effective_date=dto.effectiveDate,
-                        bid=rate.bid,
-                        ask=rate.ask
-                    )
-                    await self.rate_bas_repo.upsert(rows_bas)
+        for rate in dto.rates:
+            if hasattr(rate, 'bid'):
+                rows_bas = ExchangeBuyAndSellRate(
+                    currency_id=currency_map[rate.code].id,
+                    effective_date=dto.effectiveDate,
+                    bid=rate.bid,
+                    ask=rate.ask
+                )
+                await self.rate_bas_repo.upsert(rows_bas)
 
 
         await self.session.commit()

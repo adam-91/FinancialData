@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import select
+from sqlalchemy import insert, select
 from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
 from db.repositories.base import AsyncRepository
 
@@ -20,3 +20,23 @@ class ExchangeBuySellRateRepository(
         )
 
         return await self.session.scalar(stmt)
+    
+    async def upsert(self,  bas_rate_object: ExchangeBuyAndSellRate) -> ExchangeBuyAndSellRate:
+        existing = await self.session.scalar(
+            select(ExchangeBuyAndSellRate).where(
+                ExchangeBuyAndSellRate.currency_id == bas_rate_object.currency_id,
+                ExchangeBuyAndSellRate.effective_date == bas_rate_object.effective_date,
+            )
+        )
+
+        if existing:
+            existing.bid = bas_rate_object.bid
+            existing.ask = bas_rate_object.ask
+            await self.session.commit()
+            return existing
+
+        self.session.add(bas_rate_object)
+        await self.session.commit()
+
+        return bas_rate_object
+    

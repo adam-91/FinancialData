@@ -1,6 +1,6 @@
 from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import insert, select
 from db.models.exchange_mid_rate import ExchangeMidRate
 from db.repositories.base import AsyncRepository
 
@@ -32,7 +32,22 @@ class ExchangeMidRateRepository(
 
         return await self.session.scalar(stmt)
     
-    async def upsert(self,  mid_rate_object) -> ExchangeMidRate:
-        return await self.session.merge(mid_rate_object)
+    async def upsert(self,  mid_rate_object: ExchangeMidRate) -> ExchangeMidRate:
+        existing = await self.session.scalar(
+            select(ExchangeMidRate).where(
+                ExchangeMidRate.currency_id == mid_rate_object.currency_id,
+                ExchangeMidRate.effective_date == mid_rate_object.effective_date,
+            )
+        )
+
+        if existing:
+            existing.mid = mid_rate_object.mid
+            await self.session.commit()
+            return existing
+
+        self.session.add(mid_rate_object)
+        await self.session.commit()
+
+        return mid_rate_object
     
 

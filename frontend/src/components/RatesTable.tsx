@@ -32,9 +32,9 @@ export function RatesTable({currencies,
             <td>{code}</td>
             <td>{rate.currency}</td>
             <td>{rate.effectiveDate}</td>
-            <td>{rate.mid != null ? rate.mid.toFixed(4) : "-"}</td>
-            <td>{rate.bid != null ? rate.bid.toFixed(4) : "-"}</td>
-            <td>{rate.ask != null ? rate.ask.toFixed(4) : "-"}</td>
+            <td>{rate.mid != null ? Number(rate.mid).toFixed(4) : "-"}</td>
+            <td>{rate.bid != null ? Number(rate.bid).toFixed(4) : "-"}</td>
+            <td>{rate.ask != null ? Number(rate.ask).toFixed(4) : "-"}</td>
             
           </tr>
           );
