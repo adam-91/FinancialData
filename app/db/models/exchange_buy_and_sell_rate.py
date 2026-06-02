@@ -37,7 +37,3 @@ class ExchangeBuyAndSellRate(Base):
     ask:  Mapped[Decimal] = mapped_column(
         Numeric(10, 4)
     )
-
-    currency: Mapped["Currency"] = relationship(
-        back_populates="buy_and_sell_rates"
-    )

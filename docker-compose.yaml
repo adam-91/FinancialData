@@ -13,6 +13,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U application -d FinancialDataDB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   python_app:
     build: 
@@ -21,19 +26,17 @@ services:
     container_name: python_app
     restart: always
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
     ports:
       - "8000:8000"
-
     env_file:
       - ./app/.env
     volumes:
       - ./app:/app
     working_dir: /app
-    command: python main.py
-
   frontend:
     build: 
       context: ./frontend

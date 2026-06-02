@@ -34,7 +34,7 @@ def map_to_mid_models(table: ExchangeMidRate) -> list[ExchangeMidRate]:
             currency=r.currency,
             code=r.code,
             mid=r.mid,  
-            effective_date=table.effectiveDate
+            effective_date=table['effectiveDate']
         )
         for r in table.rates
     ]
@@ -46,7 +46,7 @@ def map_to_bas_models(table: ExchangeBuyAndSellRate) -> list[ExchangeBuyAndSellR
             code=r.code,
             bid=r.bid,  
             ask=r.ask,  
-            effective_date=table.effectiveDate
+            effective_date=table['effectiveDate']
         )
         for r in table.rates
     ]

@@ -1,69 +1,34 @@
-import time
-import os
-from dotenv import load_dotenv
-from datetime import datetime
-from decimal import Decimal
-import schedule
-from db.repositories.currency import CurrencyRepository
-from integrations.NBP.currency_feed import fetch_NBP_data
-from integrations.NBP.currency_schema import validate
+from apscheduler.schedulers.asyncio import (AsyncIOScheduler)
 
-load_dotenv()
- 
-async def update_currency_rates(url: str, table_name: str):
+from services.startup_sync import (sync_ab_tables, sync_c_table)
 
-    print(f"[{datetime.now()}] Start rates downloading from table {table_name}")
+scheduler = AsyncIOScheduler(
+    timezone="Europe/Warsaw"
+)
 
-    try:
-        response = await fetch_NBP_data(url)
-        if response.status == "failed":
-            print(f'Downloading staus: {response.status}, status code: {response.status_code}, error: {response.error}')
-            raise ValueError("Downloading error")
-        if response.status == None:
-            print('Data are not availiable today')
-            return 
-        
-        validate_response = validate(url, response.response)
 
-        if validate_response == False:
-            raise ValueError("Wrong data")
-           
+def start_scheduler():
 
-    except Exception as err:
-        print(f"Data download general error {err}")
+    scheduler.add_job(
+        sync_ab_tables,
+        id="sync_noon_tables_A_B",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="mon-fri",
+        hour=12,
+        minute=15,
+    )
 
-    try:
-        curriencies = CurrencyRepository.get_all()
-        
+    scheduler.add_job(
+        sync_c_table,
+        id="sync_morning_table_C",
+        replace_existing=True,
+        trigger="cron",
+        day_of_week="mon-fri",
+        hour=8,
+        minute=15,
+    )
 
-    except Exception as err:
-        print(f"Data insert general error {err}")
+    scheduler.start()
 
-    print(response.response)
-
-    url = os.getenv('NBP_API_TABLE_A')
-    schedule.every().monday.at('12:15','Europe/Warsaw').do(update_currency_rates(url,'a'))
-    schedule.every().tuesday.at('12:15','Europe/Warsaw').do(update_currency_rates(url,'a'))
-    schedule.every().wednesday.at('12:15','Europe/Warsaw').do(update_currency_rates(url,'a'))
-    schedule.every().thursday.at('12:15','Europe/Warsaw').do(update_currency_rates(url,'a'))
-    schedule.every().friday.at('12:15','Europe/Warsaw').do(update_currency_rates(url,'a'))
-
-    url = os.getenv('NBP_API_TABLE_B')
-    schedule.every().wednesday.at('12:15','Europe/Warsaw').do(update_currency_rates(url,'b'))
-
-    url = os.getenv('NBP_API_TABLE_C')
-    schedule.every().monday.at('08:15','Europe/Warsaw').do(update_currency_rates(url,'c'))
-    schedule.every().tuesday.at('08:15','Europe/Warsaw').do(update_currency_rates(url,'c'))
-    schedule.every().wednesday.at('08:15','Europe/Warsaw').do(update_currency_rates(url),'c')
-    schedule.every().thursday.at('08:15','Europe/Warsaw').do(update_currency_rates(url),'c')
-    schedule.every().friday.at('08:15','Europe/Warsaw').do(update_currency_rates(url),'c')
-
-print("Scheduler uruchomiony")
-
-update_currency_rates(os.getenv('NBP_API_TABLE_A'),'a')
-update_currency_rates(os.getenv('NBP_API_TABLE_B'),'b')
-update_currency_rates(os.getenv('NBP_API_TABLE_C'),'c')
-
-while True:
-    schedule.run_pending()
-    time.sleep(30)
+    print("Scheduler start")

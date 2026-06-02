@@ -23,18 +23,6 @@ def get_exchange_rate_service(
         ExchangeBuySellRateRepository(db),
     )
 
-@router.get("/latest/{currency_code}")
-async def get_latest_rates(
-    currency_code: str,
-    service: ExchangeRateService = Depends(
-        get_exchange_rate_service
-    ),
-):
-    return await service.get_rate(
-        currency_code,
-        datetime.date.today(),
-    )
-
 @router.get("/history/{currency_code}/date/{date}",response_model=ExchangeResponse)
 async def get_rate_history(
     currency_code: str,
@@ -43,15 +31,48 @@ async def get_rate_history(
         get_exchange_rate_service
     ),
 ):
-    rates = await service.get_rate(
+    rate = await service.get_rate(
         currency_code,
         date,
     )
 
-    if not rates:
+    if not rate:
         raise HTTPException(
             status_code=404,
-            detail="Currency not found",
+            detail="Exchange rate not found for this date",
         )
 
+    return rate
+
+@router.get("/all", response_model=list[ExchangeResponse])
+async def get_rates(service: ExchangeRateService = Depends(
+        get_exchange_rate_service)):
+    currencies =  await service.currency_repo.get_all()
+    rates = []
+    print(currencies)
+    for currency  in currencies:
+        data = await service.get_rate(currency.code,datetime.date.today())
+        rates.append( data )
+    if not rates:
+        return None
+        #raise HTTPException(status_code=404,detail="Currency not found")
     return rates
+
+@router.get("/{currency_code}", response_model=ExchangeResponse)
+async def get_rate(
+    currency_code: str,
+    service: ExchangeRateService = Depends(
+        get_exchange_rate_service
+    ),
+):
+    rate = await service.get_rate(
+        currency_code,
+        datetime.date.today(),
+    )
+
+    if not rate:
+        raise HTTPException(status_code=404,detail="Currency not found  for this date")
+    return rate
+
+
+

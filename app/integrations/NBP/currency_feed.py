@@ -14,14 +14,14 @@ retry = Retry(total=3,
               backoff_factor=0.5
               )
 
-async def fetch_NBP_data(url: str) -> JSON:
+async def fetch_NBP_data(url: str) -> dict:
     try:
         async with httpx.AsyncClient(transport=RetryTransport(retry=retry)) as client:
             response = await client.get(url, timeout=5)
             print(response.status_code)
             return {"status": "success", "status_code": response.status_code, "response": response.json()}
     except httpx.HTTPError as err:
-        return  {"status": "failed", "status_code": response.status_code, "error": err}
+        return  {"status": "failed",  "error": str(err)}
     
 
-asyncio.run(fetch_NBP_data(url)) 
+#asyncio.run(fetch_NBP_data(url)) 

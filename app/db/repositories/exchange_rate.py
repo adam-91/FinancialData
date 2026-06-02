@@ -24,8 +24,9 @@ class ExchangeRateService:
     ):
 
         currency = (await self.currency_repo.get_by_code(currency_code))
-
+        
         if currency is None:
+            print(currency_code)
             raise ValueError(f"Currency {currency_code} not found")
 
         mid = await self.mid_repo.get_rate(
@@ -42,19 +43,13 @@ class ExchangeRateService:
         return {
             "code": currency.code,
             "currency": currency.name,
-            "effective_date": effective_date,
+            "effectiveDate": effective_date,
             "mid":
-                mid.mid
-                if mid
-                else None,
+                mid.mid if mid else None,
             "bid":
-                buy_sell.bid
-                if buy_sell
-                else None,
+                buy_sell.bid if buy_sell else None,
             "ask":
-                buy_sell.ask
-                if buy_sell
-                else None,
+                buy_sell.ask if buy_sell else None,
         }
     
 

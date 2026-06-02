@@ -31,3 +31,8 @@ class ExchangeMidRateRepository(
         )
 
         return await self.session.scalar(stmt)
+    
+    async def upsert(self,  mid_rate_object) -> ExchangeMidRate:
+        return await self.session.merge(mid_rate_object)
+    
+

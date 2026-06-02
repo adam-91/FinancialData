@@ -1,8 +1,17 @@
 from datetime import date
 from typing import TypeAlias
 from decimal import Decimal
-from pydantic import BaseModel, Field, ValidationError, ConfigDict
+from pydantic import BaseModel, Field, ValidationError
+from db.models.currency import Currency
 
+class CurrencyResponse(BaseModel):
+    id: int
+    code: str
+    name: str
+
+    model_config = {
+        "from_attributes": True
+    }
 
 #table A - average currency rates
 #table A - less often changes - average currency rates 
@@ -14,14 +23,27 @@ class ExchangeResponse(BaseModel):
     code: str
     currency: str
     effectiveDate: date
-    mid: Decimal
-    bid: Decimal
-    ask: Decimal
+    mid: Decimal | None
+    bid: Decimal | None
+    ask: Decimal | None
 
+class ExchangeResponseAB(BaseModel):
+    code: str
+    currency: str
+    effectiveDate: date
+    mid: Decimal | None
+
+
+class ExchangeResponseC(BaseModel):
+    code: str
+    currency: str
+    effectiveDate: date
+    bid: Decimal 
+    ask: Decimal  
 class NBP_currency_mean(BaseModel):
     currency: str
     code: str = Field(length=3)
-    mid: Decimal
+    mid: Decimal 
 
 class NBP_currency_buy_and_Sell(BaseModel):
     currency: str

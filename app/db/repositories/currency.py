@@ -6,12 +6,12 @@ class CurrencyRepository(AsyncRepository):
 
     async def create(self, currency: Currency) -> Currency:
         self.session.add(currency)
-        await self.session.flush()
+        await self.session.commit()
         return currency
 
     async def create_many(self, currencies: list[Currency]) -> list[Currency]:
         self.session.add_all(currencies)
-        await self.session.flush()
+        await self.session.commit()
         return currencies
 
     async def get_by_id(self, currency_id: int) -> Currency | None:

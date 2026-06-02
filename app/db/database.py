@@ -9,7 +9,7 @@ class Base(DeclarativeBase):
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+#DATABASE_URL = os.getenv("DATABASE_URL")
 
 async def init_db():
     async with engine.begin() as conn:

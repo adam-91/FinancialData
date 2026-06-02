@@ -14,10 +14,10 @@ export interface ExchangeBuyAndSellRate {
 }
 
 export interface ExchangeRate {
-    id: number;
-    currency_id: number;
-    effective_date: Date;
-    bid: number;
-    ask: number;
-    mid: number;
+  code: string;
+  currency: string;
+  effectiveDate: string;
+  mid: number | null;
+  bid: number | null;
+  ask: number | null;
 }

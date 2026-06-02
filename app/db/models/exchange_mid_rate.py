@@ -34,7 +34,3 @@ class ExchangeMidRate(Base):
     mid: Mapped[Decimal] = mapped_column(
         Numeric(10, 4)
     )
-
-    currency: Mapped["Currency"] = relationship(
-        back_populates="mid_rates"
-    )

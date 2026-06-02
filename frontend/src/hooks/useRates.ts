@@ -1,24 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMidRates, getBASRates, getRates} from "../api/rates";
-
-export const useMidRates = () => {
+import { getRate, getRates } from "../api/rates";
+ 
+export const useRate = (code: string) => {
   return useQuery({
-    queryKey: ["rates"],
-    queryFn: getMidRates,
+    queryKey: ["rate", code],
+    queryFn: () => getRate(code),
+    enabled: !!code,
   });
 };
 
-export const useBASRates = () => {
-  return useQuery({
-    queryKey: ["rates"],
-    queryFn: getBASRates,
-  });
-};
 
 export const useRates = () => {
   return useQuery({
     queryKey: ["rates"],
-    queryFn: getRates,
+    queryFn: () => getRates()
   });
 };
-

@@ -3,7 +3,7 @@ import { CurrencyRate } from "../types/currencyRate";
 
 interface RatesTableProps {
   currencies: CurrencyRate[];
-  rates: ExchangeRate[];
+  rates: ExchangeRate[] | null;
 }
 
 export function RatesTable({currencies,
@@ -23,19 +23,18 @@ export function RatesTable({currencies,
       </thead>
 
       <tbody>
-        {rates.map((rate) => {
-          const code = currencies[rate.currency_id]?.code
-          const currency = currencies[rate.currency_id]?.name
+        {rates?.map((rate) => {
+          const code = rate.code
+          //const currency = currencies.filter(c => c.code == code)
+
          return (
-          <tr
-            key={`${code}-${rate.effective_date}`}
-          >
+          <tr key={`${code}-${rate.effectiveDate}`} >
             <td>{code}</td>
-            <td>{currency}</td>
-            <td>{rate.effective_date.getDate()}</td>
-            <td>{rate.mid.toFixed(4)}</td>
-            <td>{rate.bid.toFixed(4)}</td>
-            <td>{rate.ask.toFixed(4)}</td>
+            <td>{rate.currency}</td>
+            <td>{rate.effectiveDate}</td>
+            <td>{rate.mid != null ? rate.mid.toFixed(4) : "-"}</td>
+            <td>{rate.bid != null ? rate.bid.toFixed(4) : "-"}</td>
+            <td>{rate.ask != null ? rate.ask.toFixed(4) : "-"}</td>
             
           </tr>
           );

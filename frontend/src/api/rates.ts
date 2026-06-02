@@ -1,21 +1,31 @@
 import axios from "axios";
-import { ExchangeMidRate, ExchangeBuyAndSellRate,  ExchangeRate} from "../types/currencyExchangeRate";
+import { ExchangeRate } from "../types/currencyExchangeRate";
 
 const api = axios.create({
   baseURL: "http://localhost:8000",
 });
 
-export const getMidRates = async (): Promise<ExchangeMidRate[]> => {
-  const response = await api.get<ExchangeMidRate[]>("/rates");
-  return response.data;
-};
+export const getRate = async (
+  code: string
+): Promise<ExchangeRate> => {
+  const response = await api.get<ExchangeRate>(
+    `/api/rates/${code}`
+  );
 
-export const getBASRates = async (): Promise<ExchangeBuyAndSellRate[]> => {
-  const response = await api.get<ExchangeBuyAndSellRate[]>("/rates");
   return response.data;
 };
 
 export const getRates = async (): Promise<ExchangeRate[]> => {
-  const response = await api.get<ExchangeRate[]>("/rates");
+  const response = await api.get<ExchangeRate[]>('/api/rates/all');
+  return response.data;
+};
+export const getHistoricalRate = async (
+  code: string,
+  date: string
+): Promise<ExchangeRate> => {
+  const response = await api.get<ExchangeRate>(
+    `/api/rates/history/${code}/date/${date}`
+  );
+
   return response.data;
 };
