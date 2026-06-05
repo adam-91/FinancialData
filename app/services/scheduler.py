@@ -1,5 +1,4 @@
 from apscheduler.schedulers.asyncio import (AsyncIOScheduler)
-
 from services.startup_sync import (sync_ab_tables, sync_c_table)
 
 scheduler = AsyncIOScheduler(
@@ -8,7 +7,8 @@ scheduler = AsyncIOScheduler(
 
 
 def start_scheduler():
-
+    if not scheduler.running:
+        scheduler.start()
     scheduler.add_job(
         sync_ab_tables,
         id="sync_noon_tables_A_B",
@@ -28,7 +28,3 @@ def start_scheduler():
         hour=8,
         minute=15,
     )
-
-    scheduler.start()
-
-    print("Scheduler start")

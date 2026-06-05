@@ -1,9 +1,9 @@
-from db.repositories.exchange_rate import ExchangeRateService
+from dto.exchange_rate_dto import BuyAndSellRateDTO, MidRateDTO
+from integrations.NBP.currency_service import dto_to_entity
 from db.models.currency import Currency
-from db.repositories.currency import (CurrencyRepository)
-
-from db.repositories.exchange_mid_rate import (ExchangeMidRateRepository, ExchangeMidRate)
-from db.repositories.exchange_buy_and_sell_rate import (ExchangeBuySellRateRepository, ExchangeBuyAndSellRate)
+from db.repositories.currency import CurrencyRepository
+from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
+from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
 
 class ExchangeRateSyncService:
 
@@ -56,24 +56,38 @@ class ExchangeRateSyncService:
         }
 
         for rate in dto.rates:
-            if hasattr(rate, 'mid'):
-                rows_mid = ExchangeMidRate(
-                    currency_id=currency_map[rate.code].id,
+            if hasattr(rate, "mid"):
+
+                dto_rate = MidRateDTO(
+                    currency=rate.currency,
+                    code=rate.code,
+                    mid=rate.mid,
                     effective_date=dto.effectiveDate,
-                    mid=rate.mid
                 )
-                await self.rate_mid_repo.upsert(rows_mid)
+
+                entity = dto_to_entity(
+                    dto_rate,
+                    currency_map[rate.code].id,
+                )
+
+                await self.rate_mid_repo.upsert(entity)
 
         for rate in dto.rates:
             if hasattr(rate, 'bid'):
-                rows_bas = ExchangeBuyAndSellRate(
-                    currency_id=currency_map[rate.code].id,
-                    effective_date=dto.effectiveDate,
-                    bid=rate.bid,
-                    ask=rate.ask
-                )
-                await self.rate_bas_repo.upsert(rows_bas)
+                dto_rate = BuyAndSellRateDTO(
+                currency=rate.currency,
+                code=rate.code,
+                bid=rate.bid,
+                ask=rate.ask,
+                effective_date=dto.effectiveDate,
+            )
 
+                entity = dto_to_entity(
+                    dto_rate,
+                    currency_map[rate.code].id,
+                )
+
+                await self.rate_bas_repo.upsert(entity)
 
         await self.session.commit()
 

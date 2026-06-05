@@ -1,7 +1,6 @@
 import os
-import httpx 
+import httpx
 from httpx_retries import RetryTransport, Retry
-import asyncio
 from dotenv import load_dotenv
 from typing import TypeAlias
 
@@ -22,6 +21,3 @@ async def fetch_NBP_data(url: str) -> dict:
             return {"status": "success", "status_code": response.status_code, "response": response.json()}
     except httpx.HTTPError as err:
         return  {"status": "failed",  "error": str(err)}
-    
-
-#asyncio.run(fetch_NBP_data(url)) 

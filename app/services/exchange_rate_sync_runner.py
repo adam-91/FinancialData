@@ -2,7 +2,7 @@ import os
 from db.database import AsyncSessionFactory
 from integrations.NBP.currency_feed import fetch_NBP_data
 from integrations.NBP.currency_schema import validate
-from services.exchange_rate_sync import (ExchangeRateSyncService)
+from services.exchange_rate_sync import ExchangeRateSyncService
 
 
 async def sync_nbp_table(url: str):

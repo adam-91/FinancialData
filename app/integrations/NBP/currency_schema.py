@@ -1,7 +1,7 @@
 from datetime import date
 from typing import TypeAlias
 from decimal import Decimal
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ValidationError, StringConstraints
 from db.models.currency import Currency
 
 class CurrencyResponse(BaseModel):
@@ -42,12 +42,12 @@ class ExchangeResponseC(BaseModel):
     ask: Decimal  
 class NBP_currency_mean(BaseModel):
     currency: str
-    code: str = Field(length=3)
+    code: str = StringConstraints(min_length=3, max_length=3)
     mid: Decimal 
 
 class NBP_currency_buy_and_Sell(BaseModel):
     currency: str
-    code: str = Field(length=3)
+    code: str = StringConstraints(min_length=3, max_length=3)
     bid: Decimal
     ask: Decimal
 

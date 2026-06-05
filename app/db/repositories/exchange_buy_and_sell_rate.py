@@ -32,11 +32,28 @@ class ExchangeBuySellRateRepository(
         if existing:
             existing.bid = bas_rate_object.bid
             existing.ask = bas_rate_object.ask
-            await self.session.commit()
+    
             return existing
 
         self.session.add(bas_rate_object)
-        await self.session.commit()
 
         return bas_rate_object
     
+    async def get_latest_rate(
+        self,
+        currency_id: int,
+    ) -> ExchangeBuyAndSellRate | None:
+
+        stmt = (
+            select(ExchangeBuyAndSellRate)
+            .where(
+                ExchangeBuyAndSellRate.currency_id == currency_id
+            )
+            .order_by(
+                ExchangeBuyAndSellRate.effective_date.desc()
+            )
+            .limit(1)
+        )
+
+        return await self.session.scalar(stmt)
+        

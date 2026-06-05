@@ -1,13 +1,8 @@
 from datetime import date
 from decimal import Decimal
-from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Numeric,Date, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from db.database import Base
-
-
-if TYPE_CHECKING:
-    from db.models.currency import Currency
 
 
 class ExchangeMidRate(Base):
@@ -34,3 +29,4 @@ class ExchangeMidRate(Base):
     mid: Mapped[Decimal] = mapped_column(
         Numeric(10, 4)
     )
+

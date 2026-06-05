@@ -16,10 +16,10 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):    
     #try:
-    print(f"Startup sync start XXXXXXXXXXXX")
+    print(f"Startup sync start")
 
     await sync_all_tables()
-    print(f"Startup sync end XXXXXXXXXXXXXXXXXXXX")
+    print(f"Startup sync end")
 
     #except Exception as err:
         #print(f"Startup sync failed: {err}")

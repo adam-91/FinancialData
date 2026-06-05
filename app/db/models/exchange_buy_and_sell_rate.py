@@ -1,14 +1,8 @@
 from datetime import date
 from decimal import Decimal
-from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Numeric,Date, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column 
 from db.database import Base
-
-
-if TYPE_CHECKING:
-    from db.models.currency import Currency
-
 
 class ExchangeBuyAndSellRate(Base):
     __tablename__ = "exchange_buy_and_sell_rates"

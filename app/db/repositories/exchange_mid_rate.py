@@ -42,12 +42,27 @@ class ExchangeMidRateRepository(
 
         if existing:
             existing.mid = mid_rate_object.mid
-            await self.session.commit()
             return existing
 
         self.session.add(mid_rate_object)
-        await self.session.commit()
-
         return mid_rate_object
-    
+
+    async def get_latest_rate(
+        self,
+        currency_id: int,
+    ) -> ExchangeMidRate | None:
+
+        stmt = (
+            select(ExchangeMidRate)
+            .where(
+                ExchangeMidRate.currency_id == currency_id
+            )
+            .order_by(
+                ExchangeMidRate.effective_date.desc()
+            )
+            .limit(1)
+        )
+
+        return await self.session.scalar(stmt)
+            
 

@@ -15,6 +15,11 @@ do
     sleep 2
 done
 
+if [ -z "$(ls -A alembic/versions)" ]; then
+    echo "Generating initial migration..."
+    alembic revision --autogenerate -m "initial"
+fi
+
 alembic upgrade head
 
 exec "$@"

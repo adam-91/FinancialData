@@ -1,11 +1,7 @@
-from typing import TYPE_CHECKING
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from db.database import Base
 
-if TYPE_CHECKING:
-    from db.models.exchange_mid_rate import ExchangeMidRate
-    from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
 
 class Currency(Base):
     __tablename__ = "currencies"
