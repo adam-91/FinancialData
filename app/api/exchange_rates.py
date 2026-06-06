@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.repositories.currency import CurrencyRepository
 from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
 from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
-from db.repositories.exchange_rate import ExchangeRateService
+from services.exchange_rate import ExchangeRateService
 from db.database import get_session
 from integrations.NBP.currency_schema import ExchangeResponse
 

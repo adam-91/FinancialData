@@ -1,7 +1,7 @@
 from datetime import date
 from types import SimpleNamespace
 import pytest
-from db.repositories.exchange_rate import ExchangeRateService
+from services.exchange_rate import ExchangeRateService
 
 
 @pytest.mark.asyncio
