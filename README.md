@@ -108,6 +108,11 @@ python main.py
   <li>Practice working with REST APIs and financial data</li>
   <li>Learn containerization with Docker</li>
   <li>Build data engineering and automation portfolio projects</li>
+  <li>Database integration PostgreSQL + alembic (database version control</li>
+  <li>Scheduled background jobs</li>
+  <li>Data visualization dashboard</li>
+  <li>Unit and integration tests</li>
+  <li>REST API layer with FastAPI</li>
 </ul>
 
 ---
@@ -115,11 +120,10 @@ python main.py
 <h2>🔮 Future Improvements</h2>
 
 <ul>
-  <li>Database integration (PostgreSQL / SQLite)</li>
-  <li>REST API layer with FastAPI</li>
+ 
   <li>Scheduled background jobs</li>
-  <li>Data visualization dashboard</li>
-  <li>Unit and integration tests</li>
+  <li>Analitics</li>
+  <li>End to end tests</li>
   <li>CI/CD pipeline integration</li>
 </ul>
 
