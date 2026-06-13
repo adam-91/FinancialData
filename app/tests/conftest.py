@@ -81,3 +81,21 @@ async def client(db_session):
         
 
     app.dependency_overrides.clear()
+
+@pytest_asyncio.fixture(scope="session")
+async def stock_factory():
+
+    def _factory(**kwargs):
+        defaults = {
+            "symbol": "PKN",
+            "yahoo_symbol": "PKN.WA",
+            "name": "Orlen S.A",
+            "exchange": "GPW",
+            "active": True
+        }
+
+        defaults.update(kwargs)
+
+        return Stock(**defaults)
+
+    return _factory

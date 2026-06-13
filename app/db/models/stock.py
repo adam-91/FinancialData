@@ -8,12 +8,12 @@ class Stock(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     symbol: Mapped[str] = mapped_column(
-        String(3),
+        String(),
         unique=True,
         index=True
     )
     yahoo_symbol: Mapped[str] = mapped_column(
-        String(6),
+        String(),
         unique=True,
         index=True
     )
