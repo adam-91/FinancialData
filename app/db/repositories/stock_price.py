@@ -1,11 +1,14 @@
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from dto.stock_price import StockPriceCreateDTO, StockPriceDTO
 from db.models.stock import Stock
 from db.models.stock_price import StockPrice
 from db.repositories.base import AsyncRepository
 
 
-class StockRepository(AsyncRepository):
-    model = Stock
+class StockPriceRepository(AsyncRepository[StockPrice,StockPriceCreateDTO,StockPriceDTO]):
+    model = StockPrice
+    output_schema = StockPriceDTO
 
     async def get_exchange_tickers(self, yahoo = True,exchange="GPW") -> list[str]:
         if yahoo:
@@ -13,9 +16,9 @@ class StockRepository(AsyncRepository):
         else:
             tmp = "symbol"
 
-        column = getattr(Stock, tmp)
+        #column = getattr(Stock, tmp)
 
-        stmt = select(column)
+        stmt = select(tmp)
         stmt = stmt.where(Stock.active == True)
 
         if exchange != 'all':
@@ -28,5 +31,4 @@ class StockRepository(AsyncRepository):
 
         return list(result.all())
 
-class StockPriceRepository(AsyncRepository):
-    model = StockPrice
+ 

@@ -1,4 +1,4 @@
-from dto.exchange_rate_dto import BuyAndSellRateDTO, MidRateDTO
+from dto.exchange_rate_dto import BuyAndSellRateCreateDTO, MidRateCreateDTO
 from integrations.NBP.currency_service import dto_to_entity
 from db.models.currency import Currency
 from db.repositories.currency import CurrencyRepository
@@ -58,7 +58,7 @@ class ExchangeRateSyncService:
         for rate in dto.rates:
             if hasattr(rate, "mid"):
 
-                dto_rate = MidRateDTO(
+                dto_rate = MidRateCreateDTO(
                     currency=rate.currency,
                     code=rate.code,
                     mid=rate.mid,
@@ -74,7 +74,7 @@ class ExchangeRateSyncService:
 
         for rate in dto.rates:
             if hasattr(rate, 'bid'):
-                dto_rate = BuyAndSellRateDTO(
+                dto_rate = BuyAndSellRateCreateDTO(
                 currency=rate.currency,
                 code=rate.code,
                 bid=rate.bid,

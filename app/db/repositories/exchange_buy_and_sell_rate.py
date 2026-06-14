@@ -1,13 +1,16 @@
 from datetime import date
-from sqlalchemy import insert, select
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from dto.exchange_rate_dto import BuyAndSellRateCreateDTO, BuyAndSellRateDTO
 from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
 from db.repositories.base import AsyncRepository
 
 
 class ExchangeBuySellRateRepository(
-    AsyncRepository[ExchangeBuyAndSellRate]
+    AsyncRepository[ExchangeBuyAndSellRate,BuyAndSellRateCreateDTO,BuyAndSellRateDTO]
 ):
     model = ExchangeBuyAndSellRate
+    output_schema = BuyAndSellRateDTO
 
     async def get_rate(self,currency_id: int,effective_date: date,) -> ExchangeBuyAndSellRate | None:
 

@@ -1,9 +1,13 @@
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from dto.currency_dto import CurrencyCreateDTO, CurrencyDTO
 from db.models.currency import Currency
 from db.repositories.base import AsyncRepository
  
-class CurrencyRepository(AsyncRepository):
-
+class CurrencyRepository(AsyncRepository[Currency,CurrencyCreateDTO,CurrencyDTO]):
+    model = Currency
+    output_schema = CurrencyDTO
+    
     async def create(self, currency: Currency) -> Currency:
         self.session.add(currency)
         await self.session.commit()

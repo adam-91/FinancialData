@@ -3,8 +3,8 @@ from decimal import Decimal
 from pydantic import BaseModel
 
 
-class StockPriceDTO(BaseModel):
-    ymbol: str
+class StockPriceCreateDTO(BaseModel):
+    symbol: str
     yahoo_symbol: str
     name: str
     exchange: str
@@ -15,3 +15,10 @@ class StockPriceDTO(BaseModel):
     close: Decimal
     adj_close: Decimal
     volume: Decimal
+
+class StockPriceDTO(StockPriceCreateDTO):
+    id: int
+
+    model_config = {
+        "from_attributes": True
+    }

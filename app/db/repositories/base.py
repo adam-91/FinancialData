@@ -1,39 +1,43 @@
 from typing import Generic, TypeVar
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 ModelType = TypeVar("ModelType")
+CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
+OutputSchemaType = TypeVar("OutputSchemaType", bound=BaseModel)
 
+class AsyncRepository(Generic[ModelType, CreateSchemaType, OutputSchemaType]):
 
-class AsyncRepository(Generic[ModelType]):
-
-    model = None
+    model: type[ModelType]
+    output_schema: type[OutputSchemaType]
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def create(
         self,
-        obj: ModelType,
-    ) -> ModelType:
+        obj: CreateSchemaType,
+    ) -> OutputSchemaType:
 
-        self.session.add(obj)
+        object = self.model(**obj.model_dump())
+        self.session.add(object)
 
-        await self.session.commit()
-        await self.session.refresh(obj)
+        await self.session.flush()
+        await self.session.refresh(object)
 
-        return obj
+        return object
 
     async def create_many(
         self,
-        objects: list[ModelType],
-    ) -> list[ModelType]:
+        dtos: list[CreateSchemaType],
+    ) -> list[OutputSchemaType]:
+        db_objects = [self.model(**dto.model_dump()) for dto in dtos]
 
-        self.session.add_all(objects)
+        self.session.add_all(db_objects)
+        await self.session.flush()
 
-        await self.session.commit()
-
-        return objects
+        return [self.output_schema.model_validate(obj) for obj in db_objects]
 
     async def get_by_id(
         self,

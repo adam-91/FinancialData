@@ -5,8 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from db.database import Base
 
 
-class Stock(Base):
-    __tablename__ = "stock"
+class StockPrice(Base):
+    __tablename__ = "stock_price"
 
     __table_args__ = (
         UniqueConstraint(

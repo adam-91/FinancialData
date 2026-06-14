@@ -1,14 +1,16 @@
 from datetime import date
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select
+from dto.exchange_rate_dto import MidRateCreateDTO, MidRateDTO
 from db.models.exchange_mid_rate import ExchangeMidRate
 from db.repositories.base import AsyncRepository
 
 class ExchangeMidRateRepository(
-    AsyncRepository[ExchangeMidRate]
+    AsyncRepository[ExchangeMidRate,MidRateCreateDTO,MidRateDTO]
 ):
     model = ExchangeMidRate
-
+    output_schema = MidRateDTO
+        
     async def get_currency_rates(self,currency_id: int,) -> list[ExchangeMidRate]:
         stmt = (
             select(ExchangeMidRate)

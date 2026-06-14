@@ -1,20 +1,30 @@
 import os
 import sys
 import pytest
+import asyncio
 from pathlib import Path
 from alembic import command
 from alembic.config import Config
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.pool import NullPool 
 from testcontainers.postgres import PostgresContainer
 from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient
- 
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from main import app
 from db.database import get_session
- 
+from db.repositories.stock import StockRepository
+from dto.stock import StockCreateDTO
+
+@pytest.fixture(scope="session")
+def event_loop():
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    yield loop
+    loop.close()
 
 @pytest.fixture
 def client():
@@ -24,6 +34,7 @@ def client():
 def db_container():
     with PostgresContainer("postgres:16-alpine") as postgres:
         yield postgres
+
 
 @pytest.fixture(scope="session")
 def alembic_migrations(db_container):
@@ -35,21 +46,24 @@ def alembic_migrations(db_container):
     alembic_cfg.set_main_option("sqlalchemy.url", sync_url)
     alembic_cfg.set_main_option("script_location", "app/alembic")
     
-    # Wykonujemy migracje
     command.upgrade(alembic_cfg, "head")
 
     yield
 
 @pytest_asyncio.fixture(scope="session")
-async def async_engine(db_container, alembic_migrations):
+async def async_engine(db_container,alembic_migrations):
+ 
     sync_url = db_container.get_connection_url()
+ 
     async_url = (
         sync_url
         .replace("postgresql://", "postgresql+asyncpg://")
         .replace("postgresql+psycopg2://", "postgresql+asyncpg://")
     )
-    
-    engine = create_async_engine(async_url, echo=False)
+
+    engine = create_async_engine(async_url, echo=False,poolclass=NullPool )
+    engine.clear_compiled_cache()
+        
     yield engine
     await engine.dispose()
 
@@ -66,6 +80,7 @@ async def db_session(async_engine):
             
             yield async_session
             await transaction.rollback()
+            await connection.close()
 
 @pytest_asyncio.fixture(scope="function")
 async def client(db_session):
@@ -79,11 +94,15 @@ async def client(db_session):
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
         
-
     app.dependency_overrides.clear()
 
-@pytest_asyncio.fixture(scope="session")
-async def stock_factory():
+### STOCK ######################
+@pytest.fixture(scope="function")
+def stock_repo(db_session):
+    return StockRepository(db_session)
+
+@pytest.fixture(scope="function")
+def stock_factory():
 
     def _factory(**kwargs):
         defaults = {
@@ -96,6 +115,39 @@ async def stock_factory():
 
         defaults.update(kwargs)
 
-        return Stock(**defaults)
+        return StockCreateDTO(**defaults)
 
     return _factory
+
+@pytest_asyncio.fixture(scope="function")
+async def stock_data(stock_factory,stock_repo):
+    created = await stock_repo.create_many([
+        stock_factory(
+            symbol="PKN",
+            yahoo_symbol="PKN.WA",
+            name="Orlen S.A",
+            exchange="GPW",
+            active=True,
+        ),
+        stock_factory(
+            symbol="KGH",
+            yahoo_symbol="KGH.WA",
+            name="KGHM Polska Miedź S.A.",
+            exchange="GPW",
+            active=True,
+        ),
+        stock_factory(
+            symbol="ABCT",
+            yahoo_symbol="ABCT.WA",
+            name="ABC Data S.A. / Asseco BS",
+            exchange="GPW",
+            active=False,
+        ),
+        stock_factory(
+            symbol="MSFT",
+            yahoo_symbol="MSFT",
+            name="Microsoft Corporation",
+            exchange="NYSE",
+            active=True,
+        )
+    ])
