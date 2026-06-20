@@ -1,15 +1,11 @@
 from datetime import date
 
-from sqlalchemy import select
-
-from db.models.exchange_mid_rate import ExchangeMidRate
 from db.repositories.currency import CurrencyRepository
-from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
 from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
+from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
 
 
 class ExchangeRateService:
-
     def __init__(
         self,
         currency_repo: CurrencyRepository,
@@ -26,8 +22,8 @@ class ExchangeRateService:
         effective_date: date | None = None,
     ):
 
-        currency = (await self.currency_repo.get_by_code(currency_code))
-        
+        currency = await self.currency_repo.get_by_code(currency_code)
+
         if currency is None:
             print(currency_code)
             raise ValueError(f"Currency {currency_code} not found")
@@ -40,10 +36,9 @@ class ExchangeRateService:
                 effective_date,
             )
 
-            buy_sell = (await self.buy_sell_repo.get_rate(
-                    currency.id,
-                    effective_date,
-                )
+            buy_sell = await self.buy_sell_repo.get_rate(
+                currency.id,
+                effective_date,
             )
         if mid is None and buy_sell is None:
             return None
@@ -51,34 +46,23 @@ class ExchangeRateService:
             "code": currency.code,
             "currency": currency.name,
             "effectiveDate": effective_date,
-            "mid":
-                mid.mid if mid else None,
-            "bid":
-                buy_sell.bid if buy_sell else None,
-            "ask":
-                buy_sell.ask if buy_sell else None,
+            "mid": mid.mid if mid else None,
+            "bid": buy_sell.bid if buy_sell else None,
+            "ask": buy_sell.ask if buy_sell else None,
         }
-    
+
     async def get_latest_rate(
         self,
         currency_code: str,
     ):
-        currency = await self.currency_repo.get_by_code(
-            currency_code
-        )
+        currency = await self.currency_repo.get_by_code(currency_code)
 
         if currency is None:
-            raise ValueError(
-                f"Currency {currency_code} not found"
-            )
+            raise ValueError(f"Currency {currency_code} not found")
 
-        mid = await self.mid_repo.get_latest_rate(
-            currency.id
-        )
+        mid = await self.mid_repo.get_latest_rate(currency.id)
 
-        buy_sell = await self.buy_sell_repo.get_latest_rate(
-            currency.id
-        )
+        buy_sell = await self.buy_sell_repo.get_latest_rate(currency.id)
 
         latest_date = None
 

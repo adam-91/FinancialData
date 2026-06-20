@@ -1,9 +1,8 @@
-from apscheduler.schedulers.asyncio import (AsyncIOScheduler)
-from services.startup_sync import (sync_ab_tables, sync_c_table)
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-scheduler = AsyncIOScheduler(
-    timezone="Europe/Warsaw"
-)
+from services.startup_sync import sync_ab_tables, sync_c_table
+
+scheduler = AsyncIOScheduler(timezone="Europe/Warsaw")
 
 
 def start_scheduler():

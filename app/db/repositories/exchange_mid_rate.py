@@ -1,17 +1,22 @@
 from datetime import date
+
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from dto.exchange_rate_dto import MidRateCreateDTO, MidRateDTO
+
 from db.models.exchange_mid_rate import ExchangeMidRate
 from db.repositories.base import AsyncRepository
+from dto.exchange_rate_dto import MidRateCreateDTO, MidRateDTO
+
 
 class ExchangeMidRateRepository(
-    AsyncRepository[ExchangeMidRate,MidRateCreateDTO,MidRateDTO]
+    AsyncRepository[ExchangeMidRate, MidRateCreateDTO, MidRateDTO]
 ):
     model = ExchangeMidRate
     output_schema = MidRateDTO
-        
-    async def get_currency_rates(self,currency_id: int,) -> list[ExchangeMidRate]:
+
+    async def get_currency_rates(
+        self,
+        currency_id: int,
+    ) -> list[ExchangeMidRate]:
         stmt = (
             select(ExchangeMidRate)
             .where(ExchangeMidRate.currency_id == currency_id)
@@ -22,19 +27,20 @@ class ExchangeMidRateRepository(
 
         return list(result.all())
 
-    async def get_rate(self, currency_id: int, effective_date: date,) -> ExchangeMidRate | None:
+    async def get_rate(
+        self,
+        currency_id: int,
+        effective_date: date,
+    ) -> ExchangeMidRate | None:
 
-        stmt = (
-            select(ExchangeMidRate)
-            .where(
-                ExchangeMidRate.currency_id == currency_id,
-                ExchangeMidRate.effective_date == effective_date,
-            )
+        stmt = select(ExchangeMidRate).where(
+            ExchangeMidRate.currency_id == currency_id,
+            ExchangeMidRate.effective_date == effective_date,
         )
 
         return await self.session.scalar(stmt)
-    
-    async def upsert(self,  mid_rate_object: ExchangeMidRate) -> ExchangeMidRate:
+
+    async def upsert(self, mid_rate_object: ExchangeMidRate) -> ExchangeMidRate:
         existing = await self.session.scalar(
             select(ExchangeMidRate).where(
                 ExchangeMidRate.currency_id == mid_rate_object.currency_id,
@@ -56,15 +62,9 @@ class ExchangeMidRateRepository(
 
         stmt = (
             select(ExchangeMidRate)
-            .where(
-                ExchangeMidRate.currency_id == currency_id
-            )
-            .order_by(
-                ExchangeMidRate.effective_date.desc()
-            )
+            .where(ExchangeMidRate.currency_id == currency_id)
+            .order_by(ExchangeMidRate.effective_date.desc())
             .limit(1)
         )
 
         return await self.session.scalar(stmt)
-            
-

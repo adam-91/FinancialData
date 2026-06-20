@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+
 from pydantic import BaseModel
 
 
@@ -9,6 +10,7 @@ class MidRateCreateDTO(BaseModel):
     mid: Decimal
     effective_date: date
 
+
 class BuyAndSellRateCreateDTO(BaseModel):
     currency: str
     code: str
@@ -16,16 +18,14 @@ class BuyAndSellRateCreateDTO(BaseModel):
     ask: Decimal
     effective_date: date
 
+
 class MidRateDTO(MidRateCreateDTO):
     id: int
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
+
 
 class BuyAndSellRateDTO(BuyAndSellRateCreateDTO):
     id: int
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

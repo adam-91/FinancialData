@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+
 from pydantic import BaseModel
 
 
@@ -16,9 +17,8 @@ class StockPriceCreateDTO(BaseModel):
     adj_close: Decimal
     volume: Decimal
 
+
 class StockPriceDTO(StockPriceCreateDTO):
     id: int
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

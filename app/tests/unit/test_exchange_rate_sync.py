@@ -1,6 +1,8 @@
 from decimal import Decimal
 from types import SimpleNamespace
+
 import pytest
+
 from services.exchange_rate_sync import ExchangeRateSyncService
 
 
@@ -61,6 +63,7 @@ async def test_sync_creates_missing_currency():
     assert len(created) == 1
     assert created[0].code == "USD"
 
+
 @pytest.mark.asyncio
 async def test_sync_does_not_create_existing_currency():
     existing = SimpleNamespace(
@@ -113,6 +116,7 @@ async def test_sync_does_not_create_existing_currency():
     await service.sync(dto)
 
     assert created == []
+
 
 @pytest.mark.asyncio
 async def test_sync_saves_bid_ask_rates():

@@ -1,17 +1,17 @@
 import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from db.database import get_session
 from db.repositories.currency import CurrencyRepository
 from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
 from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
-from services.exchange_rate import ExchangeRateService
-from db.database import get_session
 from integrations.NBP.currency_schema import ExchangeResponse
+from services.exchange_rate import ExchangeRateService
 
-router = APIRouter(
-    prefix="/api/rates",
-    tags=["rates"]
-)
+router = APIRouter(prefix="/api/rates", tags=["rates"])
+
 
 def get_exchange_rate_service(
     db: AsyncSession = Depends(get_session),
@@ -24,13 +24,11 @@ def get_exchange_rate_service(
     )
 
 
-@router.get("/history/{currency_code}/date/{date}",response_model=ExchangeResponse)
+@router.get("/history/{currency_code}/date/{date}", response_model=ExchangeResponse)
 async def get_rate_history(
     currency_code: str,
     date: datetime.date,
-    service: ExchangeRateService = Depends(
-        get_exchange_rate_service
-    ),
+    service: ExchangeRateService = Depends(get_exchange_rate_service),
 ):
     rate = await service.get_rate(
         currency_code,
@@ -47,27 +45,25 @@ async def get_rate_history(
 
 
 @router.get("/all", response_model=list[ExchangeResponse])
-async def get_all_rates(service: ExchangeRateService = Depends(
-        get_exchange_rate_service)):
-    currencies =  await service.currency_repo.get_all()
+async def get_all_rates(
+    service: ExchangeRateService = Depends(get_exchange_rate_service),
+):
+    currencies = await service.currency_repo.get_all()
     rates = []
     print(currencies)
     for currency in currencies:
-        data = await service.get_latest_rate(
-            currency.code
-        )
+        data = await service.get_latest_rate(currency.code)
         if data is not None:
             rates.append(data)
-         
-        #raise HTTPException(status_code=404,detail="Currency not found")
+
+        # raise HTTPException(status_code=404,detail="Currency not found")
     return rates
+
 
 @router.get("/{currency_code}", response_model=ExchangeResponse)
 async def get_rate(
     currency_code: str,
-    service: ExchangeRateService = Depends(
-        get_exchange_rate_service
-    ),
+    service: ExchangeRateService = Depends(get_exchange_rate_service),
 ):
     rate = await service.get_rate(
         currency_code,
@@ -75,8 +71,5 @@ async def get_rate(
     )
 
     if not rate:
-        raise HTTPException(status_code=404,detail="Currency not found  for this date")
+        raise HTTPException(status_code=404, detail="Currency not found  for this date")
     return rate
-
-
-

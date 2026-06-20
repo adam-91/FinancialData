@@ -1,0 +1,55 @@
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "SIM",
+]
+
+ignore = [
+    "B008",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "core",
+    "db",
+    "api",
+    "dto",
+    "services",
+    "integrations",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.per-file-ignores]
+"**/conftest.py" = ["SIM117"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+exclude = [
+    "alembic",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["app"]
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+env_override_existing_values = 1
+env_files = [".env"]
+

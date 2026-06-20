@@ -1,7 +1,8 @@
-from typing import TypeAlias
-from pydantic import BaseModel, Field, ValidationError
 from pandas import DataFrame
+from pydantic import BaseModel, Field
+
 from .yfinance_stock_feed import GPW_Indexes
+
 
 class NBP_currency_mean(BaseModel):
     currency: str
@@ -9,7 +10,8 @@ class NBP_currency_mean(BaseModel):
     mid: float
 
 
-JSON: TypeAlias = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
+type JSON = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
+
 
 def validate(index: GPW_Indexes, data: DataFrame) -> bool:
     return True

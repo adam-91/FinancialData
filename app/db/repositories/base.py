@@ -1,4 +1,5 @@
-from typing import Generic, TypeVar
+from typing import TypeVar
+
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,8 +8,8 @@ ModelType = TypeVar("ModelType")
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 OutputSchemaType = TypeVar("OutputSchemaType", bound=BaseModel)
 
-class AsyncRepository(Generic[ModelType, CreateSchemaType, OutputSchemaType]):
 
+class AsyncRepository[ModelType, CreateSchemaType, OutputSchemaType]:
     model: type[ModelType]
     output_schema: type[OutputSchemaType]
 
