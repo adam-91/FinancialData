@@ -16,8 +16,8 @@ from alembic import command
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from db.database import get_session
-from db.repositories.stock import StockRepository
-from dto.stock import StockCreateDTO
+from db.repositories.stock_company import StockCompanyRepository
+from dto.stock_company import StockCompanyCreateDTO
 from main import app
 
 
@@ -98,7 +98,7 @@ async def client(db_session):
 ### STOCK ######################
 @pytest.fixture(scope="function")
 async def stock_repo(db_session):
-    return StockRepository(db_session)
+    return StockCompanyRepository(db_session)
 
 
 @pytest.fixture(scope="function")
@@ -115,7 +115,7 @@ def stock_factory():
 
         defaults.update(kwargs)
 
-        return StockCreateDTO(**defaults)
+        return StockCompanyCreateDTO(**defaults)
 
     return _factory
 

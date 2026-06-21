@@ -2,9 +2,10 @@ from datetime import date
 from decimal import Decimal
 
 from sqlalchemy import Date, ForeignKey, Numeric, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
+from db.models.currency import Currency
 
 
 class ExchangeMidRate(Base):
@@ -19,3 +20,5 @@ class ExchangeMidRate(Base):
     effective_date: Mapped[date] = mapped_column(Date, index=True)
 
     mid: Mapped[Decimal] = mapped_column(Numeric(10, 4))
+
+    currency: Mapped["Currency"] = relationship() 

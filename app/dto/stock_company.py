@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class StockCreateDTO(BaseModel):
+class StockCompanyCreateDTO(BaseModel):
     symbol: str
     yahoo_symbol: str
     name: str
@@ -9,7 +9,7 @@ class StockCreateDTO(BaseModel):
     active: bool
 
 
-class StockDTO(StockCreateDTO):
+class StockCompanyDTO(StockCompanyCreateDTO):
     id: int
 
     model_config = {"from_attributes": True}

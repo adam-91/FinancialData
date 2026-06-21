@@ -1,14 +1,12 @@
 from datetime import date
 from decimal import Decimal
 
+from app.dto.stock_company import StockCompanyDTO
 from pydantic import BaseModel
 
 
 class StockPriceCreateDTO(BaseModel):
-    symbol: str
-    yahoo_symbol: str
-    name: str
-    exchange: str
+    stock_id: int
     trading_date: date
     open: Decimal
     high: Decimal
@@ -20,5 +18,10 @@ class StockPriceCreateDTO(BaseModel):
 
 class StockPriceDTO(StockPriceCreateDTO):
     id: int
+
+    model_config = {"from_attributes": True}
+
+class StockPriceFullDTO(StockPriceDTO):
+    stock: StockCompanyDTO
 
     model_config = {"from_attributes": True}

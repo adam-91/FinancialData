@@ -1,21 +1,21 @@
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, UniqueConstraint
+from sqlalchemy import Date, ForeignKey, Numeric, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
-from db.models.stock_company import StockCompany
+from db.models.stock_exchange_index import StockExchangeIndex
 
 
-class StockPrice(Base):
-    __tablename__ = "stock_prices"
+class StockExchangeIndexRate(Base):
+    __tablename__ = "stock_exchange_indexe_rates"
 
-    __table_args__ = (UniqueConstraint("company_id", "trading_date"),)
+    __table_args__ = (UniqueConstraint("index_id", "trading_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    company_id: Mapped[int] = mapped_column(ForeignKey("stock_companies.id"))
-    trading_date: Mapped[date] = mapped_column(DateTime(timezone=True), index=True)
+    index_id: Mapped[int] = mapped_column(ForeignKey("stock_exchange_indexes.id"))
+    trading_date: Mapped[date] = mapped_column(Date, index=True)
     open: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     high: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     low: Mapped[Decimal] = mapped_column(Numeric(10, 4))
@@ -23,6 +23,6 @@ class StockPrice(Base):
     adj_close: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     volume: Mapped[Decimal] = mapped_column(Numeric(10, 4))
 
-    UniqueConstraint("company_id", "trading_date", name="uq_stock_price_date")
+    UniqueConstraint("index_id", "trading_date")
 
-    stock_company: Mapped["StockCompany"] = relationship() 
+    stock_exchange_indexes: Mapped["StockExchangeIndex"] = relationship() 

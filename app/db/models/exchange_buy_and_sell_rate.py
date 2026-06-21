@@ -2,9 +2,10 @@ from datetime import date
 from decimal import Decimal
 
 from sqlalchemy import Date, ForeignKey, Numeric, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
+from db.models.currency import Currency
 
 
 class ExchangeBuyAndSellRate(Base):
@@ -20,3 +21,5 @@ class ExchangeBuyAndSellRate(Base):
 
     bid: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     ask: Mapped[Decimal] = mapped_column(Numeric(10, 4))
+
+    currency: Mapped["Currency"] = relationship() 
