@@ -1,12 +1,16 @@
 from datetime import date
 
+from dto.stock_price_dto import (
+    StockPriceCreateDTO,
+    StockPriceDTO,
+    StockPriceFullDTO,
+)
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from db.models.stock_company import StockCompany
 from db.models.stock_price import StockPrice
 from db.repositories.base import AsyncRepository
-from dto.stock_price import StockPriceCreateDTO, StockPriceDTO, StockPriceFullDTO
 
 
 class StockPriceRepository(

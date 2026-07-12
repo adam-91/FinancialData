@@ -1,8 +1,9 @@
 from datetime import date
 from decimal import Decimal
 
-from app.dto.stock_company import StockCompanyDTO
 from pydantic import BaseModel
+
+from dto.stock_company_dto import StockCompanyDTO
 
 
 class StockPriceCreateDTO(BaseModel):

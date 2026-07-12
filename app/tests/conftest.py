@@ -3,11 +3,12 @@ import os
 import sys
 from pathlib import Path
 
+import docker
 import pytest
 import pytest_asyncio
 from alembic.config import Config
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
 from testcontainers.postgres import PostgresContainer
 
@@ -15,9 +16,12 @@ from alembic import command
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from config.data_init import create_start_data
+from db.repositories.stock_exchange import StockExchangeRepository
+from db.repositories.stock_exchange_index import StockExchangeIndexRepository
 from db.database import get_session
 from db.repositories.stock_company import StockCompanyRepository
-from dto.stock_company import StockCompanyCreateDTO
+from dto.stock_company_dto import StockCompanyCreateDTO
 from main import app
 
 
@@ -28,8 +32,20 @@ def event_loop():
     yield loop
     loop.close()
 
+def _docker_is_available() -> bool:
+    try:
+        client = docker.from_env()
+        client.ping()
+        return True
+    except Exception:
+        return False
+
+
 @pytest.fixture(scope="session")
 def db_container():
+    if not _docker_is_available():
+        pytest.skip("Docker nie jest dostępny, więc testy integracyjne z PostgreSQL są pomijane.")
+
     with PostgresContainer("postgres:16-alpine") as postgres:
         yield postgres
 
@@ -61,11 +77,17 @@ async def async_engine(db_container, alembic_migrations):
     engine = create_async_engine(async_url, echo=False, poolclass=NullPool)
     engine.clear_compiled_cache()
 
+    async_session_local = async_sessionmaker(bind=engine, class_=AsyncSession)
+    async with async_session_local() as session:
+        await create_start_data(session)  
+        await session.commit()
+
+    
     yield engine
     await engine.dispose()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture
 async def db_session(async_engine):
     async with async_engine.connect() as connection:
         async with connection.begin() as transaction:
@@ -80,7 +102,7 @@ async def db_session(async_engine):
             await connection.close()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture 
 async def client(db_session):
 
     async def _override_get_db():
@@ -96,12 +118,20 @@ async def client(db_session):
 
 
 ### STOCK ######################
-@pytest.fixture(scope="function")
-async def stock_repo(db_session):
+@pytest_asyncio.fixture
+async def stock_company_repo(db_session):
     return StockCompanyRepository(db_session)
 
+@pytest_asyncio.fixture
+async def stock_exchange_repo(db_session):
+    return StockExchangeRepository(db_session)
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture
+async def stock_exchange_indexes_repo(db_session):
+    return StockExchangeIndexRepository(db_session)
+
+
+@pytest.fixture 
 def stock_factory():
 
     def _factory(**kwargs):
@@ -120,7 +150,7 @@ def stock_factory():
     return _factory
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture 
 async def stock_data(stock_factory, stock_repo):
     await stock_repo.create_many(
         [

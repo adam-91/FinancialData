@@ -1,0 +1,149 @@
+indexes:
+  # --- POLSKA ---
+  - exchange_symbol: GPW
+    symbol: "^WIG20"
+    name: "Warszawski Indeks Giełdowy 20"
+  - exchange_symbol: GPW
+    symbol: "^WIG"
+    name: "Warszawski Indeks Giełdowy"
+  - exchange_symbol: GPW
+    symbol: "^MWIG40"
+    name: "mWIG40"
+
+  # --- USA ---
+  - exchange_symbol: NYSE
+    symbol: "^NYA"
+    name: "NYSE Composite"
+  - exchange_symbol: NYSE
+    symbol: "^DJI"
+    name: "Dow Jones Industrial Average"
+  - exchange_symbol: NASDAQ
+    symbol: "^IXIC"
+    name: "NASDAQ Composite"
+  - exchange_symbol: NASDAQ
+    symbol: "^NDX"
+    name: "NASDAQ 100"
+  - exchange_symbol: AMEX
+    symbol: "^GSPC"
+    name: "S&P 500"
+  - exchange_symbol: AMEX
+    symbol: "^RUT"
+    name: "Russell 2000"
+
+  # --- EUROPA ZACHODNIA ---
+  - exchange_symbol: XETRA
+    symbol: "^GDAXI"
+    name: "DAX Performance Index"
+  - exchange_symbol: XETRA
+    symbol: "^MDAXI"
+    name: "MDAX"
+  - exchange_symbol: FRA
+    symbol: "^SDAXI"
+    name: "SDAXI"
+  - exchange_symbol: LSE
+    symbol: "^FTSE"
+    name: "FTSE 100"
+  - exchange_symbol: EPA
+    symbol: "^FCHI"
+    name: "CAC 40"
+  - exchange_symbol: AMS
+    symbol: "^AEX"
+    name: "AEX Index"
+  - exchange_symbol: EBR
+    symbol: "^BFX"
+    name: "BEL 20"
+  - exchange_symbol: MIL
+    symbol: "^FTSEMIB.MI"
+    name: "FTSE MIB"
+  - exchange_symbol: BME
+    symbol: "^IBEX"
+    name: "IBEX 35"
+  - exchange_symbol: SIX
+    symbol: "^SSMI"
+    name: "Swiss Market Index"
+  - exchange_symbol: VSE
+    symbol: "^ATX"
+    name: "Austrian Traded Index"
+
+  # --- EUROPA ŚRODKOWO-WSCHODNIA & NORDYCKA ---
+  - exchange_symbol: PSE
+    symbol: "^PX"
+    name: "Prague Stock Exchange Index"
+  - exchange_symbol: BSE
+    symbol: "^BUX"
+    name: "Budapest Stock Exchange Index"
+  - exchange_symbol: BIST
+    symbol: "^XU100"
+    name: "BIST 100"
+  - exchange_symbol: STO
+    symbol: "^OMXSPI"
+    name: "OMX Stockholm Index"
+  - exchange_symbol: OSL
+    symbol: "^OSEAX"
+    name: "Oslo Børs All-Share Index"
+  - exchange_symbol: CPH
+    symbol: "^OMXC25"
+    name: "OMX Copenhagen 25"
+  - exchange_symbol: HEL
+    symbol: "^OMXH25"
+    name: "OMX Helsinki 25"
+
+  # --- AZJA & PACYFIK ---
+  - exchange_symbol: TSE
+    symbol: "^N225"
+    name: "Nikkei 225"
+  - exchange_symbol: HKEX
+    symbol: "^HSI"
+    name: "Hang Seng Index"
+  - exchange_symbol: SSE
+    symbol: "000001.SS"
+    name: "SSE Composite Index"
+  - exchange_symbol: SZSE
+    symbol: "399001.SZ"
+    name: "SZSE Component Index"
+  - exchange_symbol: NSE
+    symbol: "^NSEI"
+    name: "NIFTY 50"
+  - exchange_symbol: BSE_INDIA
+    symbol: "^BSESN"
+    name: "S&P BSE SENSEX"
+  - exchange_symbol: KRX
+    symbol: "^KS11"
+    name: "KOSPI Composite Index"
+  - exchange_symbol: TWSE
+    symbol: "^TWII"
+    name: "TAIEX Volume Index"
+  - exchange_symbol: SGX
+    symbol: "^STI"
+    name: "Straits Times Index"
+  - exchange_symbol: ASX
+    symbol: "^AXJO"
+    name: "S&P/ASX 200"
+  - exchange_symbol: NZX
+    symbol: "^NZ50"
+    name: "S&P/NZX 50"
+
+  # --- AMERYKA POŁUDNIOWA ---
+  - exchange_symbol: B3
+    symbol: "^BVSP"
+    name: "IBOVESPA"
+  - exchange_symbol: BYMA
+    symbol: "^MERV"
+    name: "S&P MERVAL"
+  - exchange_symbol: BMV
+    symbol: "^MXX"
+    name: "IPC Mexico"
+  - exchange_symbol: BCS
+    symbol: "^IPSA"
+    name: "S&P/CLX IPSA"
+
+  # --- BLISKI WSCHÓD & AFRYKA ---
+  - exchange_symbol: TASE
+    symbol: "^TA125"
+    name: "TA-125"
+  - exchange_symbol: TADAWUL
+    symbol: "^TASI.SR"
+    name: "Tadawul All Share Index"
+  - exchange_symbol: JSE
+    symbol: "^J203.JO"
+    name: "FTSE/JSE Africa All Share Index"

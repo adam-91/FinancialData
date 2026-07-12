@@ -1,6 +1,13 @@
 [tool.ruff]
 line-length = 88
 target-version = "py313"
+force-exclude = true
+exclude = [
+    ".git",
+    ".venv",
+    "alembic",
+    "alembic/*",
+]
 
 [tool.ruff.lint]
 select = [
@@ -41,12 +48,11 @@ warn_return_any = true
 warn_unused_configs = true
 check_untyped_defs = true
 disallow_untyped_defs = true
-exclude = [
-    "**/alembic/",
-]
+
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+addopts = "-p pytest_asyncio"
+testpaths = ["app/tests"]
 asyncio_mode = "auto"
 pythonpath = ["app"]
 asyncio_default_fixture_loop_scope = "session"

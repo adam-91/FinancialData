@@ -5,7 +5,7 @@ class StockCompanyCreateDTO(BaseModel):
     symbol: str
     yahoo_symbol: str
     name: str
-    exchange: str
+    stock_exchange_id: int
     active: bool
 
 

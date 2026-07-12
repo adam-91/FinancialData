@@ -1,42 +1,41 @@
 import pytest
 
-pytestmark = pytest.mark.asyncio(loop_scope="session")
-
-
 @pytest.mark.asyncio
-async def test_get_exchange_tickers_non_yahoo_single_exchange(
-    db_session, stock_repo, stock_data
+async def test_get_stock_exchange(
+    db_session, stock_exchange_repo
 ):
 
-    tickers = await stock_repo.get_exchange_tickers(yahoo=False, exchange="GPW")
+    stocks = await stock_exchange_repo.get_exchange("GPW")
 
-    assert len(tickers) == 2
-    assert tickers == ["PKN", "KGH"]
-
-
-@pytest.mark.asyncio
-async def test_get_exchange_tickers_single_exchange(db_session, stock_repo, stock_data):
-    tickers = await stock_repo.get_exchange_tickers(exchange="GPW")
-
-    assert len(tickers) == 2
-    assert tickers == ["PKN.WA", "KGH.WA"]
-
+    assert stocks is not None
+    assert stocks.symbol == "GPW"
+    assert stocks.name == "Giełda Papierów Wartościowych w Warszawie"
+    assert stocks.country == "POLAND"
 
 @pytest.mark.asyncio
-async def test_get_exchange_tickers_no_yahoo_multiple_exchange(
-    async_engine, stock_repo, stock_data
+async def test_get_stock_exchange_index(
+    db_session, stock_exchange_indexes_repo
 ):
-    tickers = await stock_repo.get_exchange_tickers(yahoo=False, exchange="all")
+    stocks = await stock_exchange_indexes_repo.get_exchange_index("^WIG20")
 
-    assert len(tickers) == 3
-    assert tickers == ["PKN", "KGH", "MSFT"]
-
+    assert stocks is not None
+    assert stocks.symbol == "^WIG20"
+    assert stocks.name == "Warszawski Indeks Giełdowy 20"
+    assert stocks.exchange_symbol == "GPW"
 
 @pytest.mark.asyncio
-async def test_get_exchange_tickers_multiple_exchange(
-    async_engine, stock_repo, stock_data
+async def test_get_stock_exchange_indexes_for_stock_market(
+    db_session, stock_exchange_indexes_repo
 ):
-    tickers = await stock_repo.get_exchange_tickers(yahoo=True, exchange="all")
+    indexes = await stock_exchange_indexes_repo.get_exchange_indexes(stock_exchange="GPW")
 
-    assert len(tickers) == 3
-    assert tickers == ["PKN.WA", "KGH.WA", "MSFT"]
+    assert len(indexes) == 3
+    assert indexes[0].symbol == "^WIG20"
+    assert indexes[1].symbol == "^WIG0"
+    assert indexes[2].symbol == "^MWIG400"
+    assert indexes[0].name == "Warszawski Indeks Giełdowy 20"
+    assert indexes.exchange_symbol == "GPW"
+
+
+
+

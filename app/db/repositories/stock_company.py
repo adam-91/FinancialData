@@ -1,9 +1,11 @@
 from sqlalchemy import insert, inspect, select
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.orm import joinedload
 
 from db.models.stock_company import StockCompany
+from db.models.stock_exchange import StockExchange
 from db.repositories.base import AsyncRepository
-from dto.stock_company import StockCompanyCreateDTO, StockCompanyDTO
+from dto.stock_company_dto import StockCompanyCreateDTO, StockCompanyDTO
 
 
 class StockCompanyRepository(AsyncRepository[
@@ -14,7 +16,11 @@ class StockCompanyRepository(AsyncRepository[
     model = StockCompany
     output_schema = StockCompanyDTO
 
-    async def get_exchange_tickers(self, yahoo=True, exchange="GPW") -> list[str]:
+    async def get_exchange_tickers(
+            self, 
+            yahoo=True, 
+            exchange: int | str ="GPW"
+            ) -> list[str]:
         if yahoo:
             stmt = select(StockCompany.yahoo_symbol)  
         else:
@@ -22,8 +28,11 @@ class StockCompanyRepository(AsyncRepository[
 
         stmt = stmt.where(StockCompany.active)
 
-        if exchange != "all":
-            stmt = stmt.where(StockCompany.exchange == exchange)
+        if isinstance(exchange, int):
+            stmt = stmt.where(StockCompany.stock_exchange_id == exchange)
+        else:
+            stmt = stmt.options(joinedload(StockExchange.name))
+            stmt = stmt.where(StockExchange.name == exchange)
 
         stmt = stmt.order_by(StockCompany.id)
         result = await self.session.execute(stmt)
@@ -89,5 +98,5 @@ class StockCompanyRepository(AsyncRepository[
 
         upsert_stmt = stmt.on_conflict_do_update(index_elements=["symbol"], set=columns)
 
-        await self.execute(upsert_stmt)
-        await self.commit()
+        await self.session.execute(upsert_stmt)
+        await self.session.commit()

@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.currency import router as currency_router
 from api.exchange_rates import router as rates_router
+from config.data_init import create_start_data
 from services.scheduler import scheduler, start_scheduler
 from services.startup_sync import sync_all_tables
 
@@ -13,11 +14,13 @@ type JSON= dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 
 load_dotenv()
 
+async def initialize_database():
+    await create_start_data()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # try:
-    print("Startup sync start")
+    await initialize_database()
 
     await sync_all_tables()
     print("Startup sync end")

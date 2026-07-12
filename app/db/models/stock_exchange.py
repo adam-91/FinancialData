@@ -11,4 +11,5 @@ class StockExchange(Base):
     symbol: Mapped[str] = mapped_column(String(20), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(100), unique=True)
     country: Mapped[str] = mapped_column(String(100), index=True)
+    ticker: Mapped[str] = mapped_column(String(4), nullable=True)
     active: Mapped[bool] = mapped_column(Boolean)
