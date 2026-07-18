@@ -14,5 +14,12 @@ class Settings(BaseSettings):
     NBP_API_TABLES: str
     YFINANCE_CRYPTOCURRENCIES: str
 
+    HISTORY_FEED_BATCH_SIZE: int = 30
+    HISTORY_FEED_SLEEP_MIN: float = 1.0
+    HISTORY_FEED_SLEEP_MAX: float = 2.0
+    HISTORY_FEED_RATE_LIMIT_BASE_DELAY: int = 30
+    HISTORY_FEED_RATE_LIMIT_MAX_RETRIES: int = 3
+    HISTORY_FEED_STALE_THRESHOLD_DAYS: int = 30
+
 
 settings = Settings()

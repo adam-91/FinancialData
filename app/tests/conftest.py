@@ -8,7 +8,11 @@ import pytest
 import pytest_asyncio
 from alembic.config import Config
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.pool import NullPool
 from testcontainers.postgres import PostgresContainer
 
@@ -17,12 +21,13 @@ from alembic import command
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config.data_init import create_start_data
-from db.repositories.stock_exchange import StockExchangeRepository
-from db.repositories.stock_exchange_index import StockExchangeIndexRepository
 from db.database import get_session
 from db.repositories.stock_company import StockCompanyRepository
+from db.repositories.stock_exchange import StockExchangeRepository
+from db.repositories.stock_exchange_index import StockExchangeIndexRepository
 from dto.stock_company_dto import StockCompanyCreateDTO
 from main import app
+from services.parquet_tracker import ParquetTracker
 
 
 @pytest.fixture(scope="session")
@@ -31,6 +36,7 @@ def event_loop():
     loop = policy.new_event_loop()
     yield loop
     loop.close()
+
 
 def _docker_is_available() -> bool:
     try:
@@ -44,7 +50,10 @@ def _docker_is_available() -> bool:
 @pytest.fixture(scope="session")
 def db_container():
     if not _docker_is_available():
-        pytest.skip("Docker nie jest dostępny, więc testy integracyjne z PostgreSQL są pomijane.")
+        pytest.skip(
+            "Docker nie jest dostępny, więc testy integracyjne z PostgreSQL "
+            "są pomijane."
+        )
 
     with PostgresContainer("postgres:16-alpine") as postgres:
         yield postgres
@@ -79,10 +88,9 @@ async def async_engine(db_container, alembic_migrations):
 
     async_session_local = async_sessionmaker(bind=engine, class_=AsyncSession)
     async with async_session_local() as session:
-        await create_start_data(session)  
+        await create_start_data(session)
         await session.commit()
 
-    
     yield engine
     await engine.dispose()
 
@@ -102,7 +110,7 @@ async def db_session(async_engine):
             await connection.close()
 
 
-@pytest_asyncio.fixture 
+@pytest_asyncio.fixture
 async def client(db_session):
 
     async def _override_get_db():
@@ -122,16 +130,18 @@ async def client(db_session):
 async def stock_company_repo(db_session):
     return StockCompanyRepository(db_session)
 
+
 @pytest_asyncio.fixture
 async def stock_exchange_repo(db_session):
     return StockExchangeRepository(db_session)
+
 
 @pytest_asyncio.fixture
 async def stock_exchange_indexes_repo(db_session):
     return StockExchangeIndexRepository(db_session)
 
 
-@pytest.fixture 
+@pytest.fixture
 def stock_factory():
 
     def _factory(**kwargs):
@@ -150,7 +160,7 @@ def stock_factory():
     return _factory
 
 
-@pytest_asyncio.fixture 
+@pytest_asyncio.fixture
 async def stock_data(stock_factory, stock_repo):
     await stock_repo.create_many(
         [
@@ -184,3 +194,13 @@ async def stock_data(stock_factory, stock_repo):
             ),
         ]
     )
+
+
+@pytest.fixture
+def test_parquet_path(tmp_path):
+    return str(tmp_path / "test_tracker.parquet")
+
+
+@pytest.fixture
+def parquet_tracker(test_parquet_path):
+    return ParquetTracker(parquet_path=test_parquet_path)
