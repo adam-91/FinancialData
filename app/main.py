@@ -6,10 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.currency import router as currency_router
 from api.exchange_rates import router as rates_router
+from api.stock_companies import router as stock_companies_router
 from config.data_init import create_start_data
 from services.history_feeder import run_historical_feed
 from services.scheduler import scheduler, start_scheduler
 from services.startup_sync import sync_all_tables
+from services.stock_company_sync import sync_stock_companies_if_needed
 
 type JSON = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 
@@ -30,6 +32,11 @@ async def lifespan(app: FastAPI):
 
     # except Exception as err:
     # print(f"Startup sync failed: {err}")
+
+    try:
+        await sync_stock_companies_if_needed()
+    except Exception as err:
+        print(f"Stock companies sync failed: {err}")
 
     try:
         await run_historical_feed()
@@ -56,6 +63,7 @@ app.add_middleware(
 )
 app.include_router(currency_router)
 app.include_router(rates_router)
+app.include_router(stock_companies_router)
 
 
 @app.get("/health")

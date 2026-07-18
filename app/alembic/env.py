@@ -9,7 +9,7 @@ from core.config import settings
 from db.database import Base
 import db.models 
 
-load_dotenv(os.path.join(os.path.dirname(__file__), ".../.env"))
+load_dotenv(os.path.join(os.path.dirname(__file__), "../../.env"))
 
 config = context.config if hasattr(context, "config") else None
 

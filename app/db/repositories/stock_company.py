@@ -1,28 +1,27 @@
-from sqlalchemy import insert, inspect, select
+from sqlalchemy import func, insert, inspect, select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.orm import joinedload
 
 from db.models.stock_company import StockCompany
 from db.models.stock_exchange import StockExchange
+from db.models.stock_exchange_index import StockExchangeIndex
+from db.models.stock_index_membership import StockIndexMembership
 from db.repositories.base import AsyncRepository
 from dto.stock_company_dto import StockCompanyCreateDTO, StockCompanyDTO
 
 
-class StockCompanyRepository(AsyncRepository[
-    StockCompany, 
-    StockCompanyCreateDTO,
-    StockCompanyDTO
-    ]):
+class StockCompanyRepository(
+    AsyncRepository[StockCompany, StockCompanyCreateDTO, StockCompanyDTO]
+):
     model = StockCompany
     output_schema = StockCompanyDTO
 
     async def get_exchange_tickers(
-            self, 
-            yahoo=True, 
-            exchange: int | str ="GPW"
-            ) -> list[str]:
+        self, yahoo=True, exchange: int | str = "GPW"
+    ) -> list[str]:
         if yahoo:
-            stmt = select(StockCompany.yahoo_symbol)  
+            stmt = select(StockCompany.yahoo_symbol)
         else:
             select(StockCompany.symbol)
 
@@ -57,9 +56,8 @@ class StockCompanyRepository(AsyncRepository[
         return StockCompanyDTO.model_validate(stock_model)
 
     async def get_stock_instance_by_yahoo_symbol(
-            self, 
-            yahoo_symbol: str
-            ) -> StockCompanyDTO:
+        self, yahoo_symbol: str
+    ) -> StockCompanyDTO:
 
         stmt = select(StockCompany)
         stmt = stmt.where(StockCompany.active)
@@ -78,9 +76,8 @@ class StockCompanyRepository(AsyncRepository[
         return StockCompanyDTO.model_validate(stock_model)
 
     async def upsert(
-            self, 
-            stock_object: StockCompanyDTO | StockCompanyCreateDTO
-            ) -> StockCompanyDTO:
+        self, stock_object: StockCompanyDTO | StockCompanyCreateDTO
+    ) -> StockCompanyDTO:
         payload = stock_object.model_dump()
 
         if StockCompanyDTO(stock_object, StockCompanyDTO):
@@ -100,3 +97,56 @@ class StockCompanyRepository(AsyncRepository[
 
         await self.session.execute(upsert_stmt)
         await self.session.commit()
+
+    async def get_count(self) -> int:
+        stmt = select(func.count()).select_from(StockCompany)
+        result = await self.session.execute(stmt)
+        return result.scalar_one()
+
+    async def bulk_upsert(self, companies: list[dict]) -> int:
+        if not companies:
+            return 0
+
+        stmt = pg_insert(StockCompany).values(companies)
+        update_dict = {
+            c.name: stmt.excluded[c.name]
+            for c in stmt.excluded
+            if c.name not in ("id", "symbol", "yahoo_symbol")
+        }
+        upsert_stmt = stmt.on_conflict_do_update(
+            index_elements=["yahoo_symbol"],
+            set_=update_dict,
+        )
+        result = await self.session.execute(upsert_stmt)
+        await self.session.commit()
+        return result.rowcount
+
+    async def get_by_exchange(self, exchange_symbol: str) -> list[StockCompanyDTO]:
+        stmt = select(StockCompany)
+        stmt = stmt.join(StockExchange)
+        stmt = stmt.where(StockExchange.symbol == exchange_symbol)
+        stmt = stmt.where(StockCompany.active)
+
+        result = await self.session.execute(stmt)
+        companies = result.scalars().all()
+
+        return [StockCompanyDTO.model_validate(c) for c in companies]
+
+    async def get_by_index(self, index_symbol: str) -> list[StockCompanyDTO]:
+        stmt = select(StockCompany)
+        stmt = stmt.join(
+            StockIndexMembership,
+            StockCompany.id == StockIndexMembership.company_id,
+        )
+        stmt = stmt.join(
+            StockExchangeIndex,
+            StockIndexMembership.index_id == StockExchangeIndex.id,
+        )
+        stmt = stmt.where(StockExchangeIndex.symbol == index_symbol)
+        stmt = stmt.where(StockIndexMembership.active)
+        stmt = stmt.where(StockCompany.active)
+
+        result = await self.session.execute(stmt)
+        companies = result.scalars().all()
+
+        return [StockCompanyDTO.model_validate(c) for c in companies]
