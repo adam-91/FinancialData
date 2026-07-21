@@ -1,0 +1,54 @@
+{
+  "app": {
+    "title": "Financial Data",
+    "loading": "Loading...",
+    "error": "Error fetching data"
+  },
+  "header": {
+    "dashboard": "Dashboard",
+    "currencies": "Currencies",
+    "stocks": "Stocks"
+  },
+  "chart": {
+    "title": "Stock Market Quotes",
+    "selectIndex": "Select index",
+    "chartType": "Chart type",
+    "candlestick": "Candlestick",
+    "line": "Line",
+    "open": "Open",
+    "high": "High",
+    "low": "Low",
+    "close": "Close",
+    "volume": "Volume"
+  },
+  "currency": {
+    "title": "Exchange Rates",
+    "selectCurrencies": "Select currencies",
+    "code": "Code",
+    "name": "Currency",
+    "date": "Date",
+    "midRate": "Mid Rate",
+    "buyRate": "Buy Rate",
+    "sellRate": "Sell Rate"
+  },
+  "stocks": {
+    "title": "Stock Quotes",
+    "selectIndex": "Select index",
+    "allIndices": "All indices",
+    "symbol": "Symbol",
+    "name": "Name",
+    "price": "Price",
+    "change": "Change",
+    "changePercent": "Change %",
+    "volume": "Volume",
+    "exchange": "Exchange"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "pl": "Polish",
+    "en": "English"
+  }
+}

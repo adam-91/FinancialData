@@ -1,0 +1,54 @@
+{
+  "app": {
+    "title": "Dane Finansowe",
+    "loading": "Ładowanie...",
+    "error": "Błąd pobierania danych"
+  },
+  "header": {
+    "dashboard": "Panel",
+    "currencies": "Waluty",
+    "stocks": "Spółki"
+  },
+  "chart": {
+    "title": "Notowania giełdowe",
+    "selectIndex": "Wybierz indeks",
+    "chartType": "Typ wykresu",
+    "candlestick": "Świecowy",
+    "line": "Liniowy",
+    "open": "Otwarcie",
+    "high": "Najwyższy",
+    "low": "Najniższy",
+    "close": "Zamknięcie",
+    "volume": "Wolumen"
+  },
+  "currency": {
+    "title": "Kursy walut",
+    "selectCurrencies": "Wybierz waluty",
+    "code": "Kod",
+    "name": "Waluta",
+    "date": "Data",
+    "midRate": "Kurs średni",
+    "buyRate": "Kupno",
+    "sellRate": "Sprzedaż"
+  },
+  "stocks": {
+    "title": "Notowania spółek",
+    "selectIndex": "Wybierz indeks",
+    "allIndices": "Wszystkie indeksy",
+    "symbol": "Symbol",
+    "name": "Nazwa",
+    "price": "Cena",
+    "change": "Zmiana",
+    "changePercent": "Zmiana %",
+    "volume": "Wolumen",
+    "exchange": "Giełda"
+  },
+  "theme": {
+    "light": "Jasny",
+    "dark": "Ciemny"
+  },
+  "language": {
+    "pl": "Polski",
+    "en": "Angielski"
+  }
+}
