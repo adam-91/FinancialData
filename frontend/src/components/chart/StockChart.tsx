@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import { IndexOHLCV } from "../../types/index";
 import { ChartType } from "./ChartControls";
 
-const ChartContainer = styled.div`
+const ChartContainer = styled.div<{ $height?: number }>`
   width: 100%;
-  height: 500px;
+  height: ${({ $height }) => $height || 500}px;
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   border: 1px solid ${({ theme }) => theme.colors.border};
   overflow: hidden;
@@ -18,9 +18,10 @@ const ChartContainer = styled.div`
 interface StockChartProps {
   data: IndexOHLCV[];
   chartType: ChartType;
+  height?: number;
 }
 
-export function StockChart({ data, chartType }: StockChartProps) {
+export function StockChart({ data, chartType, height = 500 }: StockChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<SeriesType> | null>(null);
@@ -63,7 +64,7 @@ export function StockChart({ data, chartType }: StockChartProps) {
         locale: i18n.language,
       },
       width: chartContainerRef.current.clientWidth,
-      height: 500,
+      height,
     });
 
     chartRef.current = chart;
@@ -171,5 +172,5 @@ export function StockChart({ data, chartType }: StockChartProps) {
     }
   }, [data, chartType, theme]);
 
-  return <ChartContainer ref={chartContainerRef} />;
+  return <ChartContainer ref={chartContainerRef} $height={height} />;
 }

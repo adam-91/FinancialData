@@ -1,3 +1,5 @@
+export type Period = "1w" | "3m" | "1y" | "3y" | "10y" | "max";
+
 export interface StockIndex {
   id: number;
   symbol: string;

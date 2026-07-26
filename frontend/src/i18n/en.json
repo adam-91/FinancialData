@@ -29,7 +29,11 @@
     "date": "Date",
     "midRate": "Mid Rate",
     "buyRate": "Buy Rate",
-    "sellRate": "Sell Rate"
+    "sellRate": "Sell Rate",
+    "change": "Change",
+    "avgRate": "Average",
+    "main": "Main",
+    "all": "All"
   },
   "stocks": {
     "title": "Stock Quotes",
@@ -41,7 +45,28 @@
     "change": "Change",
     "changePercent": "Change %",
     "volume": "Volume",
-    "exchange": "Exchange"
+    "exchange": "Exchange",
+    "selectCompanies": "Select companies",
+    "maxCompanies": "Max 4 companies"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "tiles": {
+      "indexChart": "Index Chart",
+      "currencyChart": "Currency Chart",
+      "indexTable": "Index Table",
+      "currencyTable": "Currency Table",
+      "stockChart": "Stock Chart",
+      "stockTable": "Stock Table"
+    }
+  },
+  "period": {
+    "1w": "1 week",
+    "3m": "3 months",
+    "1y": "1 year",
+    "3y": "3 years",
+    "10y": "10 years",
+    "max": "Max"
   },
   "theme": {
     "light": "Light",

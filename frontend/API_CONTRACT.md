@@ -41,7 +41,7 @@ Get historical OHLCV data for a specific index.
 - `symbol` (string): Index symbol (e.g., `^WIG20`, `^GSPC`)
 
 **Query Parameters (optional):**
-- `period` (string): Time period - `1m`, `3m`, `6m`, `1y`, `5y`, `max` (default: `1y`)
+- `period` (string): Time period - `1w`, `3m`, `1y`, `3y`, `10y`, `max` (default: `1y`)
 
 **Response:**
 ```json
@@ -85,6 +85,7 @@ Get latest prices for all active stock companies.
     "yahoo_symbol": "CDR.WA",
     "name": "CD Projekt",
     "stock_exchange": "GPW",
+    "indices": ["^WIG20", "^WIG"],
     "price": {
       "trading_date": "2024-01-15",
       "open": 185.50,
@@ -101,6 +102,7 @@ Get latest prices for all active stock companies.
     "yahoo_symbol": "PKN.WA",
     "name": "PKN Orlen",
     "stock_exchange": "GPW",
+    "indices": ["^WIG20", "^WIG"],
     "price": {
       "trading_date": "2024-01-15",
       "open": 72.10,
@@ -125,7 +127,7 @@ Get historical OHLCV data for a specific stock company.
 - `symbol` (string): Stock symbol (e.g., `CDR`, `PKN`)
 
 **Query Parameters (optional):**
-- `period` (string): Time period - `1m`, `3m`, `6m`, `1y`, `5y`, `max` (default: `1y`)
+- `period` (string): Time period - `1w`, `3m`, `1y`, `3y`, `10y`, `max` (default: `1y`)
 
 **Response:**
 ```json
@@ -155,6 +157,42 @@ Get historical OHLCV data for a specific stock company.
 
 ---
 
+## Currency Exchange Rates
+
+### GET /api/currencies/{code}/history
+
+Get historical exchange rates for a specific currency.
+
+**Path Parameters:**
+- `code` (string): Currency code (e.g., `EUR`, `USD`)
+
+**Query Parameters (optional):**
+- `period` (string): Time period - `1w`, `3m`, `1y`, `3y`, `10y`, `max` (default: `1y`)
+
+**Response:**
+```json
+{
+  "code": "EUR",
+  "currency": "euro",
+  "data": [
+    {
+      "time": "2024-01-02",
+      "mid": 4.3250,
+      "bid": 4.3034,
+      "ask": 4.3466
+    },
+    {
+      "time": "2024-01-03",
+      "mid": 4.3180,
+      "bid": 4.2964,
+      "ask": 4.3396
+    }
+  ]
+}
+```
+
+---
+
 ## Existing Endpoints (Already Implemented)
 
 ### GET /api/currencies/
@@ -175,3 +213,4 @@ List all stock companies (metadata only, no prices).
 - Volume is represented as integer
 - `change` and `change_percent` are calculated on the backend
 - Mock data is currently used on the frontend until backend endpoints are implemented
+- The `period` parameter supports: `1w` (1 week), `3m` (3 months), `1y` (1 year), `3y` (3 years), `10y` (10 years), `max` (all available data)

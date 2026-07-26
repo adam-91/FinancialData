@@ -1,4 +1,4 @@
-import { StockIndex, IndexHistoryResponse } from "../types/index";
+import { StockIndex, IndexHistoryResponse, Period } from "../types/index";
 import { mockIndices, getMockIndexHistory } from "../mocks/indices";
 
 export const getIndices = async (): Promise<StockIndex[]> => {
@@ -7,8 +7,8 @@ export const getIndices = async (): Promise<StockIndex[]> => {
   });
 };
 
-export const getIndexHistory = async (symbol: string): Promise<IndexHistoryResponse> => {
+export const getIndexHistory = async (symbol: string, period: Period = "1y"): Promise<IndexHistoryResponse> => {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(getMockIndexHistory(symbol)), 500);
+    setTimeout(() => resolve(getMockIndexHistory(symbol, period)), 500);
   });
 };

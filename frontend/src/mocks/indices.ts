@@ -1,4 +1,4 @@
-import { StockIndex, IndexHistoryResponse } from "../types/index";
+import { StockIndex, IndexHistoryResponse, Period } from "../types/index";
 
 export const mockIndices: StockIndex[] = [
   { id: 1, symbol: "^WIG20", name: "WIG 20", stock_exchange: "GPW", active: true },
@@ -10,6 +10,17 @@ export const mockIndices: StockIndex[] = [
   { id: 7, symbol: "^FTSE", name: "FTSE 100", stock_exchange: "LSE", active: true },
   { id: 8, symbol: "^N225", name: "Nikkei 225", stock_exchange: "TSE", active: true },
 ];
+
+function periodToDays(period: Period): number {
+  switch (period) {
+    case "1w": return 7;
+    case "3m": return 90;
+    case "1y": return 365;
+    case "3y": return 1095;
+    case "10y": return 3650;
+    case "max": return 7300;
+  }
+}
 
 function generateMockOHLCV(basePrice: number, days: number): IndexHistoryResponse["data"] {
   const data = [];
@@ -45,7 +56,7 @@ function generateMockOHLCV(basePrice: number, days: number): IndexHistoryRespons
   return data;
 }
 
-export function getMockIndexHistory(symbol: string): IndexHistoryResponse {
+export function getMockIndexHistory(symbol: string, period: Period = "1y"): IndexHistoryResponse {
   const index = mockIndices.find(i => i.symbol === symbol) || mockIndices[0];
   const basePrices: Record<string, number> = {
     "^WIG20": 2450,
@@ -59,10 +70,11 @@ export function getMockIndexHistory(symbol: string): IndexHistoryResponse {
   };
 
   const basePrice = basePrices[symbol] || 1000;
+  const days = periodToDays(period);
   
   return {
     symbol: index.symbol,
     name: index.name,
-    data: generateMockOHLCV(basePrice, 365),
+    data: generateMockOHLCV(basePrice, days),
   };
 }

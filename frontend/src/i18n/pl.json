@@ -29,7 +29,11 @@
     "date": "Data",
     "midRate": "Kurs średni",
     "buyRate": "Kupno",
-    "sellRate": "Sprzedaż"
+    "sellRate": "Sprzedaż",
+    "change": "Zmiana",
+    "avgRate": "Średnia",
+    "main": "Główne",
+    "all": "Wszystkie"
   },
   "stocks": {
     "title": "Notowania spółek",
@@ -41,7 +45,28 @@
     "change": "Zmiana",
     "changePercent": "Zmiana %",
     "volume": "Wolumen",
-    "exchange": "Giełda"
+    "exchange": "Giełda",
+    "selectCompanies": "Wybierz spółki",
+    "maxCompanies": "Maks. 4 spółki"
+  },
+  "dashboard": {
+    "title": "Panel główny",
+    "tiles": {
+      "indexChart": "Wykres indeksu",
+      "currencyChart": "Wykres walut",
+      "indexTable": "Tabela indeksów",
+      "currencyTable": "Tabela walut",
+      "stockChart": "Wykres spółek",
+      "stockTable": "Tabela spółek"
+    }
+  },
+  "period": {
+    "1w": "1 tydzień",
+    "3m": "3 miesiące",
+    "1y": "1 rok",
+    "3y": "3 lata",
+    "10y": "10 lat",
+    "max": "Maks."
   },
   "theme": {
     "light": "Jasny",

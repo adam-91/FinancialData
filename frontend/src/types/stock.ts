@@ -1,3 +1,5 @@
+import { Period } from "./index";
+
 export interface StockPrice {
   trading_date: string;
   open: number;
@@ -32,3 +34,5 @@ export interface StockHistoryResponse {
   name: string;
   data: StockOHLCV[];
 }
+
+export type { Period };

@@ -1,4 +1,4 @@
-import { StockCompany } from "../types/stock";
+import { StockCompany, StockOHLCV, Period } from "../types/stock";
 
 export const mockStocks: StockCompany[] = [
   {
@@ -206,3 +206,61 @@ export const mockStocks: StockCompany[] = [
     },
   },
 ];
+
+function periodToDays(period: Period): number {
+  switch (period) {
+    case "1w": return 7;
+    case "3m": return 90;
+    case "1y": return 365;
+    case "3y": return 1095;
+    case "10y": return 3650;
+    case "max": return 7300;
+  }
+}
+
+function generateStockOHLCV(basePrice: number, days: number): StockOHLCV[] {
+  const data: StockOHLCV[] = [];
+  let currentPrice = basePrice;
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  for (let i = 0; i < days; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
+
+    if (date.getDay() === 0 || date.getDay() === 6) continue;
+
+    const change = (Math.random() - 0.5) * basePrice * 0.04;
+    const open = currentPrice;
+    const close = currentPrice + change;
+    const high = Math.max(open, close) + Math.random() * basePrice * 0.015;
+    const low = Math.min(open, close) - Math.random() * basePrice * 0.015;
+    const volume = Math.floor(Math.random() * 5000000) + 500000;
+
+    data.push({
+      time: date.toISOString().split("T")[0],
+      open: parseFloat(open.toFixed(2)),
+      high: parseFloat(high.toFixed(2)),
+      low: parseFloat(low.toFixed(2)),
+      close: parseFloat(close.toFixed(2)),
+      volume,
+    });
+
+    currentPrice = close;
+  }
+
+  return data;
+}
+
+export function getMockStockHistory(symbol: string, period: Period = "1y"): { symbol: string; name: string; data: StockOHLCV[] } {
+  const stock = mockStocks.find(s => s.symbol === symbol);
+  const basePrice = stock ? stock.price.close : 100;
+  const name = stock ? stock.name : symbol;
+  const days = periodToDays(period);
+
+  return {
+    symbol,
+    name,
+    data: generateStockOHLCV(basePrice, days),
+  };
+}

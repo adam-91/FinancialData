@@ -1,14 +1,25 @@
 import { Layout } from "./components/layout/Layout";
-import { ChartSection } from "./components/chart/ChartSection";
-import { CurrencySection } from "./components/tables/CurrencySection";
-import { StockSection } from "./components/tables/StockSection";
+import { DashboardGrid } from "./components/dashboard/DashboardGrid";
+import { IndexChartTile } from "./components/dashboard/IndexChartTile";
+import { CurrencyChartTile } from "./components/dashboard/CurrencyChartTile";
+import { IndexTableTile } from "./components/dashboard/IndexTableTile";
+import { CurrencyTableTile } from "./components/dashboard/CurrencyTableTile";
+import { StockChartTile } from "./components/dashboard/StockChartTile";
+import { StockTableTile } from "./components/dashboard/StockTableTile";
 
 function App() {
   return (
     <Layout>
-      <ChartSection />
-      <CurrencySection />
-      <StockSection />
+      <DashboardGrid>
+        {{
+          indexChart: <IndexChartTile />,
+          currencyChart: <CurrencyChartTile />,
+          indexTable: <IndexTableTile />,
+          currencyTable: <CurrencyTableTile />,
+          stockChart: <StockChartTile />,
+          stockTable: <StockTableTile />,
+        }}
+      </DashboardGrid>
     </Layout>
   );
 }

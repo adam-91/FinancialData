@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 const Main = styled.main`
   flex: 1;
   padding: 32px;
-  max-width: 1400px;
+  max-width: 1600px;
   width: 100%;
   margin: 0 auto;
 
