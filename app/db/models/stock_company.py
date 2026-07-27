@@ -1,8 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
 from db.models.stock_exchange import StockExchange
+
+if TYPE_CHECKING:
+    from db.models.stock_index_membership import StockIndexMembership
 
 
 class StockCompany(Base):
@@ -15,4 +22,7 @@ class StockCompany(Base):
     exchange_id: Mapped[str] = mapped_column(ForeignKey("stock_exchanges.id"))
     active: Mapped[bool] = mapped_column(Boolean)
 
-    stock_exchange: Mapped["StockExchange"] = relationship() 
+    stock_exchange: Mapped["StockExchange"] = relationship()
+    stock_index_memberships: Mapped[list["StockIndexMembership"]] = relationship(
+        back_populates="stock_company"
+    ) 

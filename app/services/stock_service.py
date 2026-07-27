@@ -1,9 +1,8 @@
 from datetime import date
 
-from dto.stock_price_dto import StockPriceFullDTO
-
 from db.repositories.stock_company import StockCompanyRepository
 from db.repositories.stock_price import StockPriceRepository
+from dto.stock_price_dto import StockPriceFullDTO
 
 
 class StockExchangeService:

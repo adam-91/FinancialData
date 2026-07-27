@@ -46,6 +46,19 @@ class ExchangeBuySellRateRepository(
 
         return bas_rate_object
 
+    async def get_rates_for_period(
+        self, currency_id: int, start_date: date, end_date: date
+    ) -> list[ExchangeBuyAndSellRate]:
+        stmt = (
+            select(ExchangeBuyAndSellRate)
+            .where(ExchangeBuyAndSellRate.currency_id == currency_id)
+            .where(ExchangeBuyAndSellRate.effective_date.between(start_date, end_date))
+            .order_by(ExchangeBuyAndSellRate.effective_date.asc())
+        )
+
+        result = await self.session.scalars(stmt)
+        return list(result.all())
+
     async def get_latest_rate(
         self,
         currency_id: int,

@@ -2,9 +2,11 @@ from datetime import date
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, subqueryload
 
 from db.models.stock_company import StockCompany
+from db.models.stock_exchange_index import StockExchangeIndex
+from db.models.stock_index_membership import StockIndexMembership
 from db.models.stock_price import StockPrice
 from db.repositories.base import AsyncRepository
 from dto.stock_price_dto import (
@@ -88,6 +90,59 @@ class StockPriceRepository(
         stmt = stmt.where(StockPriceDTO.trading_date.between(start_date, end_date))
 
         return await self.session.scalar(stmt)
+
+    async def get_prices_for_period(
+        self, company_id: int, start_date: date, end_date: date
+    ) -> list[StockPrice]:
+        stmt = (
+            select(StockPrice)
+            .where(StockPrice.company_id == company_id)
+            .where(StockPrice.trading_date.between(start_date, end_date))
+            .order_by(StockPrice.trading_date.asc())
+        )
+
+        result = await self.session.scalars(stmt)
+        return list(result.all())
+
+    async def get_all_latest_prices(self) -> list[tuple[StockCompany, StockPrice]]:
+        latest_dates_subq = (
+            select(
+                StockPrice.company_id,
+                StockPrice.trading_date,
+            )
+            .order_by(StockPrice.company_id, StockPrice.trading_date.desc())
+            .distinct()
+            .subquery()
+        )
+
+        stmt = (
+            select(StockCompany, StockPrice)
+            .join(StockPrice, StockCompany.id == StockPrice.company_id)
+            .join(
+                latest_dates_subq,
+                (StockPrice.company_id == latest_dates_subq.c.company_id)
+                & (StockPrice.trading_date == latest_dates_subq.c.trading_date),
+            )
+            .options(
+                joinedload(StockCompany.stock_exchange),
+                subqueryload(StockCompany.stock_index_memberships)
+                .joinedload(StockIndexMembership.stock_index),
+            )
+            .where(StockCompany.active)
+            .order_by(StockCompany.symbol)
+        )
+
+        result = await self.session.execute(stmt)
+        rows = result.all()
+
+        seen = set()
+        unique_rows = []
+        for company, price in rows:
+            if company.id not in seen:
+                seen.add(company.id)
+                unique_rows.append((company, price))
+
+        return unique_rows
 
     async def bulk_upsert(self, prices: list[dict]) -> int:
         if not prices:

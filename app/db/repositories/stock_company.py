@@ -121,6 +121,20 @@ class StockCompanyRepository(
         await self.session.commit()
         return result.rowcount
 
+    async def get_all_active_with_relations(self) -> list[StockCompany]:
+        stmt = (
+            select(StockCompany)
+            .options(
+                joinedload(StockCompany.stock_exchange),
+                joinedload(StockCompany.stock_index_memberships)
+                .joinedload(StockIndexMembership.stock_index),
+            )
+            .where(StockCompany.active)
+        )
+
+        result = await self.session.scalars(stmt)
+        return list(result.unique().all())
+
     async def get_by_exchange(self, exchange_symbol: str) -> list[StockCompanyDTO]:
         stmt = select(StockCompany)
         stmt = stmt.join(StockExchange)

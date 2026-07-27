@@ -6,7 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.currency import router as currency_router
 from api.exchange_rates import router as rates_router
+from api.indices import router as indices_router
 from api.stock_companies import router as stock_companies_router
+from api.stock_prices import router as stock_prices_router
 from config.data_init import create_start_data
 from services.history_feeder import run_historical_feed
 from services.scheduler import scheduler, start_scheduler
@@ -64,6 +66,8 @@ app.add_middleware(
 app.include_router(currency_router)
 app.include_router(rates_router)
 app.include_router(stock_companies_router)
+app.include_router(indices_router)
+app.include_router(stock_prices_router)
 
 
 @app.get("/health")

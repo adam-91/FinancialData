@@ -55,6 +55,19 @@ class ExchangeMidRateRepository(
         self.session.add(mid_rate_object)
         return mid_rate_object
 
+    async def get_rates_for_period(
+        self, currency_id: int, start_date: date, end_date: date
+    ) -> list[ExchangeMidRate]:
+        stmt = (
+            select(ExchangeMidRate)
+            .where(ExchangeMidRate.currency_id == currency_id)
+            .where(ExchangeMidRate.effective_date.between(start_date, end_date))
+            .order_by(ExchangeMidRate.effective_date.asc())
+        )
+
+        result = await self.session.scalars(stmt)
+        return list(result.all())
+
     async def get_latest_rate(
         self,
         currency_id: int,

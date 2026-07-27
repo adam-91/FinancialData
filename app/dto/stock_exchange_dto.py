@@ -1,8 +1,10 @@
 from datetime import date
 from decimal import Decimal
 
-from dto.stock_company_dto import StockCompanyDTO
 from pydantic import BaseModel
+
+from dto.stock_company_dto import StockCompanyDTO
+
 
 class StockExchangeCreateDTO(BaseModel):
     symbol: str

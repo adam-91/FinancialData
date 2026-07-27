@@ -1,3 +1,6 @@
+from datetime import date
+
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from db.models.stock_exchange_index_rate import StockExchangeIndexRate
@@ -17,6 +20,19 @@ class StockExchangeIndexRateRepository(
 ):
     model = StockExchangeIndexRate
     output_schema = StockExchangeIndexRateDTO
+
+    async def get_rates_for_period(
+        self, index_id: int, start_date: date, end_date: date
+    ) -> list[StockExchangeIndexRate]:
+        stmt = (
+            select(StockExchangeIndexRate)
+            .where(StockExchangeIndexRate.index_id == index_id)
+            .where(StockExchangeIndexRate.trading_date.between(start_date, end_date))
+            .order_by(StockExchangeIndexRate.trading_date.asc())
+        )
+
+        result = await self.session.scalars(stmt)
+        return list(result.all())
 
     async def bulk_upsert(self, rates: list[dict]) -> int:
         if not rates:

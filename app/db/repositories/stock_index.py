@@ -24,6 +24,14 @@ class StockIndexRepository(
     model = StockExchangeIndex
     output_schema = StockExchangeIndexDTO
 
+    async def get_all_with_exchange(self) -> list[StockExchangeIndex]:
+        stmt = select(StockExchangeIndex).options(
+            joinedload(StockExchangeIndex.stock_exchange)
+        )
+
+        result = await self.session.scalars(stmt)
+        return list(result.all())
+
     async def get_exchange_index(
         self, identyfier: int | str
     ) -> StockExchangeIndexDTO | None:
