@@ -1,7 +1,10 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import { Link, useLocation } from "react-router-dom";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { LanguageSwitch } from "../ui/LanguageSwitch";
+import { LoginModal } from "../ui/LoginModal";
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -41,14 +44,63 @@ const Logo = styled.div`
   }
 `;
 
+const Nav = styled.nav`
+  display: flex;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+`;
+
+const NavLink = styled(Link)<{ $active?: boolean }>`
+  padding: 8px 16px;
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  color: ${({ theme, $active }) =>
+    $active ? theme.colors.accent : theme.colors.text.secondary};
+  background: ${({ theme, $active }) =>
+    $active ? theme.colors.surfaceHover : "transparent"};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.accent};
+    background: ${({ theme }) => theme.colors.surfaceHover};
+  }
+`;
+
 const Controls = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
 `;
 
+const LoginButton = styled.button`
+  padding: 8px 16px;
+  border: 1px solid ${({ theme }) => theme.colors.accent};
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  background: transparent;
+  color: ${({ theme }) => theme.colors.accent};
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.accent};
+    color: white;
+  }
+`;
+
 export function Header() {
   const { t } = useTranslation();
+  const location = useLocation();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
     <HeaderContainer>
@@ -58,10 +110,22 @@ export function Header() {
         </svg>
         <h1>{t("app.title")}</h1>
       </Logo>
+      <Nav>
+        <NavLink to="/" $active={location.pathname === "/"}>
+          {t("nav.dashboard", "Dashboard")}
+        </NavLink>
+        <NavLink to="/healthcheck" $active={location.pathname === "/healthcheck"}>
+          {t("nav.healthcheck", "Healthcheck")}
+        </NavLink>
+      </Nav>
       <Controls>
+        <LoginButton onClick={() => setShowLoginModal(true)}>
+          {t("nav.login", "Login")}
+        </LoginButton>
         <LanguageSwitch />
         <ThemeToggle />
       </Controls>
+      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
     </HeaderContainer>
   );
 }

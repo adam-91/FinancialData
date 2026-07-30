@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import joinedload, subqueryload
 
@@ -143,6 +143,81 @@ class StockPriceRepository(
                 unique_rows.append((company, price))
 
         return unique_rows
+
+    async def get_data_range_by_company(self, company_id: int) -> dict | None:
+        stmt = (
+            select(
+                func.min(StockPrice.trading_date).label("min_date"),
+                func.max(StockPrice.trading_date).label("max_date"),
+                func.count(StockPrice.id).label("count"),
+            )
+            .where(StockPrice.company_id == company_id)
+        )
+
+        result = await self.session.execute(stmt)
+        row = result.first()
+
+        if row and row.count > 0:
+            return {
+                "min_date": row.min_date,
+                "max_date": row.max_date,
+                "count": row.count,
+            }
+        return None
+
+    async def get_all_companies_data_summary(self) -> list[dict]:
+        stmt = (
+            select(
+                StockCompany.id,
+                StockCompany.symbol,
+                StockCompany.name,
+                func.min(StockPrice.trading_date).label("min_date"),
+                func.max(StockPrice.trading_date).label("max_date"),
+                func.count(StockPrice.id).label("count"),
+            )
+            .outerjoin(StockPrice, StockCompany.id == StockPrice.company_id)
+            .where(StockCompany.active)
+            .group_by(StockCompany.id, StockCompany.symbol, StockCompany.name)
+            .order_by(StockCompany.symbol)
+        )
+
+        result = await self.session.execute(stmt)
+        rows = result.all()
+
+        return [
+            {
+                "id": row.id,
+                "symbol": row.symbol,
+                "name": row.name,
+                "min_date": row.min_date,
+                "max_date": row.max_date,
+                "count": row.count,
+            }
+            for row in rows
+        ]
+
+    async def get_prices_paginated(
+        self, company_id: int, page: int, page_size: int
+    ) -> tuple[list[StockPrice], int]:
+        count_stmt = (
+            select(func.count(StockPrice.id))
+            .where(StockPrice.company_id == company_id)
+        )
+        total = await self.session.scalar(count_stmt) or 0
+
+        offset = (page - 1) * page_size
+        stmt = (
+            select(StockPrice)
+            .where(StockPrice.company_id == company_id)
+            .order_by(StockPrice.trading_date.desc())
+            .offset(offset)
+            .limit(page_size)
+        )
+
+        result = await self.session.scalars(stmt)
+        prices = list(result.all())
+
+        return prices, total
 
     async def bulk_upsert(self, prices: list[dict]) -> int:
         if not prices:
