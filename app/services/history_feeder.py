@@ -119,7 +119,14 @@ class HistoricalDataFeeder:
                 records = self._parse_batch_dataframe(df, batch, symbol_to_company_id)
 
                 if records:
-                    await self.stock_price_repo.bulk_upsert(records)
+                    try:
+                        await self.stock_price_repo.bulk_upsert(records)
+                    except Exception as e:
+                        await self.session.rollback()
+                        print(f"HistoricalDataFeeder: DB error saving companies: {e}")
+                        for symbol in batch:
+                            self.tracker.update(symbol, "company", "error")
+                        return
 
                 for symbol in batch:
                     self.tracker.update(symbol, "company", "success")
@@ -309,7 +316,14 @@ class HistoricalDataFeeder:
                 )
 
                 if records:
-                    await self.index_rate_repo.bulk_upsert(records)
+                    try:
+                        await self.index_rate_repo.bulk_upsert(records)
+                    except Exception as e:
+                        await self.session.rollback()
+                        print(f"HistoricalDataFeeder: DB error saving indexes: {e}")
+                        for symbol in batch:
+                            self.tracker.update(symbol, "index", "error")
+                        return
 
                 for symbol in batch:
                     self.tracker.update(symbol, "index", "success")

@@ -19,7 +19,7 @@ class StockCompany(Base):
     symbol: Mapped[str] = mapped_column(String(), unique=True, index=True)
     yahoo_symbol: Mapped[str] = mapped_column(String(), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(100))
-    exchange_id: Mapped[str] = mapped_column(ForeignKey("stock_exchanges.id"))
+    exchange_id: Mapped[int] = mapped_column(ForeignKey("stock_exchanges.id"))
     active: Mapped[bool] = mapped_column(Boolean)
 
     stock_exchange: Mapped["StockExchange"] = relationship()

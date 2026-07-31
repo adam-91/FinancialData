@@ -23,11 +23,14 @@ class StockExchangeIndexCreateDTO(BaseModel):
     symbol: str
     name: str
     active: bool
-    ticker: str | None
-    stock_exchange: StockExchangeDTO
+    stock_exchange_id: int
 
-class StockExchangeIndexDTO(StockExchangeIndexCreateDTO):
+class StockExchangeIndexDTO(BaseModel):
     id: int
+    symbol: str
+    name: str
+    active: bool
+    stock_exchange_id: int
 
     model_config = {"from_attributes": True}
 

@@ -44,7 +44,6 @@ class StockExchangeIndexRepository(
         elif isinstance(stock_exchange, str):
             stmt = stmt.join(StockExchangeIndex.stock_exchange)
             stmt = stmt.where(StockExchange.name == stock_exchange)
-            stmt = stmt.options(joinedload(StockExchangeIndex.stock_exchange))
         result = await self.session.scalars(stmt)
         db_models = result.all()
     
@@ -52,7 +51,13 @@ class StockExchangeIndexRepository(
             return None
         
         return [
-            StockExchangeIndexDTO.model_validate(item)
+            StockExchangeIndexDTO(
+                id=item.id,
+                symbol=item.symbol,
+                name=item.name,
+                active=item.active,
+                stock_exchange_id=item.stock_exchange_id
+            )
             for item in db_models
         ]
     
@@ -64,11 +69,11 @@ class StockExchangeIndexRepository(
         existing_symbols = {row[0] for row in existing_symbols}
         indexes_values = {item["exchange_symbol"] for item in indexes if "exchange_symbol" in item}
         stmt = select(StockExchange.name, StockExchange.id)
-        stmt = stmt.where(StockExchange.name.in_(indexes_values))
+        stmt = stmt.where(StockExchange.symbol.in_(indexes_values))
         result = await self.session.execute(stmt)
         lookup_dict = {name: l_id for name, l_id in result.all()}
 
-        new_exchanges_dicts = []
+        new_indexes_dicts = []
 
         for stock in indexes:
             symbol = stock.get("symbol")
@@ -80,17 +85,17 @@ class StockExchangeIndexRepository(
             if stock_exchange_id is None:
                 continue
 
-            new_exchanges_dicts.append({
+            new_indexes_dicts.append({
                 "symbol": symbol,
                 "name": stock.get("name"),
                 "stock_exchange_id": stock_exchange_id,
                 "active": True
             })
                 
-        if new_exchanges_dicts:
-            await self.session.execute(insert(StockExchange), new_exchanges_dicts)
+        if new_indexes_dicts:
+            await self.session.execute(insert(StockExchangeIndex), new_indexes_dicts)
             await self.session.commit()
-            print(f"Added {len(new_exchanges_dicts)} of the new stock exchange indexes")
+            print(f"Added {len(new_indexes_dicts)} of the new stock exchange indexes")
         else:
             print("ℹNo new stock exchange indexes.")
        

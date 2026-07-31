@@ -34,11 +34,11 @@ class ParquetTracker:
         except Exception as e:
             print(f"Error saving parquet tracker: {e}")
 
-    def is_stale(self, yahoo_symbol: str, threshold_days: int = 30) -> bool:
+    def is_stale(self, yahoo_symbol: str, symbol_type: str, threshold_days: int = 30) -> bool:
         if self.df.empty:
             return True
 
-        mask = self.df["yahoo_symbol"] == yahoo_symbol
+        mask = (self.df["yahoo_symbol"] == yahoo_symbol) & (self.df["type"] == symbol_type)
         if not mask.any():
             return True
 
@@ -54,13 +54,13 @@ class ParquetTracker:
     ) -> list[str]:
         stale = []
         for symbol in symbols:
-            if self.is_stale(symbol, threshold_days):
+            if self.is_stale(symbol, symbol_type, threshold_days):
                 stale.append(symbol)
         return stale
 
     def update(self, yahoo_symbol: str, symbol_type: str, status: str) -> None:
         now = datetime.now()
-        mask = self.df["yahoo_symbol"] == yahoo_symbol
+        mask = (self.df["yahoo_symbol"] == yahoo_symbol) & (self.df["type"] == symbol_type)
 
         if mask.any():
             self.df.loc[mask, "last_fetched_at"] = now

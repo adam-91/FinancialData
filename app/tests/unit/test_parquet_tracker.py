@@ -29,14 +29,14 @@ def test_update_existing_symbol(parquet_tracker):
 
 def test_is_stale_false_for_recent(parquet_tracker):
     parquet_tracker.update("CDR.WA", "company", "success")
-    assert parquet_tracker.is_stale("CDR.WA", 30) is False
+    assert parquet_tracker.is_stale("CDR.WA", "company", 30) is False
 
 
 def test_is_stale_true_for_old(parquet_tracker):
     parquet_tracker.update("CDR.WA", "company", "success")
     old_date = datetime.now() - timedelta(days=31)
     parquet_tracker.df.loc[0, "last_fetched_at"] = old_date
-    assert parquet_tracker.is_stale("CDR.WA", 30) is True
+    assert parquet_tracker.is_stale("CDR.WA", "company", 30) is True
 
 
 def test_get_stale_symbols_filters(parquet_tracker):

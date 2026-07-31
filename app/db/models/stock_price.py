@@ -21,7 +21,7 @@ class StockPrice(Base):
     low: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     close: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     adj_close: Mapped[Decimal] = mapped_column(Numeric(10, 4))
-    volume: Mapped[Decimal] = mapped_column(Numeric(10, 4))
+    volume: Mapped[Decimal] = mapped_column(Numeric(20, 4))
 
     UniqueConstraint("company_id", "trading_date", name="uq_stock_price_date")
 
