@@ -1,11 +1,11 @@
-import logging
+import structlog
 from datetime import date
 
 from db.repositories.currency import CurrencyRepository
 from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
 from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class ExchangeRateService:

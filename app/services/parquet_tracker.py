@@ -1,10 +1,10 @@
-import logging
+import structlog
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class ParquetTracker:

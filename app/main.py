@@ -1,4 +1,4 @@
-import logging
+import structlog
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
@@ -9,6 +9,7 @@ from api.currency import router as currency_router
 from api.data_health import router as data_health_router
 from api.exchange_rates import router as rates_router
 from api.indices import router as indices_router
+from api.logs import router as logs_router
 from api.stock_companies import router as stock_companies_router
 from api.stock_prices import router as stock_prices_router
 from config.data_init import create_start_data
@@ -23,7 +24,7 @@ type JSON = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 load_dotenv()
 setup_logging()
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 async def initialize_database():
@@ -77,6 +78,7 @@ app.include_router(stock_companies_router)
 app.include_router(indices_router)
 app.include_router(stock_prices_router)
 app.include_router(data_health_router)
+app.include_router(logs_router)
 
 
 @app.get("/health")

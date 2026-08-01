@@ -1,5 +1,5 @@
 import json
-import logging
+import structlog
 from pathlib import Path
 
 import yaml
@@ -12,7 +12,7 @@ from db.repositories.stock_exchange import StockExchangeRepository
 from db.repositories.stock_index import StockIndexRepository
 from dto.stock_company_dto import StockCompanyCreateDTO, StockCompanyDTO
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class StockCompanySyncService:

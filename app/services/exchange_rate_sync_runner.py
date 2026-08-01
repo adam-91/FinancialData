@@ -1,12 +1,12 @@
-import logging
 import os
+import structlog
 
 from db.database import AsyncSessionFactory
 from integrations.NBP.currency_feed import fetch_NBP_data
 from integrations.NBP.currency_schema import validate
 from services.exchange_rate_sync import ExchangeRateSyncService
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 async def sync_nbp_table(url: str):

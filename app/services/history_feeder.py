@@ -1,6 +1,6 @@
 import asyncio
-import logging
 import random
+import structlog
 from collections import defaultdict
 from decimal import Decimal, InvalidOperation
 
@@ -20,7 +20,7 @@ from db.repositories.stock_price import StockPriceRepository
 from integrations.yfinance.client import YahooFinanceClient
 from services.parquet_tracker import ParquetTracker
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class HistoricalDataFeeder:

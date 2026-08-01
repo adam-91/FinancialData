@@ -1,5 +1,5 @@
 import asyncio
-import logging
+import structlog
 from datetime import date
 
 import pandas as pd
@@ -7,7 +7,7 @@ import requests
 import yfinance as yf
 from yfinance.exceptions import YFRateLimitError
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class YahooFinanceClient:

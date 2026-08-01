@@ -1,8 +1,8 @@
-import logging
+import structlog
 
 from services.exchange_rate_sync_runner import sync_nbp_table
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 async def sync_all_tables():

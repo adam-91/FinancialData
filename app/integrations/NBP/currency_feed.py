@@ -1,11 +1,11 @@
-import logging
 import os
+import structlog
 
 import httpx
 from dotenv import load_dotenv
 from httpx_retries import Retry, RetryTransport
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 type JSON = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 

@@ -1,4 +1,4 @@
-import logging
+import structlog
 
 from db.models.currency import Currency
 from db.repositories.currency import CurrencyRepository
@@ -7,7 +7,7 @@ from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
 from dto.exchange_rate_dto import BuyAndSellRateCreateDTO, MidRateCreateDTO
 from integrations.NBP.currency_service import dto_to_entity
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class ExchangeRateSyncService:

@@ -1,10 +1,10 @@
-import logging
+import structlog
 from datetime import date
 from decimal import Decimal
 
 from pydantic import BaseModel, StringConstraints, ValidationError
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class CurrencyResponse(BaseModel):

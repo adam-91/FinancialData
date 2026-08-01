@@ -17,7 +17,6 @@ def setup_logging() -> None:
         structlog.stdlib.add_log_level,
         structlog.stdlib.PositionalArgumentsFormatter(),
         structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
         structlog.processors.UnicodeDecoder(),
     ]
 
@@ -53,7 +52,7 @@ def setup_logging() -> None:
         backupCount=5,
         encoding="utf-8",
     )
-    file_handler.setLevel(logging.DEBUG)
+    file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(file_formatter)
 
     console_handler = logging.StreamHandler(sys.stdout)
@@ -61,9 +60,27 @@ def setup_logging() -> None:
     console_handler.setFormatter(console_formatter)
 
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
+    root_logger.setLevel(logging.INFO)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(console_handler)
 
-    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    for name in ("services", "api", "integrations", "config", "db", "core"):
+        logging.getLogger(name).setLevel(logging.DEBUG)
+
+    for name in (
+        "httpx",
+        "httpcore",
+        "asyncio",
+        "yfinance",
+        "pandas",
+        "pydantic",
+        "urllib3",
+        "charset_normalizer",
+        "apscheduler",
+        "multipart",
+        "PIL",
+        "fontTools",
+        "sqlalchemy.engine",
+        "uvicorn.access",
+    ):
+        logging.getLogger(name).setLevel(logging.WARNING)

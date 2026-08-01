@@ -1,4 +1,4 @@
-import logging
+import structlog
 
 from sqlalchemy import insert, select
 
@@ -6,7 +6,7 @@ from db.models.stock_exchange import StockExchange
 from db.repositories.base import AsyncRepository
 from dto.stock_exchange_dto import StockExchangeCreateDTO, StockExchangeDTO
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 class StockExchangeRepository(

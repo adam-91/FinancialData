@@ -1,5 +1,5 @@
-import logging
 import os
+import structlog
 from pathlib import Path
 
 import yaml
@@ -9,7 +9,7 @@ from db.database import AsyncSessionFactory
 from db.repositories.stock_exchange import StockExchangeRepository
 from db.repositories.stock_exchange_index import StockExchangeIndexRepository
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 def load_yaml_data(file_path: str, key: str) -> list[dict]:
