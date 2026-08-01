@@ -9,6 +9,7 @@ import { StockChartTile } from "./components/dashboard/StockChartTile";
 import { StockTableTile } from "./components/dashboard/StockTableTile";
 import { HealthcheckPage } from "./pages/HealthcheckPage";
 import { RawDataPage } from "./pages/RawDataPage";
+import { LogsPage } from "./pages/LogsPage";
 
 function DashboardPage() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/healthcheck" element={<HealthcheckPage />} />
+        <Route path="/logs" element={<LogsPage />} />
         <Route path="/raw-data/:entityType/:symbol" element={<RawDataPage />} />
       </Routes>
     </Layout>

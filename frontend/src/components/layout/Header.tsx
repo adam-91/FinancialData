@@ -117,6 +117,9 @@ export function Header() {
         <NavLink to="/healthcheck" $active={location.pathname === "/healthcheck"}>
           {t("nav.healthcheck", "Healthcheck")}
         </NavLink>
+        <NavLink to="/logs" $active={location.pathname === "/logs"}>
+          {t("nav.logs", "Logs")}
+        </NavLink>
       </Nav>
       <Controls>
         <LoginButton onClick={() => setShowLoginModal(true)}>

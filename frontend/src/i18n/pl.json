@@ -75,5 +75,29 @@
   "language": {
     "pl": "Polski",
     "en": "Angielski"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "healthcheck": "Zdrowie danych",
+    "logs": "Logi",
+    "login": "Zaloguj"
+  },
+  "logs": {
+    "title": "Logi aplikacji",
+    "timestamp": "Czas",
+    "level": "Poziom",
+    "module": "Moduł",
+    "message": "Wiadomość",
+    "allLevels": "Wszystkie poziomy",
+    "allModules": "Wszystkie moduły",
+    "searchPlaceholder": "Szukaj w wiadomościach...",
+    "newestFirst": "Najnowsze pierwsze",
+    "oldestFirst": "Najstarsze pierwsze",
+    "loading": "Ładowanie...",
+    "empty": "Brak logów",
+    "previous": "Poprzednia",
+    "next": "Następna",
+    "page": "Strona",
+    "of": "z"
   }
 }

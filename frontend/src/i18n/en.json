@@ -75,5 +75,29 @@
   "language": {
     "pl": "Polish",
     "en": "English"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "healthcheck": "Healthcheck",
+    "logs": "Logs",
+    "login": "Login"
+  },
+  "logs": {
+    "title": "Application Logs",
+    "timestamp": "Timestamp",
+    "level": "Level",
+    "module": "Module",
+    "message": "Message",
+    "allLevels": "All Levels",
+    "allModules": "All Modules",
+    "searchPlaceholder": "Search messages...",
+    "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
+    "loading": "Loading...",
+    "empty": "No logs found",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
   }
 }
