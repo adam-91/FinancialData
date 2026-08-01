@@ -22,4 +22,4 @@ class ExchangeBuyAndSellRate(Base):
     bid: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     ask: Mapped[Decimal] = mapped_column(Numeric(10, 4))
 
-    currency: Mapped["Currency"] = relationship() 
+    currency: Mapped[Currency] = relationship()

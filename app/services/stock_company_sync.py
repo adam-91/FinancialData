@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 
 import yaml
@@ -10,6 +11,8 @@ from db.repositories.stock_company import StockCompanyRepository
 from db.repositories.stock_exchange import StockExchangeRepository
 from db.repositories.stock_index import StockIndexRepository
 from dto.stock_company_dto import StockCompanyCreateDTO, StockCompanyDTO
+
+logger = logging.getLogger(__name__)
 
 
 class StockCompanySyncService:
@@ -24,6 +27,8 @@ class StockCompanySyncService:
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
+        logger.info("Loading stock companies from JSON file", file_path=file_path)
+
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
@@ -33,6 +38,8 @@ class StockCompanySyncService:
         path = Path(file_path)
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
+
+        logger.info("Loading stock companies from YAML file", file_path=file_path)
 
         with open(path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -54,6 +61,10 @@ class StockCompanySyncService:
             if exchange_symbol not in exchange_cache:
                 exchange = await self.exchange_repo.get_exchange(exchange_symbol)
                 if exchange is None:
+                    logger.warning(
+                        "Exchange not found",
+                        exchange_symbol=exchange_symbol,
+                    )
                     continue
                 exchange_cache[exchange_symbol] = exchange.id
 
@@ -70,8 +81,11 @@ class StockCompanySyncService:
             )
 
         if companies_to_insert:
-            return await self.company_repo.bulk_upsert(companies_to_insert)
+            count = await self.company_repo.bulk_upsert(companies_to_insert)
+            logger.info("Processed stock companies", count=count)
+            return count
 
+        logger.info("No new stock companies to process")
         return 0
 
     async def add_single_company(self, data: dict) -> StockCompanyDTO:
@@ -93,13 +107,19 @@ class StockCompanySyncService:
     async def sync_if_needed(self) -> bool:
         count = await self.company_repo.get_count()
         if count >= settings.STOCK_COMPANIES_MIN_THRESHOLD:
+            logger.info("Stock companies sync not needed", current_count=count)
             return False
 
         default_file = settings.STOCK_COMPANIES_DEFAULT_FILE
         if default_file and Path(default_file).exists():
+            logger.info("Stock companies sync needed", current_count=count)
             await self.sync_from_json_file(default_file)
             return True
 
+        logger.warning(
+            "No default stock companies file found",
+            default_file=default_file,
+        )
         return False
 
     async def add_companies_to_index(
@@ -150,6 +170,7 @@ class StockCompanySyncService:
 
 
 async def sync_stock_companies_if_needed() -> None:
+    logger.info("Starting stock companies sync check")
     async with AsyncSessionFactory() as session:
         service = StockCompanySyncService(session)
         await service.sync_if_needed()

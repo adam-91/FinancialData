@@ -1,8 +1,11 @@
+import logging
 import os
 
 import httpx
 from dotenv import load_dotenv
 from httpx_retries import Retry, RetryTransport
+
+logger = logging.getLogger(__name__)
 
 type JSON = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 
@@ -16,11 +19,12 @@ async def fetch_NBP_data(url: str) -> dict:
     try:
         async with httpx.AsyncClient(transport=RetryTransport(retry=retry)) as client:
             response = await client.get(url, timeout=5)
-            print(response.status_code)
+            logger.info("NBP API response", status_code=response.status_code)
             return {
                 "status": "success",
                 "status_code": response.status_code,
                 "response": response.json(),
             }
     except httpx.HTTPError as err:
+        logger.error("NBP API request failed", error=str(err))
         return {"status": "failed", "error": str(err)}

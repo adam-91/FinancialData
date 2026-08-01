@@ -22,7 +22,7 @@ class StockCompany(Base):
     exchange_id: Mapped[int] = mapped_column(ForeignKey("stock_exchanges.id"))
     active: Mapped[bool] = mapped_column(Boolean)
 
-    stock_exchange: Mapped["StockExchange"] = relationship()
-    stock_index_memberships: Mapped[list["StockIndexMembership"]] = relationship(
+    stock_exchange: Mapped[StockExchange] = relationship()
+    stock_index_memberships: Mapped[list[StockIndexMembership]] = relationship(
         back_populates="stock_company"
-    ) 
+    )

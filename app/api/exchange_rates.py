@@ -50,7 +50,6 @@ async def get_all_rates(
 ):
     currencies = await service.currency_repo.get_all()
     rates = []
-    print(currencies)
     for currency in currencies:
         data = await service.get_latest_rate(currency.code)
         if data is not None:

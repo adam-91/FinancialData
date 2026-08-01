@@ -1,6 +1,10 @@
+import logging
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from services.startup_sync import sync_ab_tables, sync_c_table
+
+logger = logging.getLogger(__name__)
 
 scheduler = AsyncIOScheduler(timezone="Europe/Warsaw")
 
@@ -8,6 +12,8 @@ scheduler = AsyncIOScheduler(timezone="Europe/Warsaw")
 def start_scheduler():
     if not scheduler.running:
         scheduler.start()
+        logger.info("Scheduler started")
+
     scheduler.add_job(
         sync_ab_tables,
         id="sync_noon_tables_A_B",
@@ -17,6 +23,7 @@ def start_scheduler():
         hour=12,
         minute=15,
     )
+    logger.info("Scheduled job: sync tables A and B at 12:15 Mon-Fri")
 
     scheduler.add_job(
         sync_c_table,
@@ -27,3 +34,4 @@ def start_scheduler():
         hour=8,
         minute=15,
     )
+    logger.info("Scheduled job: sync table C at 08:15 Mon-Fri")

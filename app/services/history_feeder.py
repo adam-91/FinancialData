@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import random
 from collections import defaultdict
 from decimal import Decimal, InvalidOperation
@@ -19,6 +20,8 @@ from db.repositories.stock_price import StockPriceRepository
 from integrations.yfinance.client import YahooFinanceClient
 from services.parquet_tracker import ParquetTracker
 
+logger = logging.getLogger(__name__)
+
 
 class HistoricalDataFeeder:
     def __init__(
@@ -37,7 +40,7 @@ class HistoricalDataFeeder:
         self.tracker = tracker or ParquetTracker()
 
     async def feed_all(self) -> None:
-        print("HistoricalDataFeeder: starting feed_all")
+        logger.info("HistoricalDataFeeder: starting feed_all")
 
         companies = await self.company_repo.get_all()
         active_companies = [c for c in companies if c.active]
@@ -65,9 +68,10 @@ class HistoricalDataFeeder:
             yahoo_symbols = [c.yahoo_symbol for c in exchange_companies]
             symbol_to_company_id = {c.yahoo_symbol: c.id for c in exchange_companies}
 
-            print(
-                f"HistoricalDataFeeder: processing exchange {exchange.symbol} "
-                f"({len(exchange_companies)} companies)"
+            logger.info(
+                "HistoricalDataFeeder: processing exchange",
+                exchange_symbol=exchange.symbol,
+                companies_count=len(exchange_companies),
             )
 
             await self._feed_companies_batch(yahoo_symbols, symbol_to_company_id)
@@ -75,7 +79,7 @@ class HistoricalDataFeeder:
             await self._feed_exchange_indexes(exchange_id, exchange.symbol)
 
         self.tracker.save()
-        print("HistoricalDataFeeder: feed_all completed")
+        logger.info("HistoricalDataFeeder: feed_all completed")
 
     async def _feed_companies_batch(
         self,
@@ -87,11 +91,12 @@ class HistoricalDataFeeder:
         )
 
         if not stale_symbols:
-            print("HistoricalDataFeeder: no stale company symbols to fetch")
+            logger.info("HistoricalDataFeeder: no stale company symbols to fetch")
             return
 
-        print(
-            f"HistoricalDataFeeder: {len(stale_symbols)} stale company symbols to fetch"
+        logger.info(
+            "HistoricalDataFeeder: fetching stale company symbols",
+            stale_count=len(stale_symbols),
         )
 
         for i in range(0, len(stale_symbols), settings.HISTORY_FEED_BATCH_SIZE):
@@ -123,7 +128,10 @@ class HistoricalDataFeeder:
                         await self.stock_price_repo.bulk_upsert(records)
                     except Exception as e:
                         await self.session.rollback()
-                        print(f"HistoricalDataFeeder: DB error saving companies: {e}")
+                        logger.error(
+                            "HistoricalDataFeeder: DB error saving companies",
+                            error=str(e),
+                        )
                         for symbol in batch:
                             self.tracker.update(symbol, "company", "error")
                         return
@@ -131,27 +139,28 @@ class HistoricalDataFeeder:
                 for symbol in batch:
                     self.tracker.update(symbol, "company", "success")
 
-                print(
-                    f"HistoricalDataFeeder: saved {len(records)} records "
-                    f"for batch of {len(batch)} companies"
+                logger.info(
+                    "HistoricalDataFeeder: saved company records",
+                    records_count=len(records),
+                    batch_size=len(batch),
                 )
                 return
 
             except YFRateLimitError:
                 delay = settings.HISTORY_FEED_RATE_LIMIT_BASE_DELAY * (2**attempt)
-                print(
-                    f"HistoricalDataFeeder: YFRateLimitError, "
-                    f"retry {attempt + 1}/"
-                    f"{settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES}, "
-                    f"waiting {delay}s"
+                logger.warning(
+                    "HistoricalDataFeeder: YFRateLimitError for companies",
+                    retry=attempt + 1,
+                    max_retries=settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES,
+                    delay_seconds=delay,
                 )
                 await asyncio.sleep(delay)
 
         for symbol in batch:
             self.tracker.update(symbol, "company", "rate_limited")
-        print(
-            f"HistoricalDataFeeder: batch failed after "
-            f"{settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES} retries"
+        logger.error(
+            "HistoricalDataFeeder: company batch failed after max retries",
+            max_retries=settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES,
         )
 
     def _parse_batch_dataframe(
@@ -191,7 +200,11 @@ class HistoricalDataFeeder:
                     if record:
                         records.append(record)
             except Exception as e:
-                print(f"HistoricalDataFeeder: error parsing {ticker}: {e}")
+                logger.error(
+                    "HistoricalDataFeeder: error parsing ticker",
+                    ticker=ticker,
+                    error=str(e),
+                )
                 continue
 
         return records
@@ -262,7 +275,7 @@ class HistoricalDataFeeder:
             return None
         try:
             return Decimal(str(value))
-        except (InvalidOperation, ValueError):
+        except InvalidOperation, ValueError:
             return None
 
     async def _feed_exchange_indexes(
@@ -270,7 +283,10 @@ class HistoricalDataFeeder:
     ) -> None:
         indexes = await self.index_repo.get_exchange_indexes(exchange_id)
         if not indexes:
-            print(f"HistoricalDataFeeder: no indexes for exchange {exchange_symbol}")
+            logger.info(
+                "HistoricalDataFeeder: no indexes for exchange",
+                exchange_symbol=exchange_symbol,
+            )
             return
 
         index_symbols = [idx.symbol for idx in indexes]
@@ -281,12 +297,16 @@ class HistoricalDataFeeder:
         )
 
         if not stale_index_symbols:
-            print(f"HistoricalDataFeeder: no stale index symbols for {exchange_symbol}")
+            logger.info(
+                "HistoricalDataFeeder: no stale index symbols",
+                exchange_symbol=exchange_symbol,
+            )
             return
 
-        print(
-            f"HistoricalDataFeeder: {len(stale_index_symbols)} stale index symbols "
-            f"for {exchange_symbol}"
+        logger.info(
+            "HistoricalDataFeeder: fetching stale index symbols",
+            exchange_symbol=exchange_symbol,
+            stale_count=len(stale_index_symbols),
         )
 
         for i in range(0, len(stale_index_symbols), settings.HISTORY_FEED_BATCH_SIZE):
@@ -320,7 +340,10 @@ class HistoricalDataFeeder:
                         await self.index_rate_repo.bulk_upsert(records)
                     except Exception as e:
                         await self.session.rollback()
-                        print(f"HistoricalDataFeeder: DB error saving indexes: {e}")
+                        logger.error(
+                            "HistoricalDataFeeder: DB error saving indexes",
+                            error=str(e),
+                        )
                         for symbol in batch:
                             self.tracker.update(symbol, "index", "error")
                         return
@@ -328,27 +351,28 @@ class HistoricalDataFeeder:
                 for symbol in batch:
                     self.tracker.update(symbol, "index", "success")
 
-                print(
-                    f"HistoricalDataFeeder: saved {len(records)} index rate records "
-                    f"for batch of {len(batch)} indexes"
+                logger.info(
+                    "HistoricalDataFeeder: saved index rate records",
+                    records_count=len(records),
+                    batch_size=len(batch),
                 )
                 return
 
             except YFRateLimitError:
                 delay = settings.HISTORY_FEED_RATE_LIMIT_BASE_DELAY * (2**attempt)
-                print(
-                    f"HistoricalDataFeeder: YFRateLimitError for indexes, "
-                    f"retry {attempt + 1}/"
-                    f"{settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES}, "
-                    f"waiting {delay}s"
+                logger.warning(
+                    "HistoricalDataFeeder: YFRateLimitError for indexes",
+                    retry=attempt + 1,
+                    max_retries=settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES,
+                    delay_seconds=delay,
                 )
                 await asyncio.sleep(delay)
 
         for symbol in batch:
             self.tracker.update(symbol, "index", "rate_limited")
-        print(
-            f"HistoricalDataFeeder: index batch failed after "
-            f"{settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES} retries"
+        logger.error(
+            "HistoricalDataFeeder: index batch failed after max retries",
+            max_retries=settings.HISTORY_FEED_RATE_LIMIT_MAX_RETRIES,
         )
 
     def _parse_index_batch_dataframe(
@@ -388,7 +412,11 @@ class HistoricalDataFeeder:
                     if record:
                         records.append(record)
             except Exception as e:
-                print(f"HistoricalDataFeeder: error parsing index {ticker}: {e}")
+                logger.error(
+                    "HistoricalDataFeeder: error parsing index",
+                    ticker=ticker,
+                    error=str(e),
+                )
                 continue
 
         return records
@@ -457,6 +485,7 @@ class HistoricalDataFeeder:
 
 
 async def run_historical_feed() -> None:
+    logger.info("Starting historical data feed")
     async with AsyncSessionFactory() as session:
         feeder = HistoricalDataFeeder(session)
         await feeder.feed_all()

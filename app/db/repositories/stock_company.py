@@ -126,8 +126,9 @@ class StockCompanyRepository(
             select(StockCompany)
             .options(
                 joinedload(StockCompany.stock_exchange),
-                joinedload(StockCompany.stock_index_memberships)
-                .joinedload(StockIndexMembership.stock_index),
+                joinedload(StockCompany.stock_index_memberships).joinedload(
+                    StockIndexMembership.stock_index
+                ),
             )
             .where(StockCompany.active)
         )

@@ -1,7 +1,10 @@
+import logging
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 class ParquetTracker:
@@ -17,7 +20,7 @@ class ParquetTracker:
             try:
                 self.df = pd.read_parquet(self.parquet_path)
             except Exception as e:
-                print(f"Error loading parquet tracker: {e}")
+                logger.error("Error loading parquet tracker", error=str(e))
                 self.df = pd.DataFrame(
                     columns=["yahoo_symbol", "type", "last_fetched_at", "status"]
                 )
@@ -32,13 +35,17 @@ class ParquetTracker:
             self.parquet_path.parent.mkdir(parents=True, exist_ok=True)
             self.df.to_parquet(self.parquet_path, index=False)
         except Exception as e:
-            print(f"Error saving parquet tracker: {e}")
+            logger.error("Error saving parquet tracker", error=str(e))
 
-    def is_stale(self, yahoo_symbol: str, symbol_type: str, threshold_days: int = 30) -> bool:
+    def is_stale(
+        self, yahoo_symbol: str, symbol_type: str, threshold_days: int = 30
+    ) -> bool:
         if self.df.empty:
             return True
 
-        mask = (self.df["yahoo_symbol"] == yahoo_symbol) & (self.df["type"] == symbol_type)
+        mask = (self.df["yahoo_symbol"] == yahoo_symbol) & (
+            self.df["type"] == symbol_type
+        )
         if not mask.any():
             return True
 
@@ -60,7 +67,9 @@ class ParquetTracker:
 
     def update(self, yahoo_symbol: str, symbol_type: str, status: str) -> None:
         now = datetime.now()
-        mask = (self.df["yahoo_symbol"] == yahoo_symbol) & (self.df["type"] == symbol_type)
+        mask = (self.df["yahoo_symbol"] == yahoo_symbol) & (
+            self.df["type"] == symbol_type
+        )
 
         if mask.any():
             self.df.loc[mask, "last_fetched_at"] = now

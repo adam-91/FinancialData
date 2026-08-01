@@ -1,10 +1,13 @@
 import asyncio
+import logging
 from datetime import date
 
 import pandas as pd
 import requests
 import yfinance as yf
 from yfinance.exceptions import YFRateLimitError
+
+logger = logging.getLogger(__name__)
 
 
 class YahooFinanceClient:
@@ -26,13 +29,13 @@ class YahooFinanceClient:
         except YFRateLimitError:
             raise
         except requests.exceptions.ConnectionError as e:
-            print(f"Connection error for {yahoo_symbol}: {e}")
+            logger.error("Connection error", symbol=yahoo_symbol, error=str(e))
             return pd.DataFrame()
         except requests.exceptions.Timeout as e:
-            print(f"Timeout for {yahoo_symbol}: {e}")
+            logger.error("Timeout error", symbol=yahoo_symbol, error=str(e))
             return pd.DataFrame()
         except Exception as e:
-            print(f"Error downloading {yahoo_symbol}: {e}")
+            logger.error("Error downloading symbol", symbol=yahoo_symbol, error=str(e))
             return pd.DataFrame()
 
     async def get_history_batch(
@@ -56,13 +59,13 @@ class YahooFinanceClient:
         except YFRateLimitError:
             raise
         except requests.exceptions.ConnectionError as e:
-            print(f"Connection error for batch: {e}")
+            logger.error("Connection error for batch", error=str(e))
             return pd.DataFrame()
         except requests.exceptions.Timeout as e:
-            print(f"Timeout for batch: {e}")
+            logger.error("Timeout error for batch", error=str(e))
             return pd.DataFrame()
         except Exception as e:
-            print(f"Error downloading batch: {e}")
+            logger.error("Error downloading batch", error=str(e))
             return pd.DataFrame()
 
     async def get_last_session(self, yahoo_symbol: str) -> pd.DataFrame:
@@ -77,11 +80,11 @@ class YahooFinanceClient:
         except YFRateLimitError:
             raise
         except requests.exceptions.ConnectionError as e:
-            print(f"Connection error for {yahoo_symbol}: {e}")
+            logger.error("Connection error", symbol=yahoo_symbol, error=str(e))
             return pd.DataFrame()
         except requests.exceptions.Timeout as e:
-            print(f"Timeout for {yahoo_symbol}: {e}")
+            logger.error("Timeout error", symbol=yahoo_symbol, error=str(e))
             return pd.DataFrame()
         except Exception as e:
-            print(f"Error downloading {yahoo_symbol}: {e}")
+            logger.error("Error downloading symbol", symbol=yahoo_symbol, error=str(e))
             return pd.DataFrame()

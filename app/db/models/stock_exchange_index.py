@@ -14,4 +14,4 @@ class StockExchangeIndex(Base):
     name: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     active: Mapped[bool] = mapped_column(Boolean)
 
-    stock_exchange: Mapped["StockExchange"] = relationship() 
+    stock_exchange: Mapped[StockExchange] = relationship()

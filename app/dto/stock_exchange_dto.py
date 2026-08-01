@@ -25,6 +25,7 @@ class StockExchangeIndexCreateDTO(BaseModel):
     active: bool
     stock_exchange_id: int
 
+
 class StockExchangeIndexDTO(BaseModel):
     id: int
     symbol: str
@@ -33,6 +34,7 @@ class StockExchangeIndexDTO(BaseModel):
     stock_exchange_id: int
 
     model_config = {"from_attributes": True}
+
 
 class StockExchangeIndexRateCreateDTO(BaseModel):
     index_id: int
@@ -50,6 +52,7 @@ class StockExchangeIndexRateDTO(StockExchangeIndexRateCreateDTO):
 
     model_config = {"from_attributes": True}
 
+
 class StockIndexMembershipCreateDTO(BaseModel):
     company_id: int
     index_id: int
@@ -57,13 +60,11 @@ class StockIndexMembershipCreateDTO(BaseModel):
     left_at: date | None
     active: bool
 
-class StockIndexMembershipDTO(BaseModel):
 
-    joined_at:date
+class StockIndexMembershipDTO(BaseModel):
+    joined_at: date
     left_at: date | None
     active: bool
     company: StockCompanyDTO
     index: StockExchangeIndexDTO
     stock_exchange: StockExchangeDTO
-
-

@@ -22,6 +22,7 @@ class StockPriceDTO(StockPriceCreateDTO):
 
     model_config = {"from_attributes": True}
 
+
 class StockPriceFullDTO(StockPriceDTO):
     stock: StockCompanyDTO
 

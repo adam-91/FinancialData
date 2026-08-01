@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 def period_to_start_date(period: str) -> date:
     today = date.today()
-    
+
     match period:
         case "1w":
             return today - timedelta(weeks=1)

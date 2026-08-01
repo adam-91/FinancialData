@@ -25,4 +25,4 @@ class StockPrice(Base):
 
     UniqueConstraint("company_id", "trading_date", name="uq_stock_price_date")
 
-    stock_company: Mapped["StockCompany"] = relationship() 
+    stock_company: Mapped[StockCompany] = relationship()

@@ -1,7 +1,10 @@
+import logging
 from datetime import date
 from decimal import Decimal
 
 from pydantic import BaseModel, StringConstraints, ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 class CurrencyResponse(BaseModel):
@@ -73,33 +76,33 @@ class NBP_C_table(BaseModel):
 
 def validate(table: str, data: JSON) -> JSON | bool:
     if table == "NBP_API_TABLE_A":
-        print("validate table A")
+        logger.info("Validating NBP table A")
         return validate_table_AB(data)
     elif table == "NBP_API_TABLE_B":
-        print("validate table B")
+        logger.info("Validating NBP table B")
         return validate_table_AB(data)
     else:
-        print("validate table C")
+        logger.info("Validating NBP table C")
         return validate_table_C(data)
 
 
 def validate_table_AB(data: list) -> JSON | bool:
     try:
         table = NBP_AB_table.model_validate(data[0])
-        print("validation success")
+        logger.info("Validation success for table A/B")
         return table
 
     except ValidationError as err:
-        print(f"Validation failed: {err}")
+        logger.error("Validation failed for table A/B", error=str(err))
         return False
 
 
 def validate_table_C(data: list) -> JSON | bool:
     try:
         c_table = NBP_C_table.model_validate(data[0])
-        print("validation success C table")
+        logger.info("Validation success for table C")
         return c_table
 
     except ValidationError as err:
-        print(f"Validation failed: {err}")
+        logger.error("Validation failed for table C", error=str(err))
         return False

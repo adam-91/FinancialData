@@ -25,4 +25,4 @@ class StockExchangeIndexRate(Base):
 
     UniqueConstraint("index_id", "trading_date")
 
-    stock_exchange_indexes: Mapped["StockExchangeIndex"] = relationship() 
+    stock_exchange_indexes: Mapped[StockExchangeIndex] = relationship()

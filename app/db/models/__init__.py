@@ -17,5 +17,5 @@ __all__ = [
     "StockExchange",
     "StockExchangeIndex",
     "StockExchangeIndexRate",
-    "StockIndexMembership"
+    "StockIndexMembership",
 ]

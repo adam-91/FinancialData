@@ -36,14 +36,11 @@ class StockExchangeIndexRateRepository(
         return list(result.all())
 
     async def get_data_range_by_index(self, index_id: int) -> dict | None:
-        stmt = (
-            select(
-                func.min(StockExchangeIndexRate.trading_date).label("min_date"),
-                func.max(StockExchangeIndexRate.trading_date).label("max_date"),
-                func.count(StockExchangeIndexRate.id).label("count"),
-            )
-            .where(StockExchangeIndexRate.index_id == index_id)
-        )
+        stmt = select(
+            func.min(StockExchangeIndexRate.trading_date).label("min_date"),
+            func.max(StockExchangeIndexRate.trading_date).label("max_date"),
+            func.count(StockExchangeIndexRate.id).label("count"),
+        ).where(StockExchangeIndexRate.index_id == index_id)
 
         result = await self.session.execute(stmt)
         row = result.first()
@@ -96,9 +93,8 @@ class StockExchangeIndexRateRepository(
     async def get_rates_paginated(
         self, index_id: int, page: int, page_size: int
     ) -> tuple[list[StockExchangeIndexRate], int]:
-        count_stmt = (
-            select(func.count(StockExchangeIndexRate.id))
-            .where(StockExchangeIndexRate.index_id == index_id)
+        count_stmt = select(func.count(StockExchangeIndexRate.id)).where(
+            StockExchangeIndexRate.index_id == index_id
         )
         total = await self.session.scalar(count_stmt) or 0
 

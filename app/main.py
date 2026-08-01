@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
@@ -11,6 +12,7 @@ from api.indices import router as indices_router
 from api.stock_companies import router as stock_companies_router
 from api.stock_prices import router as stock_prices_router
 from config.data_init import create_start_data
+from core.logging_config import setup_logging
 from services.history_feeder import run_historical_feed
 from services.scheduler import scheduler, start_scheduler
 from services.startup_sync import sync_all_tables
@@ -19,38 +21,43 @@ from services.stock_company_sync import sync_stock_companies_if_needed
 type JSON = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
 
 load_dotenv()
+setup_logging()
+
+logger = logging.getLogger(__name__)
 
 
 async def initialize_database():
+    logger.info("Initializing database with seed data")
     await create_start_data()
+    logger.info("Database initialization completed")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # try:
+    logger.info("Application startup started")
+
     await initialize_database()
 
     await sync_all_tables()
-    print("Startup sync end")
-
-    # except Exception as err:
-    # print(f"Startup sync failed: {err}")
+    logger.info("Startup sync completed")
 
     try:
         await sync_stock_companies_if_needed()
     except Exception as err:
-        print(f"Stock companies sync failed: {err}")
+        logger.critical("Stock companies sync failed", error=str(err))
 
     try:
         await run_historical_feed()
     except Exception as err:
-        print(f"Historical feed failed: {err}")
+        logger.critical("Historical feed failed", error=str(err))
 
     start_scheduler()
+    logger.info("Application startup completed")
 
     yield
 
     scheduler.shutdown()
+    logger.info("Application shutdown completed")
 
 
 app = FastAPI(title="Financial Data", version="1.0.0", lifespan=lifespan)

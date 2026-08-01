@@ -8,15 +8,17 @@ from core.config import settings
 class Base(DeclarativeBase):
     pass
 
+
 load_dotenv()
 
-engine = create_async_engine(settings.DATABASE_URL, pool_pre_ping=True, echo=True)
+engine = create_async_engine(settings.DATABASE_URL, pool_pre_ping=True, echo=False)
 
 AsyncSessionFactory = async_sessionmaker(
     bind=engine,
     expire_on_commit=False,
     autoflush=False,
 )
+
 
 async def get_session() -> AsyncSession:
     async with AsyncSessionFactory() as session:

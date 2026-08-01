@@ -70,7 +70,7 @@ def alembic_migrations(db_container):
     alembic_cfg.set_main_option("script_location", "app/alembic")
 
     command.upgrade(alembic_cfg, "head")
-    
+
     yield
 
 

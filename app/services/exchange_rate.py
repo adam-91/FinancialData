@@ -1,8 +1,11 @@
+import logging
 from datetime import date
 
 from db.repositories.currency import CurrencyRepository
 from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
 from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
+
+logger = logging.getLogger(__name__)
 
 
 class ExchangeRateService:
@@ -25,7 +28,7 @@ class ExchangeRateService:
         currency = await self.currency_repo.get_by_code(currency_code)
 
         if currency is None:
-            print(currency_code)
+            logger.warning("Currency not found", currency_code=currency_code)
             raise ValueError(f"Currency {currency_code} not found")
         if effective_date is None:
             mid = await self.mid_repo.get_latest_rate(currency.id)

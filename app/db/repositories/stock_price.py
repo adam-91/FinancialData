@@ -5,7 +5,6 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import joinedload, subqueryload
 
 from db.models.stock_company import StockCompany
-from db.models.stock_exchange_index import StockExchangeIndex
 from db.models.stock_index_membership import StockIndexMembership
 from db.models.stock_price import StockPrice
 from db.repositories.base import AsyncRepository
@@ -125,8 +124,9 @@ class StockPriceRepository(
             )
             .options(
                 joinedload(StockCompany.stock_exchange),
-                subqueryload(StockCompany.stock_index_memberships)
-                .joinedload(StockIndexMembership.stock_index),
+                subqueryload(StockCompany.stock_index_memberships).joinedload(
+                    StockIndexMembership.stock_index
+                ),
             )
             .where(StockCompany.active)
             .order_by(StockCompany.symbol)
@@ -145,14 +145,11 @@ class StockPriceRepository(
         return unique_rows
 
     async def get_data_range_by_company(self, company_id: int) -> dict | None:
-        stmt = (
-            select(
-                func.min(StockPrice.trading_date).label("min_date"),
-                func.max(StockPrice.trading_date).label("max_date"),
-                func.count(StockPrice.id).label("count"),
-            )
-            .where(StockPrice.company_id == company_id)
-        )
+        stmt = select(
+            func.min(StockPrice.trading_date).label("min_date"),
+            func.max(StockPrice.trading_date).label("max_date"),
+            func.count(StockPrice.id).label("count"),
+        ).where(StockPrice.company_id == company_id)
 
         result = await self.session.execute(stmt)
         row = result.first()
@@ -199,9 +196,8 @@ class StockPriceRepository(
     async def get_prices_paginated(
         self, company_id: int, page: int, page_size: int
     ) -> tuple[list[StockPrice], int]:
-        count_stmt = (
-            select(func.count(StockPrice.id))
-            .where(StockPrice.company_id == company_id)
+        count_stmt = select(func.count(StockPrice.id)).where(
+            StockPrice.company_id == company_id
         )
         total = await self.session.scalar(count_stmt) or 0
 
