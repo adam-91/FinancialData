@@ -74,26 +74,6 @@ const SearchInput = styled.input`
   }
 `;
 
-const SortButton = styled.button<{ $active: boolean }>`
-  padding: 8px 12px;
-  border: 1px solid ${({ theme, $active }) =>
-    $active ? theme.colors.accent : theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-  background: ${({ theme, $active }) =>
-    $active ? theme.colors.accent : "transparent"};
-  color: ${({ theme, $active }) =>
-    $active ? "white" : theme.colors.text.primary};
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.accent};
-    color: ${({ theme, $active }) =>
-      $active ? "white" : theme.colors.accent};
-  }
-`;
-
 const TableWrapper = styled.div`
   overflow-x: auto;
 `;
@@ -112,6 +92,27 @@ const Th = styled.th`
   text-transform: uppercase;
   color: ${({ theme }) => theme.colors.text.secondary};
   white-space: nowrap;
+`;
+
+const SortableTh = styled(Th)<{ $active?: boolean }>`
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.accent};
+  }
+
+  ${({ $active, theme }) =>
+    $active &&
+    `
+    color: ${theme.colors.accent};
+    `}
+`;
+
+const SortIndicator = styled.span`
+  margin-left: 4px;
+  font-size: 10px;
 `;
 
 const Tr = styled.tr`
@@ -256,6 +257,7 @@ export function LogsPage() {
   const [level, setLevel] = useState<LogLevel | "">("");
   const [module, setModule] = useState("");
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"timestamp" | "level" | "module">("timestamp");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
   const pageSize = 50;
@@ -267,9 +269,10 @@ export function LogsPage() {
       level: level || undefined,
       module: module || undefined,
       search: search || undefined,
+      sort_by: sortBy,
       sort_order: sortOrder,
     }),
-    [page, level, module, search, sortOrder]
+    [page, level, module, search, sortBy, sortOrder]
   );
 
   const { data, isLoading } = useLogs(params);
@@ -292,6 +295,16 @@ export function LogsPage() {
   };
 
   const handleFilterChange = () => {
+    setPage(1);
+  };
+
+  const handleSort = (column: "timestamp" | "level" | "module") => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(column);
+      setSortOrder("desc");
+    }
     setPage(1);
   };
 
@@ -342,18 +355,6 @@ export function LogsPage() {
               handleFilterChange();
             }}
           />
-
-          <SortButton
-            $active={sortOrder === "desc"}
-            onClick={() => {
-              setSortOrder(sortOrder === "desc" ? "asc" : "desc");
-              setPage(1);
-            }}
-          >
-            {sortOrder === "desc"
-              ? t("logs.newestFirst", "Newest First")
-              : t("logs.oldestFirst", "Oldest First")}
-          </SortButton>
         </FiltersRow>
       </Section>
 
@@ -368,9 +369,33 @@ export function LogsPage() {
               <Table>
                 <thead>
                   <tr>
-                    <Th>{t("logs.timestamp", "Timestamp")}</Th>
-                    <Th>{t("logs.level", "Level")}</Th>
-                    <Th>{t("logs.module", "Module")}</Th>
+                    <SortableTh
+                      $active={sortBy === "timestamp"}
+                      onClick={() => handleSort("timestamp")}
+                    >
+                      {t("logs.timestamp", "Timestamp")}
+                      {sortBy === "timestamp" && (
+                        <SortIndicator>{sortOrder === "asc" ? "▲" : "▼"}</SortIndicator>
+                      )}
+                    </SortableTh>
+                    <SortableTh
+                      $active={sortBy === "level"}
+                      onClick={() => handleSort("level")}
+                    >
+                      {t("logs.level", "Level")}
+                      {sortBy === "level" && (
+                        <SortIndicator>{sortOrder === "asc" ? "▲" : "▼"}</SortIndicator>
+                      )}
+                    </SortableTh>
+                    <SortableTh
+                      $active={sortBy === "module"}
+                      onClick={() => handleSort("module")}
+                    >
+                      {t("logs.module", "Module")}
+                      {sortBy === "module" && (
+                        <SortIndicator>{sortOrder === "asc" ? "▲" : "▼"}</SortIndicator>
+                      )}
+                    </SortableTh>
                     <Th>{t("logs.message", "Message")}</Th>
                   </tr>
                 </thead>

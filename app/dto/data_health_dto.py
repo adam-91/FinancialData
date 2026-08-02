@@ -11,6 +11,7 @@ class DataHealthSummary(BaseModel):
     total_companies: int
     companies_with_data: int
     companies_percent: float
+    warnings: list[str] = []
 
 
 class EntityHealthDetail(BaseModel):

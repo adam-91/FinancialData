@@ -167,6 +167,7 @@ class StockPriceRepository(
             select(
                 StockCompany.id,
                 StockCompany.symbol,
+                StockCompany.yahoo_symbol,
                 StockCompany.name,
                 func.min(StockPrice.trading_date).label("min_date"),
                 func.max(StockPrice.trading_date).label("max_date"),
@@ -174,7 +175,12 @@ class StockPriceRepository(
             )
             .outerjoin(StockPrice, StockCompany.id == StockPrice.company_id)
             .where(StockCompany.active)
-            .group_by(StockCompany.id, StockCompany.symbol, StockCompany.name)
+            .group_by(
+                StockCompany.id,
+                StockCompany.symbol,
+                StockCompany.yahoo_symbol,
+                StockCompany.name,
+            )
             .order_by(StockCompany.symbol)
         )
 
@@ -185,6 +191,7 @@ class StockPriceRepository(
             {
                 "id": row.id,
                 "symbol": row.symbol,
+                "yahoo_symbol": row.yahoo_symbol,
                 "name": row.name,
                 "min_date": row.min_date,
                 "max_date": row.max_date,

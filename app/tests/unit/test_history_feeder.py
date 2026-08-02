@@ -261,3 +261,103 @@ async def test_fresh_symbols_skipped(feeder, mock_yf_client, parquet_tracker):
     await feeder._feed_companies_batch(["CDR.WA"], {"CDR.WA": 1})
 
     mock_yf_client.get_history_batch.assert_not_called()
+
+
+def test_parse_single_ticker_df_without_adj_close(feeder):
+    df = pd.DataFrame(
+        {
+            "Open": [100.0, 101.0],
+            "High": [105.0, 106.0],
+            "Low": [99.0, 100.0],
+            "Close": [103.0, 104.0],
+            "Volume": [1000000, 1100000],
+        },
+        index=pd.to_datetime(["2025-01-01", "2025-01-02"]),
+    )
+
+    records = feeder._parse_single_ticker_df(df, "CDR.WA", {"CDR.WA": 1})
+
+    assert len(records) == 2
+    assert records[0]["company_id"] == 1
+    assert records[0]["open"] == Decimal("100.0")
+    assert records[0]["close"] == Decimal("103.0")
+    assert records[0]["adj_close"] == Decimal("103.0")
+    assert records[0]["volume"] == Decimal("1000000")
+
+
+def test_row_to_record_fallback_adj_close_to_close(feeder):
+    row = pd.Series(
+        {
+            "Open": 100.0,
+            "High": 105.0,
+            "Low": 99.0,
+            "Close": 103.0,
+            "Volume": 1000000,
+        }
+    )
+    result = feeder._row_to_record(row, 1, pd.Timestamp("2025-01-01"))
+    assert result is not None
+    assert result["close"] == Decimal("103.0")
+    assert result["adj_close"] == Decimal("103.0")
+
+
+def test_row_to_index_record_fallback_adj_close_to_close(feeder):
+    row = pd.Series(
+        {
+            "Open": 100.0,
+            "High": 105.0,
+            "Low": 99.0,
+            "Close": 103.0,
+            "Volume": 1000000,
+        }
+    )
+    result = feeder._row_to_index_record(row, 1, pd.Timestamp("2025-01-01"))
+    assert result is not None
+    assert result["close"] == Decimal("103.0")
+    assert result["adj_close"] == Decimal("103.0")
+
+
+@pytest.mark.asyncio
+async def test_no_data_parsed_status_when_df_not_empty_but_no_records(
+    feeder, mock_yf_client, parquet_tracker
+):
+    df = pd.DataFrame(
+        {
+            "Open": [float("nan")],
+            "High": [float("nan")],
+            "Low": [float("nan")],
+            "Close": [float("nan")],
+            "Volume": [float("nan")],
+        },
+        index=pd.to_datetime(["2025-01-01"]),
+    )
+    mock_yf_client.get_history_batch.return_value = df
+
+    await feeder._download_and_save_companies(["CDR.WA"], {"CDR.WA": 1})
+
+    assert parquet_tracker.df.iloc[0]["status"] == "no_data_parsed"
+
+
+@pytest.mark.asyncio
+async def test_validate_tracker_consistency_marks_stale(
+    feeder, mock_repos, parquet_tracker
+):
+    parquet_tracker.update("CDR.WA", "company", "success")
+
+    mock_repos["stock_price_repo"].get_all_companies_data_summary.return_value = [
+        {
+            "id": 1,
+            "symbol": "CDR",
+            "yahoo_symbol": "CDR.WA",
+            "name": "CD Projekt",
+            "min_date": None,
+            "max_date": None,
+            "count": 0,
+        }
+    ]
+    mock_repos["index_rate_repo"].get_all_indexes_data_summary.return_value = []
+
+    await feeder._validate_tracker_consistency()
+
+    assert parquet_tracker.is_stale("CDR.WA", "company", threshold_days=30)
+    assert parquet_tracker.df.iloc[0]["status"] == "stale"

@@ -12,6 +12,8 @@ from dto.data_health_dto import (
     RawDataResponse,
 )
 from services.data_health_service import DataHealthService
+from services.history_feeder import run_historical_feed
+from services.parquet_tracker import ParquetTracker
 
 router = APIRouter(prefix="/api/health", tags=["health"])
 
@@ -111,3 +113,14 @@ async def get_raw_data(
     if result is None:
         raise HTTPException(status_code=404, detail="Entity not found")
     return result
+
+
+@router.post("/data/reset-tracker")
+async def reset_fetch_tracker(refetch: bool = True):
+    tracker = ParquetTracker()
+    tracker.reset()
+
+    if refetch:
+        await run_historical_feed()
+
+    return {"status": "ok", "refetch_triggered": refetch}

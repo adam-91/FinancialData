@@ -69,10 +69,10 @@ class StockExchangeIndexRepository(
         indexes_values = {
             item["exchange_symbol"] for item in indexes if "exchange_symbol" in item
         }
-        stmt = select(StockExchange.name, StockExchange.id)
+        stmt = select(StockExchange.symbol, StockExchange.id)
         stmt = stmt.where(StockExchange.symbol.in_(indexes_values))
         result = await self.session.execute(stmt)
-        lookup_dict = {name: l_id for name, l_id in result.all()}
+        lookup_dict = {symbol: l_id for symbol, l_id in result.all()}
 
         new_indexes_dicts = []
 

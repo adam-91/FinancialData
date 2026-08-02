@@ -1,8 +1,8 @@
-import structlog
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
+import structlog
 
 logger = structlog.get_logger()
 
@@ -86,3 +86,33 @@ class ParquetTracker:
                 ]
             )
             self.df = pd.concat([self.df, new_row], ignore_index=True)
+
+    def reset(self) -> None:
+        self.df = pd.DataFrame(
+            columns=["yahoo_symbol", "type", "last_fetched_at", "status"]
+        )
+        self.save()
+        logger.info("ParquetTracker: reset all tracking data")
+
+    def mark_stale(self, yahoo_symbol: str, symbol_type: str) -> None:
+        mask = (self.df["yahoo_symbol"] == yahoo_symbol) & (
+            self.df["type"] == symbol_type
+        )
+        if mask.any():
+            self.df.loc[mask, "last_fetched_at"] = pd.Timestamp.now() - pd.Timedelta(
+                days=365 * 100
+            )
+            self.df.loc[mask, "status"] = "stale"
+            logger.info(
+                "ParquetTracker: marked symbol as stale",
+                yahoo_symbol=yahoo_symbol,
+                type=symbol_type,
+            )
+
+    def get_symbols_with_status(self, status: str) -> list[tuple[str, str]]:
+        if self.df.empty:
+            return []
+        mask = self.df["status"] == status
+        return [
+            (row["yahoo_symbol"], row["type"]) for _, row in self.df[mask].iterrows()
+        ]

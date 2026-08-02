@@ -1,10 +1,10 @@
 import asyncio
 import random
-import structlog
 from collections import defaultdict
 from decimal import Decimal, InvalidOperation
 
 import pandas as pd
+import structlog
 from sqlalchemy.ext.asyncio import AsyncSession
 from yfinance.exceptions import YFRateLimitError
 
@@ -41,6 +41,8 @@ class HistoricalDataFeeder:
 
     async def feed_all(self) -> None:
         logger.info("HistoricalDataFeeder: starting feed_all")
+
+        await self._validate_tracker_consistency()
 
         companies = await self.company_repo.get_all()
         active_companies = [c for c in companies if c.active]
@@ -80,6 +82,82 @@ class HistoricalDataFeeder:
 
         self.tracker.save()
         logger.info("HistoricalDataFeeder: feed_all completed")
+
+    async def _validate_tracker_consistency(self) -> None:
+        logger.info("HistoricalDataFeeder: validating tracker consistency with DB")
+
+        companies_summary = await self.stock_price_repo.get_all_companies_data_summary()
+        company_yahoo_symbols_with_data = {
+            row["yahoo_symbol"] for row in companies_summary if row["count"] > 0
+        }
+
+        company_yahoo_symbols_all = {row["yahoo_symbol"] for row in companies_summary}
+
+        indexes_summary = await self.index_rate_repo.get_all_indexes_data_summary()
+        index_symbols_with_data = {
+            row["symbol"] for row in indexes_summary if row["count"] > 0
+        }
+
+        index_symbols_all = {row["symbol"] for row in indexes_summary}
+
+        success_companies = self.tracker.get_symbols_with_status("success")
+        success_indexes = self.tracker.get_symbols_with_status("success")
+
+        inconsistent_count = 0
+
+        for yahoo_symbol, symbol_type in success_companies:
+            if symbol_type != "company":
+                continue
+            if (
+                yahoo_symbol in company_yahoo_symbols_all
+                and yahoo_symbol not in company_yahoo_symbols_with_data
+            ):
+                logger.warning(
+                    "HistoricalDataFeeder: tracker inconsistency - "
+                    "company marked success but no data in DB",
+                    yahoo_symbol=yahoo_symbol,
+                )
+                self.tracker.mark_stale(yahoo_symbol, "company")
+                inconsistent_count += 1
+
+        for symbol, symbol_type in success_indexes:
+            if symbol_type != "index":
+                continue
+            if symbol in index_symbols_all and symbol not in index_symbols_with_data:
+                logger.warning(
+                    "HistoricalDataFeeder: tracker inconsistency - "
+                    "index marked success but no data in DB",
+                    symbol=symbol,
+                )
+                self.tracker.mark_stale(symbol, "index")
+                inconsistent_count += 1
+
+        no_data_parsed_companies = self.tracker.get_symbols_with_status(
+            "no_data_parsed"
+        )
+        no_data_parsed_indexes = self.tracker.get_symbols_with_status(
+            "no_data_parsed"
+        )
+
+        for yahoo_symbol, symbol_type in no_data_parsed_companies:
+            if symbol_type == "company":
+                self.tracker.mark_stale(yahoo_symbol, "company")
+                inconsistent_count += 1
+
+        for symbol, symbol_type in no_data_parsed_indexes:
+            if symbol_type == "index":
+                self.tracker.mark_stale(symbol, "index")
+                inconsistent_count += 1
+
+        if inconsistent_count > 0:
+            logger.warning(
+                "HistoricalDataFeeder: found inconsistencies, "
+                "marked symbols for re-fetch",
+                inconsistent_count=inconsistent_count,
+            )
+            self.tracker.save()
+        else:
+            logger.info("HistoricalDataFeeder: tracker consistent with DB")
 
     async def _feed_companies_batch(
         self,
@@ -123,18 +201,31 @@ class HistoricalDataFeeder:
 
                 records = self._parse_batch_dataframe(df, batch, symbol_to_company_id)
 
-                if records:
-                    try:
-                        await self.stock_price_repo.bulk_upsert(records)
-                    except Exception as e:
-                        await self.session.rollback()
-                        logger.error(
-                            "HistoricalDataFeeder: DB error saving companies",
-                            error=str(e),
-                        )
-                        for symbol in batch:
-                            self.tracker.update(symbol, "company", "error")
-                        return
+                if not records:
+                    logger.warning(
+                        "HistoricalDataFeeder: DataFrame not empty "
+                        "but 0 records parsed",
+                        batch=batch,
+                        df_shape=df.shape,
+                    )
+                    for symbol in batch:
+                        self.tracker.update(symbol, "company", "no_data_parsed")
+                    return
+
+                try:
+                    chunk_size = 2000
+                    for i in range(0, len(records), chunk_size):
+                        chunk = records[i : i + chunk_size]
+                        await self.stock_price_repo.bulk_upsert(chunk)
+                except Exception as e:
+                    await self.session.rollback()
+                    logger.error(
+                        "HistoricalDataFeeder: DB error saving companies",
+                        error=str(e),
+                    )
+                    for symbol in batch:
+                        self.tracker.update(symbol, "company", "error")
+                    return
 
                 for symbol in batch:
                     self.tracker.update(symbol, "company", "success")
@@ -239,7 +330,7 @@ class HistoricalDataFeeder:
             low_val = HistoricalDataFeeder._to_decimal(row.get("Low"))
             close_val = HistoricalDataFeeder._to_decimal(row.get("Close"))
             adj_close_val = HistoricalDataFeeder._to_decimal(
-                row.get("Adj Close", row.get("Adj_Close"))
+                row.get("Adj Close", row.get("Adj_Close", row.get("Close")))
             )
             volume_val = HistoricalDataFeeder._to_decimal(row.get("Volume"))
 
@@ -250,7 +341,6 @@ class HistoricalDataFeeder:
                     high_val,
                     low_val,
                     close_val,
-                    adj_close_val,
                     volume_val,
                 ]
             ):
@@ -335,18 +425,31 @@ class HistoricalDataFeeder:
                     df, batch, symbol_to_index_id
                 )
 
-                if records:
-                    try:
-                        await self.index_rate_repo.bulk_upsert(records)
-                    except Exception as e:
-                        await self.session.rollback()
-                        logger.error(
-                            "HistoricalDataFeeder: DB error saving indexes",
-                            error=str(e),
-                        )
-                        for symbol in batch:
-                            self.tracker.update(symbol, "index", "error")
-                        return
+                if not records:
+                    logger.warning(
+                        "HistoricalDataFeeder: DataFrame not empty "
+                        "but 0 index records parsed",
+                        batch=batch,
+                        df_shape=df.shape,
+                    )
+                    for symbol in batch:
+                        self.tracker.update(symbol, "index", "no_data_parsed")
+                    return
+
+                try:
+                    chunk_size = 2000
+                    for i in range(0, len(records), chunk_size):
+                        chunk = records[i : i + chunk_size]
+                        await self.index_rate_repo.bulk_upsert(chunk)
+                except Exception as e:
+                    await self.session.rollback()
+                    logger.error(
+                        "HistoricalDataFeeder: DB error saving indexes",
+                        error=str(e),
+                    )
+                    for symbol in batch:
+                        self.tracker.update(symbol, "index", "error")
+                    return
 
                 for symbol in batch:
                     self.tracker.update(symbol, "index", "success")
@@ -453,7 +556,7 @@ class HistoricalDataFeeder:
             low_val = HistoricalDataFeeder._to_decimal(row.get("Low"))
             close_val = HistoricalDataFeeder._to_decimal(row.get("Close"))
             adj_close_val = HistoricalDataFeeder._to_decimal(
-                row.get("Adj Close", row.get("Adj_Close"))
+                row.get("Adj Close", row.get("Adj_Close", row.get("Close")))
             )
             volume_val = HistoricalDataFeeder._to_decimal(row.get("Volume"))
 
@@ -464,7 +567,6 @@ class HistoricalDataFeeder:
                     high_val,
                     low_val,
                     close_val,
-                    adj_close_val,
                     volume_val,
                 ]
             ):

@@ -34,6 +34,7 @@ async def get_logs(
     level: str | None = None,
     module: str | None = None,
     search: str | None = None,
+    sort_by: Literal["timestamp", "level", "module"] = "timestamp",
     sort_order: Literal["asc", "desc"] = "desc",
 ):
     valid_levels = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
@@ -56,6 +57,8 @@ async def get_logs(
 
                 try:
                     log_data = json.loads(line)
+                    if not log_data.get("timestamp"):
+                        continue
                     all_logs.append(log_data)
                 except json.JSONDecodeError:
                     logger.debug("Failed to parse log line", line=line[:100])
@@ -83,17 +86,32 @@ async def get_logs(
             log for log in filtered_logs if search_lower in log.get("event", "").lower()
         ]
 
-    def get_timestamp(log):
-        ts = log.get("timestamp", "")
-        try:
-            dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=datetime.now().astimezone().tzinfo)
-            return dt
-        except (ValueError, AttributeError):
-            return datetime.min.replace(tzinfo=datetime.now().astimezone().tzinfo)
+    LEVEL_PRIORITY = {
+        "DEBUG": 1,
+        "INFO": 2,
+        "WARNING": 3,
+        "ERROR": 4,
+        "CRITICAL": 5,
+    }
 
-    filtered_logs.sort(key=get_timestamp, reverse=(sort_order == "desc"))
+    def get_sort_key(log):
+        if sort_by == "timestamp":
+            ts = log.get("timestamp", "")
+            try:
+                dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=datetime.now().astimezone().tzinfo)
+                return dt
+            except (ValueError, AttributeError):
+                return datetime.min.replace(tzinfo=datetime.now().astimezone().tzinfo)
+        elif sort_by == "level":
+            level_val = log.get("level", "INFO").upper()
+            return LEVEL_PRIORITY.get(level_val, 0)
+        elif sort_by == "module":
+            return log.get("logger", "")
+        return None
+
+    filtered_logs.sort(key=get_sort_key, reverse=(sort_order == "desc"))
 
     total = len(filtered_logs)
     start_idx = (page - 1) * page_size

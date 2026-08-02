@@ -8,6 +8,7 @@ from dto.data_health_dto import (
     RawDataEntry,
     RawDataResponse,
 )
+from services.parquet_tracker import ParquetTracker
 
 
 class DataHealthService:
@@ -42,6 +43,10 @@ class DataHealthService:
             else 0.0
         )
 
+        warnings = self._generate_warnings(
+            companies_summary, indexes_summary, companies_with_data, indices_with_data
+        )
+
         return DataHealthSummary(
             total_indices=total_indices,
             indices_with_data=indices_with_data,
@@ -49,7 +54,67 @@ class DataHealthService:
             total_companies=total_companies,
             companies_with_data=companies_with_data,
             companies_percent=round(companies_percent, 2),
+            warnings=warnings,
         )
+
+    def _generate_warnings(
+        self,
+        companies_summary: list[dict],
+        indexes_summary: list[dict],
+        companies_with_data: int,
+        indices_with_data: int,
+    ) -> list[str]:
+        warnings: list[str] = []
+
+        if companies_with_data == 0 and len(companies_summary) > 0:
+            warnings.append(
+                "No historical price data for any company. "
+                "Use POST /api/health/data/reset-tracker to re-fetch."
+            )
+
+        if indices_with_data == 0 and len(indexes_summary) > 0:
+            warnings.append(
+                "No historical data for any index. "
+                "Use POST /api/health/data/reset-tracker to re-fetch."
+            )
+
+        companies_without_data = len(companies_summary) - companies_with_data
+        if 0 < companies_without_data < len(companies_summary):
+            warnings.append(
+                f"{companies_without_data}/{len(companies_summary)} companies "
+                "missing historical data."
+            )
+
+        indices_without_data = len(indexes_summary) - indices_with_data
+        if 0 < indices_without_data < len(indexes_summary):
+            warnings.append(
+                f"{indices_without_data}/{len(indexes_summary)} indices "
+                "missing historical data."
+            )
+
+        tracker = ParquetTracker()
+        error_symbols = tracker.get_symbols_with_status("error")
+        rate_limited_symbols = tracker.get_symbols_with_status("rate_limited")
+        no_data_symbols = tracker.get_symbols_with_status("no_data_parsed")
+
+        if error_symbols:
+            warnings.append(
+                f"{len(error_symbols)} symbols had DB errors during last fetch."
+            )
+
+        if rate_limited_symbols:
+            warnings.append(
+                f"{len(rate_limited_symbols)} symbols were rate-limited "
+                "by Yahoo Finance."
+            )
+
+        if no_data_symbols:
+            warnings.append(
+                f"{len(no_data_symbols)} symbols returned data from Yahoo "
+                "but nothing was parsed."
+            )
+
+        return warnings
 
     async def get_index_detail(self, symbol: str) -> EntityHealthDetail | None:
         indexes = await self.index_repo.get_all_with_exchange()

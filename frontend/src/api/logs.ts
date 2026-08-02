@@ -18,9 +18,10 @@ export interface LogsResponse {
 export interface LogsQueryParams {
   page?: number;
   page_size?: number;
-  level?: "DEBUG" | "INFO" | "WARNING" | "ERROR" | "CRITICAL";
+  level?: string;
   module?: string;
   search?: string;
+  sort_by?: "timestamp" | "level" | "module";
   sort_order?: "asc" | "desc";
 }
 

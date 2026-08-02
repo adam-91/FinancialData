@@ -20,7 +20,7 @@ class StockExchangeIndexRate(Base):
     high: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     low: Mapped[Decimal] = mapped_column(Numeric(10, 4))
     close: Mapped[Decimal] = mapped_column(Numeric(10, 4))
-    adj_close: Mapped[Decimal] = mapped_column(Numeric(10, 4))
+    adj_close: Mapped[Decimal | None] = mapped_column(Numeric(10, 4), nullable=True)
     volume: Mapped[Decimal] = mapped_column(Numeric(20, 4))
 
     UniqueConstraint("index_id", "trading_date")

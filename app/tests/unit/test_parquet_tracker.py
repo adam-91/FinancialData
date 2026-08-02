@@ -81,3 +81,42 @@ def test_load_corrupted_file(test_parquet_path, tmp_path):
         "last_fetched_at",
         "status",
     ]
+
+
+def test_reset_clears_all_data(parquet_tracker):
+    parquet_tracker.update("CDR.WA", "company", "success")
+    parquet_tracker.update("PKN.WA", "index", "error")
+    assert len(parquet_tracker.df) == 2
+
+    parquet_tracker.reset()
+
+    assert parquet_tracker.df.empty
+
+
+def test_mark_stale_updates_symbol(parquet_tracker):
+    parquet_tracker.update("CDR.WA", "company", "success")
+
+    parquet_tracker.mark_stale("CDR.WA", "company")
+
+    assert parquet_tracker.df.iloc[0]["status"] == "stale"
+    assert parquet_tracker.is_stale("CDR.WA", "company", threshold_days=30)
+
+
+def test_get_symbols_with_status_filters_correctly(parquet_tracker):
+    parquet_tracker.update("CDR.WA", "company", "success")
+    parquet_tracker.update("PKN.WA", "company", "error")
+    parquet_tracker.update("^WIG20", "index", "success")
+
+    success_symbols = parquet_tracker.get_symbols_with_status("success")
+    error_symbols = parquet_tracker.get_symbols_with_status("error")
+
+    assert len(success_symbols) == 2
+    assert ("CDR.WA", "company") in success_symbols
+    assert ("^WIG20", "index") in success_symbols
+    assert len(error_symbols) == 1
+    assert ("PKN.WA", "company") in error_symbols
+
+
+def test_get_symbols_with_status_empty_tracker(parquet_tracker):
+    result = parquet_tracker.get_symbols_with_status("success")
+    assert result == []
