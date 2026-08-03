@@ -1,0 +1,249 @@
+exchanges:
+  # --- AMERYKA PÓŁNOCNA (USA & KANADA) ---
+  - symbol: NYSE
+    name: "New York Stock Exchange"
+    country: USA
+  - symbol: NASDAQ
+    name: "NASDAQ Stock Market"
+    country: USA
+  - symbol: AMEX
+    name: "NYSE American"
+    country: USA
+  - symbol: TSX
+    name: "Toronto Stock Exchange"
+    country: CANADA
+    ticker: TO
+  - symbol: TSXV
+    name: "TSX Venture Exchange"
+    country: CANADA
+    ticker: V
+  - symbol: CSE
+    name: "Canadian Securities Exchange"
+    country: CANADA
+    ticker: CN
+  - symbol: NEO
+    name: "Cboe Canada (NEO Exchange)"
+    country: CANADA
+    ticker: NE
+
+  # --- EUROPA ŚRODKOWO-WSCHODNIA (W TYM POLSKA) ---
+  - symbol: GPW
+    name: "Giełda Papierów Wartościowych w Warszawie"
+    country: POLAND
+    ticker: WA
+  - symbol: PSE
+    name: "Prague Stock Exchange"
+    country: CZECH REPUBLIC
+    ticker: PR
+  - symbol: BSE
+    name: "Budapest Stock Exchange"
+    country: HUNGARY
+    ticker: BU
+  - symbol: BVB
+    name: "Bucharest Stock Exchange"
+    country: ROMANIA
+    ticker: RO
+  - symbol: LJSE
+    name: "Ljubljana Stock Exchange"
+    country: SLOVENIA
+    ticker: LJ
+
+  # --- EUROPA ZACHODNIA & NORDYCKA ---
+  - symbol: XETRA
+    name: "Deutsche Börse Xetra"
+    country: GERMANY
+    ticker: DE
+  - symbol: FRA
+    name: "Börse Frankfurt"
+    country: GERMANY
+    ticker: F
+  - symbol: LSE
+    name: "London Stock Exchange"
+    country: UNITED KINGDOM
+    ticker: L
+  - symbol: EPA
+    name: "Euronext Paris"
+    country: FRANCE
+    ticker: PA
+  - symbol: AMS
+    name: "Euronext Amsterdam"
+    country: NETHERLANDS
+    ticker: AS
+  - symbol: EBR
+    name: "Euronext Brussels"
+    country: BELGIUM
+    ticker: BR
+  - symbol: ELI
+    name: "Euronext Lisbon"
+    country: PORTUGAL
+    ticker: LS
+  - symbol: MIL
+    name: "Borsa Italiana"
+    country: ITALY
+    ticker: MI
+  - symbol: BME
+    name: "Bolsas y Mercados Españoles"
+    country: SPAIN
+    ticker: MC
+  - symbol: SIX
+    name: "SIX Swiss Exchange"
+    country: SWITZERLAND
+    ticker: SW
+  - symbol: VSE
+    name: "Vienna Stock Exchange"
+    country: AUSTRIA
+    ticker: VI
+  - symbol: STO
+    name: "Nasdaq Stockholm"
+    country: SWEDEN
+    ticker: ST
+  - symbol: OSL
+    name: "Oslo Børs"
+    country: NORWAY
+    ticker: OL
+  - symbol: CPH
+    name: "Nasdaq Copenhagen"
+    country: DENMARK
+    ticker: CO
+  - symbol: HEL
+    name: "Nasdaq Helsinki"
+    country: FINLAND
+    ticker: HE
+  - symbol: ISE
+    name: "Euronext Dublin (Irish Stock Exchange)"
+    country: IRELAND
+    ticker: IR
+  - symbol: ATH
+    name: "Athens Stock Exchange"
+    country: GREECE
+    ticker: AT
+  - symbol: BIST
+    name: "Borsa Istanbul"
+    country: TURKEY
+    ticker: IS
+
+  # --- AZJA & PACYFIK ---
+  - symbol: TSE
+    name: "Tokyo Stock Exchange"
+    country: JAPAN
+    ticker: T
+  - symbol: HKEX
+    name: "Hong Kong Stock Exchange"
+    country: HONG KONG
+    ticker: HK
+  - symbol: SSE
+    name: "Shanghai Stock Exchange"
+    country: CHINA
+    ticker: SS
+  - symbol: SZSE
+    name: "Shenzhen Stock Exchange"
+    country: CHINA
+    ticker: SZ
+  - symbol: NSE
+    name: "National Stock Exchange of India"
+    country: INDIA
+    ticker: NS
+  - symbol: BSE_INDIA
+    name: "Bombay Stock Exchange"
+    country: INDIA
+    ticker: BO
+  - symbol: KRX
+    name: "Korea Exchange"
+    country: SOUTH KOREA
+    ticker: KS
+  - symbol: KOSDAQ
+    name: "KOSDAQ"
+    country: SOUTH KOREA
+    ticker: KQ
+  - symbol: TWSE
+    name: "Taiwan Stock Exchange"
+    country: TAIWAN
+    ticker: TW
+  - symbol: TWO
+    name: "Taipei Exchange"
+    country: TAIWAN
+    ticker: TWO
+  - symbol: SGX
+    name: "Singapore Exchange"
+    country: SINGAPORE
+    ticker: SI
+  - symbol: ASX
+    name: "Australian Securities Exchange"
+    country: AUSTRALIA
+    ticker: AX
+  - symbol: NZX
+    name: "New Zealand Exchange"
+    country: NEW ZEALAND
+    ticker: NZ
+  - symbol: IDX
+    name: "Indonesia Stock Exchange"
+    country: INDONESIA
+    ticker: JK
+  - symbol: KLSE
+    name: "Bursa Malaysia"
+    country: MALAYSIA
+    ticker: KL
+  - symbol: PSE_PHIL
+    name: "Philippine Stock Exchange"
+    country: PHILIPPINES
+    ticker: PS
+  - symbol: SET
+    name: "Stock Exchange of Thailand"
+    country: THAILAND
+    ticker: BK
+
+  # --- AMERYKA POŁUDNIOWA & ŚRODKOWA ---
+  - symbol: B3
+    name: "B3 - Brasil, Bolsa, Balcão"
+    country: BRAZIL
+    ticker: SA
+  - symbol: BYMA
+    name: "Bolsas y Mercados Argentinos"
+    country: ARGENTINA
+    ticker: BA
+  - symbol: BMV
+    name: "Bolsa Mexicana de Valores"
+    country: MEXICO
+    ticker: MX
+  - symbol: BCS
+    name: "Santiago Stock Exchange"
+    country: CHILE
+    ticker: SN
+  - symbol: bvc
+    name: "Bolsa de Valores de Colombia"
+    country: COLOMBIA
+    ticker: CO
+  - symbol: BVL
+    name: "Bolsa de Valores de Lima"
+    country: PERU
+    ticker: LM
+
+  # --- BLISKI WSCHÓD & AFRYKA ---
+  - symbol: TASE
+    name: "Tel Aviv Stock Exchange"
+    country: ISRAEL
+    ticker: TA
+  - symbol: TADAWUL
+    name: "Saudi Exchange"
+    country: SAUDI ARABIA
+    ticker: QA
+  - symbol: DFM
+    name: "Dubai Financial Market"
+    country: UAE
+    ticker: DU
+  - symbol: ADX
+    name: "Abu Dhabi Securities Exchange"
+    country: UAE
+    ticker: AD
+  - symbol: QSE
+    name: "Qatar Stock Exchange"
+    country: QATAR
+    ticker: QA
+  - symbol: JSE
+    name: "Johannesburg Stock Exchange"
+    country: SOUTH AFRICA
+    ticker: JO
+  - symbol: EGX
+    name: "Egyptian Exchange"
+    country: EGYPT
+    ticker: CA

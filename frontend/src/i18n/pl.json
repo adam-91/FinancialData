@@ -1,0 +1,108 @@
+{
+  "app": {
+    "title": "Dane Finansowe",
+    "loading": "Ładowanie...",
+    "error": "Błąd pobierania danych"
+  },
+  "header": {
+    "dashboard": "Panel",
+    "currencies": "Waluty",
+    "stocks": "Spółki"
+  },
+  "chart": {
+    "title": "Notowania giełdowe",
+    "selectIndex": "Wybierz indeks",
+    "chartType": "Typ wykresu",
+    "candlestick": "Świecowy",
+    "line": "Liniowy",
+    "open": "Otwarcie",
+    "high": "Najwyższy",
+    "low": "Najniższy",
+    "close": "Zamknięcie",
+    "volume": "Wolumen"
+  },
+  "currency": {
+    "title": "Kursy walut",
+    "selectCurrencies": "Wybierz waluty",
+    "code": "Kod",
+    "name": "Waluta",
+    "date": "Data",
+    "midRate": "Kurs średni",
+    "buyRate": "Kupno",
+    "sellRate": "Sprzedaż",
+    "change": "Zmiana",
+    "avgRate": "Średnia",
+    "main": "Główne",
+    "all": "Wszystkie"
+  },
+  "stocks": {
+    "title": "Notowania spółek",
+    "selectIndex": "Wybierz indeks",
+    "allIndices": "Wszystkie indeksy",
+    "symbol": "Symbol",
+    "name": "Nazwa",
+    "price": "Cena",
+    "change": "Zmiana",
+    "changePercent": "Zmiana %",
+    "volume": "Wolumen",
+    "exchange": "Giełda",
+    "selectCompanies": "Wybierz spółki",
+    "maxCompanies": "Maks. 4 spółki"
+  },
+  "dashboard": {
+    "title": "Panel główny",
+    "tiles": {
+      "indexChart": "Wykres indeksu",
+      "currencyChart": "Wykres walut",
+      "indexTable": "Tabela indeksów",
+      "currencyTable": "Tabela walut",
+      "stockChart": "Wykres spółek",
+      "stockTable": "Tabela spółek"
+    }
+  },
+  "period": {
+    "1w": "1 tydzień",
+    "3m": "3 miesiące",
+    "1y": "1 rok",
+    "3y": "3 lata",
+    "10y": "10 lat",
+    "max": "Maks."
+  },
+  "theme": {
+    "light": "Jasny",
+    "dark": "Ciemny"
+  },
+  "language": {
+    "pl": "Polski",
+    "en": "Angielski"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "healthcheck": "Zdrowie danych",
+    "logs": "Logi",
+    "login": "Zaloguj"
+  },
+  "logs": {
+    "title": "Logi aplikacji",
+    "timestamp": "Czas",
+    "level": "Poziom",
+    "module": "Moduł",
+    "message": "Wiadomość",
+    "allLevels": "Wszystkie poziomy",
+    "allModules": "Wszystkie moduły",
+    "searchPlaceholder": "Szukaj w wiadomościach...",
+    "newestFirst": "Najnowsze pierwsze",
+    "oldestFirst": "Najstarsze pierwsze",
+    "sortByTimestamp": "Sortuj po czasie",
+    "sortByLevel": "Sortuj po poziomie",
+    "sortByModule": "Sortuj po module",
+    "sortAscending": "Rosnąco",
+    "sortDescending": "Malejąco",
+    "loading": "Ładowanie...",
+    "empty": "Brak logów",
+    "previous": "Poprzednia",
+    "next": "Następna",
+    "page": "Strona",
+    "of": "z"
+  }
+}

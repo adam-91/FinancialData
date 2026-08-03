@@ -1,38 +1,41 @@
-import { RatesTable } from "./components/RatesTable";
-import { useRates } from "./hooks/useRates";
-import { useCurrencies } from "./hooks/useCurrency";
-function App() {
-  
-  const {
-    data: currencies, 
-    isLoading: currenciesLoading, 
-    isError: currenciesError 
-  }  = useCurrencies()
+import { Routes, Route } from "react-router-dom";
+import { Layout } from "./components/layout/Layout";
+import { DashboardGrid } from "./components/dashboard/DashboardGrid";
+import { IndexChartTile } from "./components/dashboard/IndexChartTile";
+import { CurrencyChartTile } from "./components/dashboard/CurrencyChartTile";
+import { IndexTableTile } from "./components/dashboard/IndexTableTile";
+import { CurrencyTableTile } from "./components/dashboard/CurrencyTableTile";
+import { StockChartTile } from "./components/dashboard/StockChartTile";
+import { StockTableTile } from "./components/dashboard/StockTableTile";
+import { HealthcheckPage } from "./pages/HealthcheckPage";
+import { RawDataPage } from "./pages/RawDataPage";
+import { LogsPage } from "./pages/LogsPage";
 
-  const {
-    data: rates,
-    isLoading: ratesLoading,
-    isError: ratesError,
-  } = useRates()
-
-
-   if (currenciesLoading || ratesLoading) {
-    
-    return <h2>Ładowanie...</h2>;
-  }
-
-  if (currenciesError || ratesError) {
-    return <h2>Błąd pobierania danych</h2>;
-  }
-
+function DashboardPage() {
   return (
-    <main>
-      <h1>Kursy walut NBP</h1>
+    <DashboardGrid>
+      {{
+        indexChart: <IndexChartTile />,
+        currencyChart: <CurrencyChartTile />,
+        indexTable: <IndexTableTile />,
+        currencyTable: <CurrencyTableTile />,
+        stockChart: <StockChartTile />,
+        stockTable: <StockTableTile />,
+      }}
+    </DashboardGrid>
+  );
+}
 
-      <RatesTable 
-        currencies={currencies  ?? []} 
-        rates={rates ?? []} />
-    </main>
+function App() {
+  return (
+    <Layout>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/healthcheck" element={<HealthcheckPage />} />
+        <Route path="/logs" element={<LogsPage />} />
+        <Route path="/raw-data/:entityType/:symbol" element={<RawDataPage />} />
+      </Routes>
+    </Layout>
   );
 }
 

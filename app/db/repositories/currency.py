@@ -1,8 +1,13 @@
 from sqlalchemy import select
+
 from db.models.currency import Currency
 from db.repositories.base import AsyncRepository
- 
-class CurrencyRepository(AsyncRepository):
+from dto.currency_dto import CurrencyCreateDTO, CurrencyDTO
+
+
+class CurrencyRepository(AsyncRepository[Currency, CurrencyCreateDTO, CurrencyDTO]):
+    model = Currency
+    output_schema = CurrencyDTO
 
     async def create(self, currency: Currency) -> Currency:
         self.session.add(currency)
@@ -41,4 +46,3 @@ class CurrencyRepository(AsyncRepository):
 
         await self.session.delete(currency)
         return True
-

@@ -1,0 +1,108 @@
+{
+  "app": {
+    "title": "Financial Data",
+    "loading": "Loading...",
+    "error": "Error fetching data"
+  },
+  "header": {
+    "dashboard": "Dashboard",
+    "currencies": "Currencies",
+    "stocks": "Stocks"
+  },
+  "chart": {
+    "title": "Stock Market Quotes",
+    "selectIndex": "Select index",
+    "chartType": "Chart type",
+    "candlestick": "Candlestick",
+    "line": "Line",
+    "open": "Open",
+    "high": "High",
+    "low": "Low",
+    "close": "Close",
+    "volume": "Volume"
+  },
+  "currency": {
+    "title": "Exchange Rates",
+    "selectCurrencies": "Select currencies",
+    "code": "Code",
+    "name": "Currency",
+    "date": "Date",
+    "midRate": "Mid Rate",
+    "buyRate": "Buy Rate",
+    "sellRate": "Sell Rate",
+    "change": "Change",
+    "avgRate": "Average",
+    "main": "Main",
+    "all": "All"
+  },
+  "stocks": {
+    "title": "Stock Quotes",
+    "selectIndex": "Select index",
+    "allIndices": "All indices",
+    "symbol": "Symbol",
+    "name": "Name",
+    "price": "Price",
+    "change": "Change",
+    "changePercent": "Change %",
+    "volume": "Volume",
+    "exchange": "Exchange",
+    "selectCompanies": "Select companies",
+    "maxCompanies": "Max 4 companies"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "tiles": {
+      "indexChart": "Index Chart",
+      "currencyChart": "Currency Chart",
+      "indexTable": "Index Table",
+      "currencyTable": "Currency Table",
+      "stockChart": "Stock Chart",
+      "stockTable": "Stock Table"
+    }
+  },
+  "period": {
+    "1w": "1 week",
+    "3m": "3 months",
+    "1y": "1 year",
+    "3y": "3 years",
+    "10y": "10 years",
+    "max": "Max"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "pl": "Polish",
+    "en": "English"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "healthcheck": "Healthcheck",
+    "logs": "Logs",
+    "login": "Login"
+  },
+  "logs": {
+    "title": "Application Logs",
+    "timestamp": "Timestamp",
+    "level": "Level",
+    "module": "Module",
+    "message": "Message",
+    "allLevels": "All Levels",
+    "allModules": "All Modules",
+    "searchPlaceholder": "Search messages...",
+    "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
+    "sortByTimestamp": "Sort by timestamp",
+    "sortByLevel": "Sort by level",
+    "sortByModule": "Sort by module",
+    "sortAscending": "Ascending",
+    "sortDescending": "Descending",
+    "loading": "Loading...",
+    "empty": "No logs found",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  }
+}

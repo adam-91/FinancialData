@@ -1,20 +1,21 @@
 from decimal import Decimal
-from integrations.NBP.currency_service import (parse_nbp_ab_data, parse_nbp_c_data)
+
+from integrations.NBP.currency_service import parse_nbp_ab_data, parse_nbp_c_data
 
 
 def test_parse_nbp_ab_data_converts_mid_to_decimal():
     payload = [
-        {   
-            "table":"A",
-            "no":"105/A/NBP/2026",
-            "effectiveDate":"2026-06-02",
+        {
+            "table": "A",
+            "no": "105/A/NBP/2026",
+            "effectiveDate": "2026-06-02",
             "rates": [
                 {
                     "currency": "dolar amerykański",
                     "code": "USD",
                     "mid": 4.1234,
                 },
-            ]
+            ],
         }
     ]
 
@@ -25,8 +26,8 @@ def test_parse_nbp_ab_data_converts_mid_to_decimal():
 
 def test_parse_nbp_c_data_converts_bid_and_ask_to_decimal():
     payload = [
-        { 
-            "table":"A",
+        {
+            "table": "A",
             "no": "105/A/NBP/2026",
             "tradingDate": "2026-06-02",
             "effectiveDate": "2025-01-01",
@@ -37,7 +38,7 @@ def test_parse_nbp_c_data_converts_bid_and_ask_to_decimal():
                     "bid": 3.6013,
                     "ask": 3.6741,
                 },
-            ]    
+            ],
         }
     ]
 

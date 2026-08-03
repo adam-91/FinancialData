@@ -1,8 +1,14 @@
 from decimal import Decimal
-from integrations.NBP.currency_schema import NBP_AB_table, NBP_C_table
-from dto.exchange_rate_dto import MidRateDTO, BuyAndSellRateDTO
+
 from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
 from db.models.exchange_mid_rate import ExchangeMidRate
+from dto.exchange_rate_dto import (
+    BuyAndSellRateCreateDTO,
+    BuyAndSellRateDTO,
+    MidRateCreateDTO,
+    MidRateDTO,
+)
+from integrations.NBP.currency_schema import NBP_AB_table, NBP_C_table
 
 
 def parse_nbp_ab_data(data: list) -> NBP_AB_table:
@@ -16,11 +22,12 @@ def parse_nbp_ab_data(data: list) -> NBP_AB_table:
         rate["mid"] = Decimal(str(rate["mid"]))
 
     return NBP_AB_table(
-        table = table["table"],
-        no = table["no"],
-        effectiveDate = table["effectiveDate"],
-        rates = rates
+        table=table["table"],
+        no=table["no"],
+        effectiveDate=table["effectiveDate"],
+        rates=rates,
     )
+
 
 def parse_nbp_c_data(data: list) -> NBP_C_table:
     table = data[0]
@@ -34,15 +41,19 @@ def parse_nbp_c_data(data: list) -> NBP_C_table:
         rate["ask"] = Decimal(str(rate["ask"]))
 
     return NBP_C_table(
-        table = table["table"],
-        no = table["no"],
-        tradingDate = table["tradingDate"],
-        effectiveDate = table["effectiveDate"],
-        rates = rates
+        table=table["table"],
+        no=table["no"],
+        tradingDate=table["tradingDate"],
+        effectiveDate=table["effectiveDate"],
+        rates=rates,
     )
 
-def dto_to_entity(dto: MidRateDTO | BuyAndSellRateDTO, currency_id: int,) -> ExchangeMidRate | ExchangeBuyAndSellRate:
-    if isinstance(dto, BuyAndSellRateDTO):
+
+def dto_to_entity(
+    dto: MidRateCreateDTO | BuyAndSellRateCreateDTO,
+    currency_id: int,
+) -> ExchangeMidRate | ExchangeBuyAndSellRate:
+    if isinstance(dto, BuyAndSellRateCreateDTO):
         return ExchangeBuyAndSellRate(
             currency_id=currency_id,
             bid=dto.bid,
@@ -50,11 +61,12 @@ def dto_to_entity(dto: MidRateDTO | BuyAndSellRateDTO, currency_id: int,) -> Exc
             effective_date=dto.effective_date,
         )
     else:
-          return ExchangeMidRate(
+        return ExchangeMidRate(
             currency_id=currency_id,
             mid=dto.mid,
             effective_date=dto.effective_date,
-          )
+        )
+
 
 def map_to_mid_models(table: NBP_AB_table) -> list[MidRateDTO]:
     return [
@@ -66,6 +78,7 @@ def map_to_mid_models(table: NBP_AB_table) -> list[MidRateDTO]:
         )
         for r in table.rates
     ]
+
 
 def map_to_bas_models(table: NBP_C_table) -> list[BuyAndSellRateDTO]:
     return [

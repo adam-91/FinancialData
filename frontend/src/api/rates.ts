@@ -7,7 +7,7 @@ const api = axios.create({
 
 export const getLastRate = async (
   code: string,
-  date: string
+  _date: string
 ): Promise<ExchangeRate> => {
   const response = await api.get<ExchangeRate>(
     `/api/rates/last/${code}/`
