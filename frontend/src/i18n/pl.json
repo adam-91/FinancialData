@@ -104,5 +104,48 @@
     "next": "Następna",
     "page": "Strona",
     "of": "z"
+  },
+  "auth": {
+    "loginTitle": "Logowanie",
+    "registerTitle": "Załóż konto",
+    "forgotTitle": "Przypomnij hasło",
+    "resetTitle": "Ustaw nowe hasło",
+    "email": "Email",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "newPassword": "Nowe hasło",
+    "currentPassword": "Obecne hasło",
+    "login": "Zaloguj",
+    "register": "Załóż konto",
+    "cancel": "Anuluj",
+    "logout": "Wyloguj",
+    "changePassword": "Zmień hasło",
+    "forgotPassword": "Nie pamiętasz hasła?",
+    "haveAccount": "Masz już konto?",
+    "noAccount": "Nie masz konta?",
+    "sendResetLink": "Wyślij link resetujący",
+    "resetPassword": "Zresetuj hasło",
+    "backToLogin": "Wróć do logowania",
+    "errors": {
+      "invalidCredentials": "Nieprawidłowy email lub hasło",
+      "emailExists": "Ten email jest już zarejestrowany",
+      "generic": "Coś poszło nie tak",
+      "weakPassword": "Hasło nie spełnia wymagań",
+      "passwordsMismatch": "Hasła nie są identyczne",
+      "registerSuccess": "Konto utworzone. Możesz się zalogować.",
+      "resetSent": "Jeśli email istnieje, link resetujący został wysłany.",
+      "resetSuccess": "Hasło zostało zresetowane. Możesz się zalogować.",
+      "changeSuccess": "Hasło zostało zmienione.",
+      "wrongPassword": "Obecne hasło jest nieprawidłowe",
+      "invalidResetToken": "Nieprawidłowy lub wygasły link"
+    },
+    "requirements": {
+      "title": "Hasło musi zawierać",
+      "length": "co najmniej 10 znaków",
+      "lower": "małą literę",
+      "upper": "wielką literę",
+      "digit": "cyfrę",
+      "special": "znak specjalny"
+    }
   }
 }

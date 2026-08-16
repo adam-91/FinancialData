@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { LanguageSwitch } from "../ui/LanguageSwitch";
-import { LoginModal } from "../ui/LoginModal";
+import { AuthModal } from "../ui/AuthModal";
+import { ChangePasswordModal } from "../ui/ChangePasswordModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -97,10 +99,24 @@ const LoginButton = styled.button`
   }
 `;
 
+const UserEmail = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+const UserMenu = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 export function Header() {
   const { t } = useTranslation();
   const location = useLocation();
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { user, logout } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   return (
     <HeaderContainer>
@@ -122,13 +138,30 @@ export function Header() {
         </NavLink>
       </Nav>
       <Controls>
-        <LoginButton onClick={() => setShowLoginModal(true)}>
-          {t("nav.login", "Login")}
-        </LoginButton>
+        {user ? (
+          <UserMenu>
+            <UserEmail>{user.email}</UserEmail>
+            <LoginButton onClick={() => setShowChangePasswordModal(true)}>
+              {t("auth.changePassword", "Change password")}
+            </LoginButton>
+            <LoginButton onClick={() => logout()}>
+              {t("auth.logout", "Log out")}
+            </LoginButton>
+          </UserMenu>
+        ) : (
+          <LoginButton onClick={() => setShowAuthModal(true)}>
+            {t("nav.login", "Login")}
+          </LoginButton>
+        )}
         <LanguageSwitch />
         <ThemeToggle />
       </Controls>
-      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} />
+      )}
+      {showChangePasswordModal && (
+        <ChangePasswordModal onClose={() => setShowChangePasswordModal(false)} />
+      )}
     </HeaderContainer>
   );
 }

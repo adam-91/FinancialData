@@ -1,5 +1,6 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useSearchParams, useNavigate } from "react-router-dom";
 import { Layout } from "./components/layout/Layout";
+import { AuthModal } from "./components/ui/AuthModal";
 import { DashboardGrid } from "./components/dashboard/DashboardGrid";
 import { IndexChartTile } from "./components/dashboard/IndexChartTile";
 import { CurrencyChartTile } from "./components/dashboard/CurrencyChartTile";
@@ -26,6 +27,20 @@ function DashboardPage() {
   );
 }
 
+function ResetPasswordPage() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const token = searchParams.get("token") ?? undefined;
+
+  return (
+    <AuthModal
+      initialView="reset"
+      resetToken={token}
+      onClose={() => navigate("/")}
+    />
+  );
+}
+
 function App() {
   return (
     <Layout>
@@ -34,6 +49,7 @@ function App() {
         <Route path="/healthcheck" element={<HealthcheckPage />} />
         <Route path="/logs" element={<LogsPage />} />
         <Route path="/raw-data/:entityType/:symbol" element={<RawDataPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
     </Layout>
   );
