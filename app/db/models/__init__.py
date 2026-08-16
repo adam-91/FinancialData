@@ -7,6 +7,7 @@ from .stock_exchange_index import StockExchangeIndex
 from .stock_exchange_index_rate import StockExchangeIndexRate
 from .stock_index_membership import StockIndexMembership
 from .stock_price import StockPrice
+from .user import User, UserRole
 
 __all__ = [
     "Currency",
@@ -18,4 +19,6 @@ __all__ = [
     "StockExchangeIndex",
     "StockExchangeIndexRate",
     "StockIndexMembership",
+    "User",
+    "UserRole",
 ]
