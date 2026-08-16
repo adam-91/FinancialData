@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useIndices } from "../../hooks/useIndices";
 import { useStockPrices } from "../../hooks/useStocks";
+import { useSettings } from "../../contexts/SettingsContext";
+import { useSessionDefault } from "../../hooks/useSessionDefault";
 import { TileWrapper } from "./TileWrapper";
 
 const TableContainer = styled.div`
@@ -82,6 +84,41 @@ const LoadingText = styled.p`
   padding: 40px;
 `;
 
+const Controls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+`;
+
+const Select = styled.select`
+  padding: 8px 32px 8px 12px;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  min-width: 180px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.accent};
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.accent};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.accent}33;
+  }
+`;
+
 type SortField = "name" | "change" | "exchange";
 type SortDirection = "asc" | "desc";
 
@@ -98,12 +135,28 @@ export function IndexTableTile() {
   const { t } = useTranslation();
   const { data: indices, isLoading: indicesLoading } = useIndices();
   const { data: stocks, isLoading: stocksLoading } = useStockPrices();
+  const { defaultExchange, version } = useSettings();
+  const [exchange, setExchange] = useSessionDefault<string>(
+    () => defaultExchange ?? "all",
+    !!indices,
+    version
+  );
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
+  const exchangeOptions = useMemo(() => {
+    const values = new Set<string>();
+    (indices ?? []).forEach((idx) => values.add(idx.stock_exchange));
+    return Array.from(values).sort();
+  }, [indices]);
+
   const indexData = useMemo((): IndexRow[] => {
     if (!indices || !stocks) return [];
-    return indices.map((idx) => {
+    const filtered =
+      exchange === "all"
+        ? indices
+        : indices.filter((idx) => idx.stock_exchange === exchange);
+    return filtered.map((idx) => {
       const indexStocks = stocks.filter((s) => s.indices.includes(idx.symbol));
       const avgChange = indexStocks.length > 0
         ? indexStocks.reduce((sum, s) => sum + s.price.change_percent, 0) / indexStocks.length
@@ -120,7 +173,7 @@ export function IndexTableTile() {
         change_percent: avgChange,
       };
     });
-  }, [indices, stocks]);
+  }, [indices, stocks, exchange]);
 
   const sortedData = useMemo(() => {
     const sorted = [...indexData];
@@ -153,6 +206,16 @@ export function IndexTableTile() {
 
   return (
     <TileWrapper title={t("dashboard.tiles.indexTable")}>
+      <Controls>
+        <Select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+          <option value="all">{t("settings.allExchanges")}</option>
+          {exchangeOptions.map((ex) => (
+            <option key={ex} value={ex}>
+              {ex}
+            </option>
+          ))}
+        </Select>
+      </Controls>
       <TableContainer>
         <Table>
           <thead>

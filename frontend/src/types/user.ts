@@ -7,3 +7,8 @@ export interface User {
   is_active: boolean;
   created_at: string;
 }
+
+export interface UserPreferences {
+  default_exchange: string | null;
+  default_currencies: string[];
+}

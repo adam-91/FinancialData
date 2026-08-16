@@ -5,6 +5,8 @@ import { useQueries } from "@tanstack/react-query";
 import { useIndices, useIndexHistory } from "../../hooks/useIndices";
 import { getIndexHistory } from "../../api/indices";
 import { Period } from "../../types/index";
+import { useSettings } from "../../contexts/SettingsContext";
+import { useSessionDefault } from "../../hooks/useSessionDefault";
 import { TileWrapper } from "./TileWrapper";
 import { PeriodSelector } from "../ui/PeriodSelector";
 import { MultiSelect } from "../ui/MultiSelect";
@@ -83,8 +85,23 @@ const LoadingText = styled.p`
 export function IndexChartTile() {
   const { t } = useTranslation();
   const { data: indices, isLoading } = useIndices();
+  const { defaultExchange, version } = useSettings();
   const [chartType, setChartType] = useState<ChartType>("candlestick");
-  const [selectedSymbols, setSelectedSymbols] = useState<string[]>(["^WIG20"]);
+  const [selectedSymbols, setSelectedSymbols] = useSessionDefault<string[]>(
+    () => {
+      if (defaultExchange && indices) {
+        const exchangeIndices = indices.filter(
+          (i) => i.stock_exchange === defaultExchange
+        );
+        if (exchangeIndices.length > 0) {
+          return exchangeIndices.slice(0, 4).map((i) => i.symbol);
+        }
+      }
+      return ["^WIG20"];
+    },
+    !!indices,
+    version
+  );
   const [period, setPeriod] = useState<Period>("1y");
 
   const singleSymbol = selectedSymbols[0] || "^WIG20";

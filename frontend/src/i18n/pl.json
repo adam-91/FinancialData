@@ -147,5 +147,12 @@
       "digit": "cyfrę",
       "special": "znak specjalny"
     }
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "defaultExchange": "Domyślna giełda",
+    "defaultExchangeNone": "Brak",
+    "defaultCurrencies": "Domyślne waluty",
+    "allExchanges": "Wszystkie giełdy"
   }
 }

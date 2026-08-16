@@ -6,6 +6,7 @@ import { ThemeToggle } from "../ui/ThemeToggle";
 import { LanguageSwitch } from "../ui/LanguageSwitch";
 import { AuthModal } from "../ui/AuthModal";
 import { ChangePasswordModal } from "../ui/ChangePasswordModal";
+import { SettingsMenu } from "../ui/SettingsMenu";
 import { useAuth } from "../../contexts/AuthContext";
 
 const HeaderContainer = styled.header`
@@ -155,6 +156,7 @@ export function Header() {
         )}
         <LanguageSwitch />
         <ThemeToggle />
+        <SettingsMenu onOpenChangePassword={() => setShowChangePasswordModal(true)} />
       </Controls>
       {showAuthModal && (
         <AuthModal onClose={() => setShowAuthModal(false)} />

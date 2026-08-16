@@ -5,6 +5,8 @@ import { useQueries } from "@tanstack/react-query";
 import { useCurrencies } from "../../hooks/useCurrency";
 import { getCurrencyHistory } from "../../api/currencyHistory";
 import { Period } from "../../types/index";
+import { useSettings } from "../../contexts/SettingsContext";
+import { useSessionDefault } from "../../hooks/useSessionDefault";
 import { TileWrapper } from "./TileWrapper";
 import { PeriodSelector } from "../ui/PeriodSelector";
 import { MultiSelect } from "../ui/MultiSelect";
@@ -30,7 +32,15 @@ const DEFAULT_CURRENCIES = ["EUR", "USD"];
 export function CurrencyChartTile() {
   const { t } = useTranslation();
   const { data: currencies, isLoading } = useCurrencies();
-  const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>(DEFAULT_CURRENCIES);
+  const { defaultCurrencies, version } = useSettings();
+  const [selectedCurrencies, setSelectedCurrencies] = useSessionDefault<string[]>(
+    () =>
+      defaultCurrencies.length > 0
+        ? defaultCurrencies.slice(0, 8)
+        : DEFAULT_CURRENCIES,
+    true,
+    version
+  );
   const [period, setPeriod] = useState<Period>("1y");
 
   const currencyOptions = useMemo(() => {

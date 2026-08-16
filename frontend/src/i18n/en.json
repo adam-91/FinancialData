@@ -147,5 +147,12 @@
       "digit": "a digit",
       "special": "a special character"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "defaultExchange": "Default exchange",
+    "defaultExchangeNone": "None",
+    "defaultCurrencies": "Default currencies",
+    "allExchanges": "All exchanges"
   }
 }

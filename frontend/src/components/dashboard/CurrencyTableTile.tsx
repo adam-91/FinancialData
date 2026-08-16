@@ -2,7 +2,11 @@ import { useMemo, useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useRates } from "../../hooks/useRates";
+import { useCurrencies } from "../../hooks/useCurrency";
+import { useSettings } from "../../contexts/SettingsContext";
+import { useSessionDefault } from "../../hooks/useSessionDefault";
 import { TileWrapper } from "./TileWrapper";
+import { MultiSelect } from "../ui/MultiSelect";
 
 const TableContainer = styled.div`
   overflow-x: auto;
@@ -129,9 +133,23 @@ type SortDirection = "asc" | "desc";
 export function CurrencyTableTile() {
   const { t } = useTranslation();
   const { data: rates, isLoading } = useRates();
+  const { data: currencies } = useCurrencies();
+  const { defaultCurrencies, version } = useSettings();
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [showMainOnly, setShowMainOnly] = useState(true);
+  const [selectedCurrencies, setSelectedCurrencies] = useSessionDefault<string[]>(
+    () => defaultCurrencies,
+    true,
+    version
+  );
+
+  const currencyOptions = useMemo(() => {
+    return (currencies ?? []).map((c) => ({
+      value: c.code,
+      label: `${c.code} - ${c.name}`,
+    }));
+  }, [currencies]);
 
   const ratesWithChange = useMemo(() => {
     if (!rates) return [];
@@ -142,9 +160,16 @@ export function CurrencyTableTile() {
   }, [rates]);
 
   const filteredRates = useMemo(() => {
-    if (!showMainOnly) return ratesWithChange;
-    return ratesWithChange.filter((r) => r.bid != null && r.ask != null);
-  }, [ratesWithChange, showMainOnly]);
+    let result = showMainOnly
+      ? ratesWithChange.filter((r) => r.bid != null && r.ask != null)
+      : ratesWithChange;
+
+    if (selectedCurrencies.length > 0) {
+      result = result.filter((r) => selectedCurrencies.includes(r.code));
+    }
+
+    return result;
+  }, [ratesWithChange, showMainOnly, selectedCurrencies]);
 
   const sortedRates = useMemo(() => {
     const sorted = [...filteredRates];
@@ -177,6 +202,12 @@ export function CurrencyTableTile() {
   return (
     <TileWrapper title={t("dashboard.tiles.currencyTable")}>
       <Controls>
+        <MultiSelect
+          options={currencyOptions}
+          selected={selectedCurrencies}
+          onChange={(s) => setSelectedCurrencies(s)}
+          placeholder={t("currency.selectCurrencies")}
+        />
         <ToggleGroup>
           <ToggleButton
             $active={showMainOnly}
