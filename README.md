@@ -19,8 +19,10 @@ Full-stack platform for collecting, processing, and visualizing financial market
 <h2>Screenshots<h2>
 
 <h3>Dashboard</h3>
-![Dashboard](screenshots/MainPanel.png)
-![Dashboard](screenshots/WhiteModePL.png)
+<p align="center">
+  <img src="screenshots/MainPanel.png" width="48%">
+  <img src="screenshots/WhiteModePL.png" width="48%">
+</p>
 
 <h2>🚀 Features</h2>
 
