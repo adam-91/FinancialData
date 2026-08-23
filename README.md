@@ -108,7 +108,7 @@ Full-stack platform for collecting, processing, and visualizing financial market
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │  Frontend   │────▶│  Backend    │────▶│ PostgreSQL  │
 │  React/TS   │     │  FastAPI    │     │   16        │
-│  :5173      │     │  :8000      │     │   :5432     │
+│  :5173      │     │  :8001      │     │   :5432     │
 └─────────────┘     └──────┬──────┘     └─────────────┘
                            │
                     ┌──────┴──────┐
@@ -159,7 +159,7 @@ docker compose up -d
 <p>This starts 3 services:</p>
 
 <ul>
-  <li><b>Backend API</b> — <code>http://localhost:8000</code></li>
+  <li><b>Backend API</b> — <code>http://localhost:8001</code></li>
   <li><b>Frontend</b> — <code>http://localhost:5173</code></li>
   <li><b>PostgreSQL</b> — <code>localhost:5432</code></li>
 </ul>
@@ -186,7 +186,7 @@ docker compose up -d
 pip install -r app/requirements.txt
 
 # Run the backend
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8001
 </pre>
 
 <h3>Frontend</h3>
