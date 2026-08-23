@@ -86,7 +86,8 @@
   "analytics": {
     "currencies": "Waluty",
     "exchanges": "Giełdy",
-    "companies": "Spółki"
+    "companies": "Spółki",
+    "quotations": "Notowania"
   },
   "logs": {
     "title": "Logi aplikacji",

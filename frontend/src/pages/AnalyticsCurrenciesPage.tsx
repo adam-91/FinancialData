@@ -1,16 +1,57 @@
-import { DashboardGrid, buildDefaultLayouts } from "../components/dashboard/DashboardGrid";
-import { CurrencyChartTile } from "../components/dashboard/CurrencyChartTile";
-import { CurrencyTableTile } from "../components/dashboard/CurrencyTableTile";
+import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useCurrencies } from "../hooks/useCurrency";
+import { Period } from "../types/index";
+import {
+  AnalyticsPageLayout,
+  AnalyticsTile,
+  AnalyticsTileTitle,
+} from "../components/analytics/AnalyticsPageLayout";
+import { CurrencyChartView } from "../components/analytics/CurrencyChartView";
+import { CurrencyTableBody } from "../components/analytics/CurrencyTableBody";
+import { MultiSelect } from "../components/ui/MultiSelect";
 
-const defaultLayouts = buildDefaultLayouts(["currencyChart", "currencyTable"]);
+const DEFAULT_CURRENCIES = ["EUR", "USD"];
 
 export function AnalyticsCurrenciesPage() {
+  const { t } = useTranslation();
+  const { data: currencies } = useCurrencies();
+  const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>(DEFAULT_CURRENCIES);
+  const [period, setPeriod] = useState<Period>("1y");
+
+  const currencyOptions = useMemo(() => {
+    return (currencies ?? []).map((c) => ({
+      value: c.code,
+      label: `${c.code} - ${c.name}`,
+    }));
+  }, [currencies]);
+
   return (
-    <DashboardGrid storageKey="analytics-currencies-layout" defaultLayouts={defaultLayouts}>
-      {{
-        currencyChart: <CurrencyChartTile />,
-        currencyTable: <CurrencyTableTile />,
-      }}
-    </DashboardGrid>
+    <AnalyticsPageLayout
+      toolbar={
+        <MultiSelect
+          options={currencyOptions}
+          selected={selectedCurrencies}
+          onChange={(s) => setSelectedCurrencies(s.slice(0, 8))}
+          placeholder={t("currency.selectCurrencies")}
+          maxSelected={8}
+        />
+      }
+      chart={
+        <AnalyticsTile>
+          <CurrencyChartView
+            selectedCurrencies={selectedCurrencies}
+            period={period}
+            onPeriodChange={setPeriod}
+          />
+        </AnalyticsTile>
+      }
+      table={
+        <AnalyticsTile>
+          <AnalyticsTileTitle>{t("analytics.quotations")}</AnalyticsTileTitle>
+          <CurrencyTableBody />
+        </AnalyticsTile>
+      }
+    />
   );
 }

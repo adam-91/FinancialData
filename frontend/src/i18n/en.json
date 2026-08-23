@@ -86,7 +86,8 @@
   "analytics": {
     "currencies": "Currencies",
     "exchanges": "Exchanges",
-    "companies": "Companies"
+    "companies": "Companies",
+    "quotations": "Quotes"
   },
   "logs": {
     "title": "Application Logs",

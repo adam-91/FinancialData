@@ -1,16 +1,14 @@
 import { useState, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { useQueries } from "@tanstack/react-query";
 import { useIndices } from "../../hooks/useIndices";
 import { useStockPrices } from "../../hooks/useStocks";
 import { getStockHistory } from "../../api/stocks";
 import { Period } from "../../types/index";
 import { TileWrapper } from "./TileWrapper";
-import { PeriodSelector } from "../ui/PeriodSelector";
 import { MultiSelect } from "../ui/MultiSelect";
-import { StockChart } from "../chart/StockChart";
-import { MultiLineChart } from "../chart/MultiLineChart";
+import { Select } from "../ui/Select";
+import { OHLCChartView } from "../analytics/OHLCChartView";
 import { ChartType } from "../chart/ChartControls";
 
 const Controls = styled.div`
@@ -21,63 +19,11 @@ const Controls = styled.div`
   margin-bottom: 12px;
 `;
 
-const ToggleGroup = styled.div`
-  display: flex;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  overflow: hidden;
-`;
-
-const ToggleButton = styled.button<{ $active: boolean }>`
-  padding: 6px 12px;
-  border: none;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: ${({ $active, theme }) => ($active ? theme.colors.accent : theme.colors.surface)};
-  color: ${({ $active, theme }) => ($active ? "#fff" : theme.colors.text.secondary)};
-
-  &:hover {
-    background: ${({ $active, theme }) => ($active ? theme.colors.accentHover : theme.colors.surfaceHover)};
-  }
-
-  &:not(:last-child) {
-    border-right: 1px solid ${({ theme }) => theme.colors.border};
-  }
-`;
-
-const Select = styled.select`
-  padding: 6px 28px 6px 10px;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.accent};
-  }
-`;
-
 const LoadingText = styled.p`
   color: ${({ theme }) => theme.colors.text.muted};
   font-size: 14px;
   text-align: center;
   padding: 40px;
-`;
-
-const HintText = styled.p`
-  color: ${({ theme }) => theme.colors.text.muted};
-  font-size: 11px;
-  margin: 4px 0 0;
 `;
 
 export function StockChartTile() {
@@ -111,44 +57,18 @@ export function StockChartTile() {
     }
   }, [stocksForIndex, selectedStocks.length]);
 
-  const singleSymbol = selectedStocks[0] || "";
-  const singleHistoryResults = useQueries({
-    queries: chartType === "candlestick" && singleSymbol
-      ? [{
-          queryKey: ["stockHistory", singleSymbol, period],
-          queryFn: () => getStockHistory(singleSymbol, period),
-        }]
-      : [],
-  });
-  const singleHistory = singleHistoryResults[0]?.data;
-
-  const historyResults = useQueries({
-    queries: chartType === "line"
-      ? selectedStocks.map((sym) => ({
-          queryKey: ["stockHistory", sym, period],
-          queryFn: () => getStockHistory(sym, period),
-        }))
-      : [],
-  });
-
-  const multiSeries = useMemo(() => {
-    if (chartType !== "line") return [];
-    return selectedStocks.map((sym, i) => {
-      const data = historyResults[i]?.data?.data ?? [];
-      return {
-        label: sym,
-        data: data.map((d) => ({ time: d.time, value: d.close })),
-      };
-    });
-  }, [chartType, selectedStocks, historyResults]);
-
-  const maxStocks = chartType === "candlestick" ? 1 : 4;
-
   const handleStockChange = (selected: string[]) => {
     if (chartType === "candlestick") {
       setSelectedStocks(selected.slice(0, 1));
     } else {
       setSelectedStocks(selected.slice(0, 4));
+    }
+  };
+
+  const handleChartTypeChange = (type: ChartType) => {
+    setChartType(type);
+    if (type === "candlestick") {
+      setSelectedStocks((prev) => prev.slice(0, 1));
     }
   };
 
@@ -193,30 +113,17 @@ export function StockChartTile() {
             maxSelected={4}
           />
         )}
-        <ToggleGroup>
-          <ToggleButton
-            $active={chartType === "candlestick"}
-            onClick={() => {
-              setChartType("candlestick");
-              setSelectedStocks((prev) => prev.slice(0, 1));
-            }}
-          >
-            {t("chart.candlestick")}
-          </ToggleButton>
-          <ToggleButton
-            $active={chartType === "line"}
-            onClick={() => setChartType("line")}
-          >
-            {t("chart.line")}
-          </ToggleButton>
-        </ToggleGroup>
-        <PeriodSelector selectedPeriod={period} onPeriodChange={setPeriod} />
       </Controls>
-      {chartType === "candlestick" ? (
-        <StockChart data={singleHistory?.data ?? []} chartType="candlestick" height={260} />
-      ) : (
-        <MultiLineChart series={multiSeries} height={260} />
-      )}
+      <OHLCChartView
+        selectedSymbols={selectedStocks}
+        chartType={chartType}
+        period={period}
+        onChartTypeChange={handleChartTypeChange}
+        onPeriodChange={setPeriod}
+        getHistory={getStockHistory}
+        namespace="stockHistory"
+        height={260}
+      />
     </TileWrapper>
   );
 }
