@@ -145,14 +145,14 @@ export function IndexTableTile() {
 
   if (indicesLoading || stocksLoading) {
     return (
-      <TileWrapper title={t("dashboard.tiles.indexTable")}>
+      <TileWrapper title={t("dashboard.tiles.indexTable")} titleLink="/analytics/exchanges">
         <LoadingText>{t("app.loading")}</LoadingText>
       </TileWrapper>
     );
   }
 
   return (
-    <TileWrapper title={t("dashboard.tiles.indexTable")}>
+    <TileWrapper title={t("dashboard.tiles.indexTable")} titleLink="/analytics/exchanges">
       <TableContainer>
         <Table>
           <thead>

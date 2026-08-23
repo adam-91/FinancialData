@@ -10,6 +10,9 @@ import { StockTableTile } from "./components/dashboard/StockTableTile";
 import { HealthcheckPage } from "./pages/HealthcheckPage";
 import { RawDataPage } from "./pages/RawDataPage";
 import { LogsPage } from "./pages/LogsPage";
+import { AnalyticsExchangesPage } from "./pages/AnalyticsExchangesPage";
+import { AnalyticsCurrenciesPage } from "./pages/AnalyticsCurrenciesPage";
+import { AnalyticsCompaniesPage } from "./pages/AnalyticsCompaniesPage";
 
 function DashboardPage() {
   return (
@@ -34,6 +37,9 @@ function App() {
         <Route path="/healthcheck" element={<HealthcheckPage />} />
         <Route path="/logs" element={<LogsPage />} />
         <Route path="/raw-data/:entityType/:symbol" element={<RawDataPage />} />
+        <Route path="/analytics/exchanges" element={<AnalyticsExchangesPage />} />
+        <Route path="/analytics/currencies" element={<AnalyticsCurrenciesPage />} />
+        <Route path="/analytics/companies" element={<AnalyticsCompaniesPage />} />
       </Routes>
     </Layout>
   );

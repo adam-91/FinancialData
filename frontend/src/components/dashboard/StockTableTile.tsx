@@ -169,14 +169,14 @@ export function StockTableTile() {
 
   if (indicesLoading || stocksLoading) {
     return (
-      <TileWrapper title={t("dashboard.tiles.stockTable")}>
+      <TileWrapper title={t("dashboard.tiles.stockTable")} titleLink="/analytics/companies">
         <LoadingText>{t("app.loading")}</LoadingText>
       </TileWrapper>
     );
   }
 
   return (
-    <TileWrapper title={t("dashboard.tiles.stockTable")}>
+    <TileWrapper title={t("dashboard.tiles.stockTable")} titleLink="/analytics/companies">
       <Controls>
         <Select value={selectedIndex} onChange={(e) => setSelectedIndex(e.target.value)}>
           {(indices ?? []).map((idx) => (

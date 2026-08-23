@@ -78,9 +78,15 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "analytics": "Analytics",
     "healthcheck": "Healthcheck",
     "logs": "Logs",
     "login": "Login"
+  },
+  "analytics": {
+    "currencies": "Currencies",
+    "exchanges": "Exchanges",
+    "companies": "Companies"
   },
   "logs": {
     "title": "Application Logs",

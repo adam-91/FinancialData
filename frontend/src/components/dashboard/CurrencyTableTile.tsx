@@ -168,14 +168,14 @@ export function CurrencyTableTile() {
 
   if (isLoading) {
     return (
-      <TileWrapper title={t("dashboard.tiles.currencyTable")}>
+      <TileWrapper title={t("dashboard.tiles.currencyTable")} titleLink="/analytics/currencies">
         <LoadingText>{t("app.loading")}</LoadingText>
       </TileWrapper>
     );
   }
 
   return (
-    <TileWrapper title={t("dashboard.tiles.currencyTable")}>
+    <TileWrapper title={t("dashboard.tiles.currencyTable")} titleLink="/analytics/currencies">
       <Controls>
         <ToggleGroup>
           <ToggleButton

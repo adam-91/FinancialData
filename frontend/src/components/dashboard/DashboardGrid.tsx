@@ -59,55 +59,80 @@ const GridContainer = styled.div`
   }
 `;
 
-const STORAGE_KEY = "dashboard-layout";
+const DEFAULT_STORAGE_KEY = "dashboard-layout";
 
-const defaultLayouts = {
-  lg: [
-    { i: "indexChart", x: 0, y: 0, w: 6, h: 4, minW: 4, minH: 3 },
-    { i: "currencyChart", x: 6, y: 0, w: 6, h: 4, minW: 4, minH: 3 },
-    { i: "indexTable", x: 0, y: 4, w: 6, h: 4, minW: 4, minH: 3 },
-    { i: "currencyTable", x: 6, y: 4, w: 6, h: 4, minW: 4, minH: 3 },
-    { i: "stockChart", x: 0, y: 8, w: 6, h: 4, minW: 4, minH: 3 },
-    { i: "stockTable", x: 6, y: 8, w: 6, h: 4, minW: 4, minH: 3 },
-  ],
-  md: [
-    { i: "indexChart", x: 0, y: 0, w: 12, h: 4, minW: 6, minH: 3 },
-    { i: "currencyChart", x: 0, y: 4, w: 12, h: 4, minW: 6, minH: 3 },
-    { i: "indexTable", x: 0, y: 8, w: 12, h: 4, minW: 6, minH: 3 },
-    { i: "currencyTable", x: 0, y: 12, w: 12, h: 4, minW: 6, minH: 3 },
-    { i: "stockChart", x: 0, y: 16, w: 12, h: 4, minW: 6, minH: 3 },
-    { i: "stockTable", x: 0, y: 20, w: 12, h: 4, minW: 6, minH: 3 },
-  ],
-  sm: [
-    { i: "indexChart", x: 0, y: 0, w: 12, h: 4, minW: 12, minH: 3 },
-    { i: "currencyChart", x: 0, y: 4, w: 12, h: 4, minW: 12, minH: 3 },
-    { i: "indexTable", x: 0, y: 8, w: 12, h: 4, minW: 12, minH: 3 },
-    { i: "currencyTable", x: 0, y: 12, w: 12, h: 4, minW: 12, minH: 3 },
-    { i: "stockChart", x: 0, y: 16, w: 12, h: 4, minW: 12, minH: 3 },
-    { i: "stockTable", x: 0, y: 20, w: 12, h: 4, minW: 12, minH: 3 },
-  ],
-};
+export function buildDefaultLayouts(items: string[]): { [key: string]: Layout[] } {
+  const lg = items.map((i, idx) => ({
+    i,
+    x: (idx % 2) * 6,
+    y: Math.floor(idx / 2) * 4,
+    w: 6,
+    h: 4,
+    minW: 4,
+    minH: 3,
+  }));
+  const md = items.map((i, idx) => ({
+    i,
+    x: 0,
+    y: idx * 4,
+    w: 12,
+    h: 4,
+    minW: 6,
+    minH: 3,
+  }));
+  const sm = items.map((i, idx) => ({
+    i,
+    x: 0,
+    y: idx * 4,
+    w: 12,
+    h: 4,
+    minW: 12,
+    minH: 3,
+  }));
+  return { lg, md, sm };
+}
 
-function loadLayouts(): { [key: string]: Layout[] } {
+const defaultLayouts = buildDefaultLayouts([
+  "indexChart",
+  "currencyChart",
+  "indexTable",
+  "currencyTable",
+  "stockChart",
+  "stockTable",
+]);
+
+function loadLayouts(
+  storageKey: string,
+  fallback: { [key: string]: Layout[] }
+): { [key: string]: Layout[] } {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(storageKey);
     if (saved) return JSON.parse(saved);
   } catch {}
-  return defaultLayouts;
+  return fallback;
 }
 
 interface DashboardGridProps {
   children: { [key: string]: React.ReactNode };
+  storageKey?: string;
+  defaultLayouts?: { [key: string]: Layout[] };
 }
 
-export function DashboardGrid({ children }: DashboardGridProps) {
-  const [layouts, setLayouts] = useState(loadLayouts);
+export function DashboardGrid({
+  children,
+  storageKey = DEFAULT_STORAGE_KEY,
+  defaultLayouts: customLayouts,
+}: DashboardGridProps) {
+  const fallbackLayouts = customLayouts ?? defaultLayouts;
+  const [layouts, setLayouts] = useState(() =>
+    loadLayouts(storageKey, fallbackLayouts)
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(1200);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(layouts));
-  }, [layouts]);
+    localStorage.setItem(storageKey, JSON.stringify(layouts));
+  }, [layouts, storageKey]);
 
   useEffect(() => {
     if (!containerRef.current) return;

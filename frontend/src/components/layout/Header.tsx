@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { LanguageSwitch } from "../ui/LanguageSwitch";
 import { LoginModal } from "../ui/LoginModal";
+import { AnalyticsMenu } from "./AnalyticsMenu";
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -114,6 +115,7 @@ export function Header() {
         <NavLink to="/" $active={location.pathname === "/"}>
           {t("nav.dashboard", "Dashboard")}
         </NavLink>
+        <AnalyticsMenu />
         <NavLink to="/healthcheck" $active={location.pathname === "/healthcheck"}>
           {t("nav.healthcheck", "Healthcheck")}
         </NavLink>

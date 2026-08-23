@@ -133,14 +133,14 @@ export function IndexChartTile() {
 
   if (isLoading) {
     return (
-      <TileWrapper title={t("dashboard.tiles.indexChart")}>
+      <TileWrapper title={t("dashboard.tiles.indexChart")} titleLink="/analytics/exchanges">
         <LoadingText>{t("app.loading")}</LoadingText>
       </TileWrapper>
     );
   }
 
   return (
-    <TileWrapper title={t("dashboard.tiles.indexChart")}>
+    <TileWrapper title={t("dashboard.tiles.indexChart")} titleLink="/analytics/exchanges">
       <Controls>
         {chartType === "candlestick" ? (
           <Select value={singleSymbol} onChange={(e) => setSelectedSymbols([e.target.value])}>

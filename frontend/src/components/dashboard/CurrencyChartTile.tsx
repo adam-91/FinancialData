@@ -60,14 +60,14 @@ export function CurrencyChartTile() {
 
   if (isLoading) {
     return (
-      <TileWrapper title={t("dashboard.tiles.currencyChart")}>
+      <TileWrapper title={t("dashboard.tiles.currencyChart")} titleLink="/analytics/currencies">
         <LoadingText>{t("app.loading")}</LoadingText>
       </TileWrapper>
     );
   }
 
   return (
-    <TileWrapper title={t("dashboard.tiles.currencyChart")}>
+    <TileWrapper title={t("dashboard.tiles.currencyChart")} titleLink="/analytics/currencies">
       <Controls>
         <MultiSelect
           options={currencyOptions}

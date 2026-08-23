@@ -78,9 +78,15 @@
   },
   "nav": {
     "dashboard": "Panel",
+    "analytics": "Analityka",
     "healthcheck": "Zdrowie danych",
     "logs": "Logi",
     "login": "Zaloguj"
+  },
+  "analytics": {
+    "currencies": "Waluty",
+    "exchanges": "Giełdy",
+    "companies": "Spółki"
   },
   "logs": {
     "title": "Logi aplikacji",
