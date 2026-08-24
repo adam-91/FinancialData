@@ -7,7 +7,9 @@ from db.database import get_session
 from db.repositories.currency import CurrencyRepository
 from db.repositories.exchange_buy_and_sell_rate import ExchangeBuySellRateRepository
 from db.repositories.exchange_mid_rate import ExchangeMidRateRepository
+from dto.currency_summary import CurrencySummaryItem
 from integrations.NBP.currency_schema import ExchangeResponse
+from services.currency_summary_service import CurrencySummaryService
 from services.exchange_rate import ExchangeRateService
 
 router = APIRouter(prefix="/api/rates", tags=["rates"])
@@ -18,6 +20,16 @@ def get_exchange_rate_service(
 ) -> ExchangeRateService:
 
     return ExchangeRateService(
+        CurrencyRepository(db),
+        ExchangeMidRateRepository(db),
+        ExchangeBuySellRateRepository(db),
+    )
+
+
+def get_currency_summary_service(
+    db: AsyncSession = Depends(get_session),
+) -> CurrencySummaryService:
+    return CurrencySummaryService(
         CurrencyRepository(db),
         ExchangeMidRateRepository(db),
         ExchangeBuySellRateRepository(db),
@@ -57,6 +69,13 @@ async def get_all_rates(
 
         # raise HTTPException(status_code=404,detail="Currency not found")
     return rates
+
+
+@router.get("/summary", response_model=list[CurrencySummaryItem])
+async def get_currency_summary(
+    service: CurrencySummaryService = Depends(get_currency_summary_service),
+) -> list[CurrencySummaryItem]:
+    return await service.get_summary()
 
 
 @router.get("/{currency_code}", response_model=ExchangeResponse)
