@@ -33,7 +33,11 @@
     "change": "Change",
     "avgRate": "Average",
     "main": "Main",
-    "all": "All"
+    "all": "All",
+    "overview": "Currency overview",
+    "dailyChange": "Daily change (30 days)",
+    "movingAverage": "Moving average",
+    "correlation": "Correlation"
   },
   "stocks": {
     "title": "Stock Quotes",

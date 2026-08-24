@@ -1,11 +1,12 @@
-import structlog
 from contextlib import asynccontextmanager
 
+import structlog
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.currency import router as currency_router
+from api.currency_analytics import router as currency_analytics_router
 from api.data_health import router as data_health_router
 from api.exchange_rates import router as rates_router
 from api.indices import router as indices_router
@@ -73,6 +74,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(currency_router)
+app.include_router(currency_analytics_router)
 app.include_router(rates_router)
 app.include_router(stock_companies_router)
 app.include_router(indices_router)

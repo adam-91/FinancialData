@@ -21,3 +21,12 @@ export interface ExchangeRate {
   bid: number | null;
   ask: number | null;
 }
+
+export interface CurrencySummary {
+  code: string;
+  currency: string;
+  mid: number | null;
+  bid: number | null;
+  ask: number | null;
+  change: number | null;
+}

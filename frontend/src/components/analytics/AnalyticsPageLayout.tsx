@@ -6,9 +6,7 @@ export const AnalyticsToolbar = styled.div`
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 12px 16px;
-  border: 1px solid ${({ theme }) => theme.colors.accent};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: 12px 0;
   margin-bottom: 16px;
 `;
 
@@ -30,7 +28,6 @@ export const AnalyticsColumn = styled.div`
 `;
 
 export const AnalyticsTile = styled.div`
-  border: 1px solid ${({ theme }) => theme.colors.accent};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   background: ${({ theme }) => theme.colors.surface};
   padding: 16px;
@@ -47,9 +44,15 @@ interface AnalyticsPageLayoutProps {
   toolbar: ReactNode;
   chart: ReactNode;
   table: ReactNode;
+  right?: ReactNode;
 }
 
-export function AnalyticsPageLayout({ toolbar, chart, table }: AnalyticsPageLayoutProps) {
+export function AnalyticsPageLayout({
+  toolbar,
+  chart,
+  table,
+  right,
+}: AnalyticsPageLayoutProps) {
   return (
     <div>
       <AnalyticsToolbar>{toolbar}</AnalyticsToolbar>
@@ -58,7 +61,7 @@ export function AnalyticsPageLayout({ toolbar, chart, table }: AnalyticsPageLayo
           {chart}
           {table}
         </AnalyticsColumn>
-        <AnalyticsColumn />
+        <AnalyticsColumn>{right}</AnalyticsColumn>
       </AnalyticsColumns>
     </div>
   );

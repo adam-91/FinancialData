@@ -33,7 +33,11 @@
     "change": "Zmiana",
     "avgRate": "Średnia",
     "main": "Główne",
-    "all": "Wszystkie"
+    "all": "Wszystkie",
+    "overview": "Przegląd walut",
+    "dailyChange": "Zmiana dzienna (30 dni)",
+    "movingAverage": "Średnia krocząca",
+    "correlation": "Korelacja"
   },
   "stocks": {
     "title": "Notowania spółek",
