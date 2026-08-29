@@ -85,7 +85,72 @@
     "analytics": "Analytics",
     "healthcheck": "Healthcheck",
     "logs": "Logs",
-    "login": "Login"
+    "login": "Login",
+    "logout": "Logout",
+    "admin": "Admin"
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Sign in to the admin panel",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "forgotPassword": "Forgot password?",
+    "error": "Login failed"
+  },
+  "forgotPassword": {
+    "title": "Reset password",
+    "subtitle": "Enter your email to receive a reset link",
+    "submit": "Send reset link",
+    "back": "Back to login",
+    "success": "If the email exists, a reset link has been sent.",
+    "error": "Failed to send reset link"
+  },
+  "resetPassword": {
+    "title": "Set new password",
+    "subtitle": "Choose a new password",
+    "submit": "Update password",
+    "success": "Password updated. Redirecting to login...",
+    "error": "Failed to reset password"
+  },
+  "changePassword": {
+    "title": "Change password",
+    "forced": "You must change your password before continuing",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "submit": "Change password",
+    "logout": "Log out",
+    "mismatch": "Passwords do not match",
+    "error": "Failed to change password"
+  },
+  "admin": {
+    "title": "Admin panel",
+    "createUser": "Create user",
+    "usersList": "Users",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "status": "Status",
+    "mustChange": "Must change password",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "Yes",
+    "no": "No",
+    "create": "Create",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "resetPassword": "Reset password",
+    "logout": "Log out",
+    "loading": "Loading...",
+    "userCreated": "User created",
+    "userUpdated": "User updated",
+    "userDeleted": "User deleted",
+    "confirmDelete": "Are you sure you want to delete this user?",
+    "error": "Operation failed"
   },
   "analytics": {
     "currencies": "Currencies",

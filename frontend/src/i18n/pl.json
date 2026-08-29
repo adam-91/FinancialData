@@ -85,7 +85,72 @@
     "analytics": "Analityka",
     "healthcheck": "Zdrowie danych",
     "logs": "Logi",
-    "login": "Zaloguj"
+    "login": "Zaloguj",
+    "logout": "Wyloguj",
+    "admin": "Admin"
+  },
+  "login": {
+    "title": "Logowanie",
+    "subtitle": "Zaloguj się do panelu administracyjnego",
+    "email": "E-mail",
+    "password": "Hasło",
+    "submit": "Zaloguj",
+    "forgotPassword": "Nie pamiętasz hasła?",
+    "error": "Logowanie nie powiodło się"
+  },
+  "forgotPassword": {
+    "title": "Reset hasła",
+    "subtitle": "Podaj e-mail, aby otrzymać link resetu",
+    "submit": "Wyślij link resetu",
+    "back": "Powrót do logowania",
+    "success": "Jeśli konto istnieje, link resetu został wysłany.",
+    "error": "Nie udało się wysłać linku resetu"
+  },
+  "resetPassword": {
+    "title": "Ustaw nowe hasło",
+    "subtitle": "Wybierz nowe hasło",
+    "submit": "Zaktualizuj hasło",
+    "success": "Hasło zaktualizowane. Przekierowanie do logowania...",
+    "error": "Nie udało się zresetować hasła"
+  },
+  "changePassword": {
+    "title": "Zmiana hasła",
+    "forced": "Musisz zmienić hasło, aby kontynuować",
+    "current": "Obecne hasło",
+    "new": "Nowe hasło",
+    "confirm": "Potwierdź nowe hasło",
+    "submit": "Zmień hasło",
+    "logout": "Wyloguj",
+    "mismatch": "Hasła nie są zgodne",
+    "error": "Nie udało się zmienić hasła"
+  },
+  "admin": {
+    "title": "Panel administracyjny",
+    "createUser": "Utwórz konto",
+    "usersList": "Konta",
+    "email": "E-mail",
+    "password": "Hasło",
+    "newPassword": "Nowe hasło",
+    "status": "Status",
+    "mustChange": "Wymagana zmiana hasła",
+    "actions": "Akcje",
+    "active": "Aktywne",
+    "inactive": "Nieaktywne",
+    "yes": "Tak",
+    "no": "Nie",
+    "create": "Utwórz",
+    "edit": "Edytuj",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "resetPassword": "Reset hasła",
+    "logout": "Wyloguj",
+    "loading": "Ładowanie...",
+    "userCreated": "Konto utworzone",
+    "userUpdated": "Konto zaktualizowane",
+    "userDeleted": "Konto usunięte",
+    "confirmDelete": "Czy na pewno chcesz usunąć to konto?",
+    "error": "Operacja nie powiodła się"
   },
   "analytics": {
     "currencies": "Waluty",

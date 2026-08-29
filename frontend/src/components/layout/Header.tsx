@@ -1,11 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { LanguageSwitch } from "../ui/LanguageSwitch";
-import { LoginModal } from "../ui/LoginModal";
 import { AnalyticsMenu } from "./AnalyticsMenu";
+import { useAuth } from "../../contexts/AuthContext";
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -101,7 +101,15 @@ const LoginButton = styled.button`
 export function Header() {
   const { t } = useTranslation();
   const location = useLocation();
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const navigate = useNavigate();
+  const { user, logout, openLoginModal } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logout();
+    navigate("/");
+  };
 
   return (
     <HeaderContainer>
@@ -122,15 +130,25 @@ export function Header() {
         <NavLink to="/logs" $active={location.pathname === "/logs"}>
           {t("nav.logs", "Logs")}
         </NavLink>
+        {user && (
+          <NavLink to="/admin" $active={location.pathname === "/admin"}>
+            {t("nav.admin", "Admin")}
+          </NavLink>
+        )}
       </Nav>
       <Controls>
-        <LoginButton onClick={() => setShowLoginModal(true)}>
-          {t("nav.login", "Login")}
-        </LoginButton>
+        {user ? (
+          <LoginButton onClick={handleLogout} disabled={loggingOut}>
+            {t("nav.logout", "Logout")}
+          </LoginButton>
+        ) : (
+          <LoginButton onClick={openLoginModal}>
+            {t("nav.login", "Login")}
+          </LoginButton>
+        )}
         <LanguageSwitch />
         <ThemeToggle />
       </Controls>
-      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
     </HeaderContainer>
   );
 }

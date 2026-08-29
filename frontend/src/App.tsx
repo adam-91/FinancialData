@@ -13,6 +13,12 @@ import { LogsPage } from "./pages/LogsPage";
 import { AnalyticsExchangesPage } from "./pages/AnalyticsExchangesPage";
 import { AnalyticsCurrenciesPage } from "./pages/AnalyticsCurrenciesPage";
 import { AnalyticsCompaniesPage } from "./pages/AnalyticsCompaniesPage";
+import { LoginPage } from "./pages/LoginPage";
+import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
+import { ChangePasswordPage } from "./pages/ChangePasswordPage";
+import { AdminPage } from "./pages/AdminPage";
+import { RequireAuth, GuestOnly } from "./components/auth/RequireAuth";
 
 function DashboardPage() {
   return (
@@ -31,17 +37,100 @@ function DashboardPage() {
 
 function App() {
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/healthcheck" element={<HealthcheckPage />} />
-        <Route path="/logs" element={<LogsPage />} />
-        <Route path="/raw-data/:entityType/:symbol" element={<RawDataPage />} />
-        <Route path="/analytics/exchanges" element={<AnalyticsExchangesPage />} />
-        <Route path="/analytics/currencies" element={<AnalyticsCurrenciesPage />} />
-        <Route path="/analytics/companies" element={<AnalyticsCompaniesPage />} />
-      </Routes>
-    </Layout>
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          <GuestOnly>
+            <LoginPage />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <GuestOnly>
+            <ForgotPasswordPage />
+          </GuestOnly>
+        }
+      />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route
+        path="/change-password"
+        element={
+          <RequireAuth>
+            <ChangePasswordPage />
+          </RequireAuth>
+        }
+      />
+
+      <Route
+        path="/"
+        element={
+          <Layout>
+            <DashboardPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/healthcheck"
+        element={
+          <Layout>
+            <HealthcheckPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/logs"
+        element={
+          <Layout>
+            <LogsPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/raw-data/:entityType/:symbol"
+        element={
+          <Layout>
+            <RawDataPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/analytics/exchanges"
+        element={
+          <Layout>
+            <AnalyticsExchangesPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/analytics/currencies"
+        element={
+          <Layout>
+            <AnalyticsCurrenciesPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/analytics/companies"
+        element={
+          <Layout>
+            <AnalyticsCompaniesPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <RequireAuth>
+            <Layout>
+              <AdminPage />
+            </Layout>
+          </RequireAuth>
+        }
+      />
+    </Routes>
   );
 }
 
