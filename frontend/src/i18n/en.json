@@ -96,6 +96,7 @@
     "password": "Password",
     "submit": "Login",
     "forgotPassword": "Forgot password?",
+    "close": "Close",
     "error": "Login failed"
   },
   "forgotPassword": {
@@ -150,7 +151,22 @@
     "userUpdated": "User updated",
     "userDeleted": "User deleted",
     "confirmDelete": "Are you sure you want to delete this user?",
-    "error": "Operation failed"
+    "error": "Operation failed",
+    "addTicker": "Add company",
+    "addIndex": "Add index",
+    "symbol": "Symbol",
+    "name": "Name",
+    "exchange": "Exchange",
+    "selectExchange": "Select exchange",
+    "yahooSymbol": "Yahoo symbol",
+    "testYfinance": "Test yFinance",
+    "add": "Add",
+    "addAnyway": "Add anyway",
+    "tickerCreated": "Company added",
+    "indexCreated": "Index added",
+    "yfinanceFound": "yFinance recognizes the symbol",
+    "yfinanceNotFound": "yFinance does not recognize the symbol",
+    "lastClose": "close"
   },
   "analytics": {
     "currencies": "Currencies",

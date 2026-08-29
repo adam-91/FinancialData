@@ -21,6 +21,9 @@ interface AuthContextType {
   logout: () => Promise<void>;
   changePassword: (current: string, next: string) => Promise<AuthUser>;
   refreshUser: () => Promise<void>;
+  isLoginModalOpen: boolean;
+  openLoginModal: () => void;
+  closeLoginModal: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +31,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
+
+  const openLoginModal = useCallback(() => setLoginModalOpen(true), []);
+  const closeLoginModal = useCallback(() => setLoginModalOpen(false), []);
 
   const refreshUser = useCallback(async () => {
     try {
@@ -65,7 +72,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, logout, changePassword, refreshUser }}
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+        changePassword,
+        refreshUser,
+        isLoginModalOpen,
+        openLoginModal,
+        closeLoginModal,
+      }}
     >
       {children}
     </AuthContext.Provider>

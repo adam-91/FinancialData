@@ -10,6 +10,8 @@ import {
   useDeleteUser,
   useGenerateResetLink,
 } from "../hooks/useUsers";
+import { AddTickerSection } from "../components/admin/AddTickerSection";
+import { AddIndexSection } from "../components/admin/AddIndexSection";
 import { isAxiosError } from "axios";
 
 const PageContainer = styled.div`
@@ -275,7 +277,7 @@ export function AdminPage() {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -420,6 +422,10 @@ export function AdminPage() {
           </TableWrapper>
         )}
       </Section>
+
+      <AddTickerSection />
+
+      <AddIndexSection />
     </PageContainer>
   );
 }

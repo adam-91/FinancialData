@@ -6,7 +6,7 @@ from db.repositories.user import UserRepository
 
 pytestmark = pytest.mark.asyncio(loop_scope="session")
 
-ADMIN_EMAIL = "admin@example.com"
+ADMIN_EMAIL = "auth-test@example.com"
 ADMIN_PASSWORD = "Secret123"
 
 

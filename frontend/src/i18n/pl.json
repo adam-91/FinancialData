@@ -96,6 +96,7 @@
     "password": "Hasło",
     "submit": "Zaloguj",
     "forgotPassword": "Nie pamiętasz hasła?",
+    "close": "Zamknij",
     "error": "Logowanie nie powiodło się"
   },
   "forgotPassword": {
@@ -150,7 +151,22 @@
     "userUpdated": "Konto zaktualizowane",
     "userDeleted": "Konto usunięte",
     "confirmDelete": "Czy na pewno chcesz usunąć to konto?",
-    "error": "Operacja nie powiodła się"
+    "error": "Operacja nie powiodła się",
+    "addTicker": "Dodaj spółkę",
+    "addIndex": "Dodaj indeks",
+    "symbol": "Symbol",
+    "name": "Nazwa",
+    "exchange": "Giełda",
+    "selectExchange": "Wybierz giełdę",
+    "yahooSymbol": "Symbol Yahoo",
+    "testYfinance": "Testuj yFinance",
+    "add": "Dodaj",
+    "addAnyway": "Dodaj mimo to",
+    "tickerCreated": "Spółka dodana",
+    "indexCreated": "Indeks dodany",
+    "yfinanceFound": "yFinance rozpoznaje symbol",
+    "yfinanceNotFound": "yFinance nie rozpoznaje symbolu",
+    "lastClose": "zamknięcie"
   },
   "analytics": {
     "currencies": "Waluty",

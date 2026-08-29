@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.admin import router as admin_router
+from api.admin_tickers import router as admin_tickers_router
 from api.auth import router as auth_router
 from api.currency import router as currency_router
 from api.currency_analytics import router as currency_analytics_router
@@ -85,6 +86,7 @@ app.include_router(data_health_router)
 app.include_router(logs_router)
 app.include_router(auth_router)
 app.include_router(admin_router)
+app.include_router(admin_tickers_router)
 
 
 @app.get("/health")
