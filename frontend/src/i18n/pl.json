@@ -166,7 +166,13 @@
     "indexCreated": "Indeks dodany",
     "yfinanceFound": "yFinance rozpoznaje symbol",
     "yfinanceNotFound": "yFinance nie rozpoznaje symbolu",
-    "lastClose": "zamknięcie"
+    "lastClose": "zamknięcie",
+    "updateData": "Aktualizacja danych",
+    "refreshCompanies": "Aktualizuj dane spółek",
+    "refreshIndices": "Aktualizuj dane indeksów",
+    "refreshing": "Aktualizowanie...",
+    "refreshCompaniesStarted": "Aktualizacja danych spółek rozpoczęta (w tle)",
+    "refreshIndicesStarted": "Aktualizacja danych indeksów rozpoczęta (w tle)"
   },
   "analytics": {
     "currencies": "Waluty",

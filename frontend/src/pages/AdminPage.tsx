@@ -12,6 +12,7 @@ import {
 } from "../hooks/useUsers";
 import { AddTickerSection } from "../components/admin/AddTickerSection";
 import { AddIndexSection } from "../components/admin/AddIndexSection";
+import { RefreshDataSection } from "../components/admin/RefreshDataSection";
 import { isAxiosError } from "axios";
 
 const PageContainer = styled.div`
@@ -426,6 +427,8 @@ export function AdminPage() {
       <AddTickerSection />
 
       <AddIndexSection />
+
+      <RefreshDataSection />
     </PageContainer>
   );
 }

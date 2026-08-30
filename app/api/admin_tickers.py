@@ -15,7 +15,11 @@ from dto.admin_ticker_dto import (
     YfinanceTestResponse,
 )
 from dto.stock_exchange_dto import StockExchangeIndexDTO
-from services.history_feeder import run_historical_feed
+from services.history_feeder import (
+    run_companies_feed,
+    run_historical_feed,
+    run_indexes_feed,
+)
 from services.ticker_admin_service import TickerAdminService
 
 router = APIRouter(prefix="/api/admin", tags=["admin-tickers"])
@@ -85,3 +89,15 @@ async def test_yfinance(
 ):
     result = await service.test_symbol(payload.symbol)
     return YfinanceTestResponse(**result)
+
+
+@router.post("/data/refresh/companies")
+async def refresh_companies(_: User = Depends(get_current_user)):
+    asyncio.create_task(run_companies_feed())
+    return {"status": "ok"}
+
+
+@router.post("/data/refresh/indices")
+async def refresh_indices(_: User = Depends(get_current_user)):
+    asyncio.create_task(run_indexes_feed())
+    return {"status": "ok"}

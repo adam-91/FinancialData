@@ -42,6 +42,14 @@ class HistoricalDataFeeder:
     async def feed_all(self) -> None:
         logger.info("HistoricalDataFeeder: starting feed_all")
 
+        await self.feed_companies()
+        await self.feed_indexes()
+
+        logger.info("HistoricalDataFeeder: feed_all completed")
+
+    async def feed_companies(self) -> None:
+        logger.info("HistoricalDataFeeder: starting company feed")
+
         await self._validate_tracker_consistency()
 
         companies = await self.company_repo.get_all()
@@ -78,10 +86,20 @@ class HistoricalDataFeeder:
 
             await self._feed_companies_batch(yahoo_symbols, symbol_to_company_id)
 
-            await self._feed_exchange_indexes(exchange_id, exchange.symbol)
+        self.tracker.save()
+        logger.info("HistoricalDataFeeder: company feed completed")
+
+    async def feed_indexes(self) -> None:
+        logger.info("HistoricalDataFeeder: starting index feed")
+
+        await self._validate_tracker_consistency()
+
+        exchanges = await self.exchange_repo.get_all()
+        for exchange in exchanges:
+            await self._feed_exchange_indexes(exchange.id, exchange.symbol)
 
         self.tracker.save()
-        logger.info("HistoricalDataFeeder: feed_all completed")
+        logger.info("HistoricalDataFeeder: index feed completed")
 
     async def _validate_tracker_consistency(self) -> None:
         logger.info("HistoricalDataFeeder: validating tracker consistency with DB")
@@ -598,3 +616,23 @@ async def run_scheduled_historical_feed() -> None:
         await run_historical_feed()
     except Exception as err:
         logger.critical("Scheduled historical feed failed", error=str(err))
+
+
+async def run_companies_feed() -> None:
+    try:
+        logger.info("Starting company historical data feed")
+        async with AsyncSessionFactory() as session:
+            feeder = HistoricalDataFeeder(session)
+            await feeder.feed_companies()
+    except Exception as err:
+        logger.critical("Company historical feed failed", error=str(err))
+
+
+async def run_indexes_feed() -> None:
+    try:
+        logger.info("Starting index historical data feed")
+        async with AsyncSessionFactory() as session:
+            feeder = HistoricalDataFeeder(session)
+            await feeder.feed_indexes()
+    except Exception as err:
+        logger.critical("Index historical feed failed", error=str(err))

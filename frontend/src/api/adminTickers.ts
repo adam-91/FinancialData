@@ -84,3 +84,17 @@ export async function testYfinance(symbol: string): Promise<YfinanceTestResult> 
   });
   return response.data;
 }
+
+export async function refreshCompaniesData(): Promise<{ status: string }> {
+  const response = await api.post<{ status: string }>(
+    "/api/admin/data/refresh/companies"
+  );
+  return response.data;
+}
+
+export async function refreshIndicesData(): Promise<{ status: string }> {
+  const response = await api.post<{ status: string }>(
+    "/api/admin/data/refresh/indices"
+  );
+  return response.data;
+}

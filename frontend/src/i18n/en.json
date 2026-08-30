@@ -166,7 +166,13 @@
     "indexCreated": "Index added",
     "yfinanceFound": "yFinance recognizes the symbol",
     "yfinanceNotFound": "yFinance does not recognize the symbol",
-    "lastClose": "close"
+    "lastClose": "close",
+    "updateData": "Update data",
+    "refreshCompanies": "Refresh companies data",
+    "refreshIndices": "Refresh indices data",
+    "refreshing": "Updating...",
+    "refreshCompaniesStarted": "Company data update started (running in background)",
+    "refreshIndicesStarted": "Index data update started (running in background)"
   },
   "analytics": {
     "currencies": "Currencies",

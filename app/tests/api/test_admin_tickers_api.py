@@ -1,3 +1,5 @@
+from unittest.mock import AsyncMock, patch
+
 import pytest
 
 from core.security import hash_password
@@ -84,3 +86,39 @@ async def test_create_index_force(client, db_session):
     )
     assert response.status_code == 201
     assert response.json()["symbol"] == "^WIGTEST"
+
+
+@pytest.mark.asyncio
+async def test_refresh_companies_requires_auth(client):
+    response = await client.post("/api/admin/data/refresh/companies")
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_refresh_indices_requires_auth(client):
+    response = await client.post("/api/admin/data/refresh/indices")
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_refresh_companies_triggered(client, db_session):
+    await _create_admin(db_session)
+    await _login(client)
+
+    with patch("api.admin_tickers.run_companies_feed", new=AsyncMock()):
+        response = await client.post("/api/admin/data/refresh/companies")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+@pytest.mark.asyncio
+async def test_refresh_indices_triggered(client, db_session):
+    await _create_admin(db_session)
+    await _login(client)
+
+    with patch("api.admin_tickers.run_indexes_feed", new=AsyncMock()):
+        response = await client.post("/api/admin/data/refresh/indices")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
