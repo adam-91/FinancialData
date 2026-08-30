@@ -137,9 +137,9 @@ export function StockTableBody({ selectedIndex, onSelectedIndexChange }: StockTa
       let cmp = 0;
       if (sortField === "symbol") cmp = a.symbol.localeCompare(b.symbol);
       else if (sortField === "name") cmp = a.name.localeCompare(b.name);
-      else if (sortField === "price") cmp = a.price.close - b.price.close;
-      else if (sortField === "change") cmp = a.price.change_percent - b.price.change_percent;
-      else if (sortField === "volume") cmp = a.price.volume - b.price.volume;
+      else if (sortField === "price") cmp = Number(a.price.close) - Number(b.price.close);
+      else if (sortField === "change") cmp = Number(a.price.change_percent) - Number(b.price.change_percent);
+      else if (sortField === "volume") cmp = Number(a.price.volume) - Number(b.price.volume);
       return sortDirection === "asc" ? cmp : -cmp;
     });
     return sorted;
@@ -205,7 +205,7 @@ export function StockTableBody({ selectedIndex, onSelectedIndexChange }: StockTa
           </thead>
           <tbody>
             {sortedStocks.map((stock) => {
-              const isPositive = stock.price.change >= 0;
+              const isPositive = Number(stock.price.change) >= 0;
               return (
                 <Tr key={stock.symbol}>
                   <Td>
@@ -213,16 +213,16 @@ export function StockTableBody({ selectedIndex, onSelectedIndexChange }: StockTa
                   </Td>
                   <Td style={{ fontWeight: 500 }}>{stock.name}</Td>
                   <Td style={{ textAlign: "right", fontFamily: "monospace", fontWeight: 600 }}>
-                    {stock.price.close.toFixed(2)}
+                    {Number(stock.price.close).toFixed(2)}
                   </Td>
                   <Td style={{ textAlign: "right" }}>
                     <ChangeBadge $positive={isPositive}>
                       {isPositive ? "+" : ""}
-                      {stock.price.change_percent.toFixed(2)}%
+                      {Number(stock.price.change_percent).toFixed(2)}%
                     </ChangeBadge>
                   </Td>
                   <Td style={{ textAlign: "right", fontFamily: "monospace", color: "inherit" }}>
-                    {formatVolume(stock.price.volume)}
+                    {formatVolume(Number(stock.price.volume))}
                   </Td>
                 </Tr>
               );

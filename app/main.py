@@ -17,6 +17,7 @@ from api.logs import router as logs_router
 from api.stock_companies import router as stock_companies_router
 from api.stock_prices import router as stock_prices_router
 from config.data_init import create_start_data
+from core.config import settings
 from core.logging_config import setup_logging
 from services.history_feeder import run_historical_feed
 from services.scheduler import scheduler, start_scheduler
@@ -70,7 +71,7 @@ app = FastAPI(title="Financial Data", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
+        origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()
     ],
     allow_credentials=True,
     allow_methods=["*"],

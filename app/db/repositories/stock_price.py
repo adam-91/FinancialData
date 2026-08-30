@@ -107,10 +107,9 @@ class StockPriceRepository(
         latest_dates_subq = (
             select(
                 StockPrice.company_id,
-                StockPrice.trading_date,
+                func.max(StockPrice.trading_date).label("max_date"),
             )
-            .order_by(StockPrice.company_id, StockPrice.trading_date.desc())
-            .distinct()
+            .group_by(StockPrice.company_id)
             .subquery()
         )
 
@@ -120,7 +119,7 @@ class StockPriceRepository(
             .join(
                 latest_dates_subq,
                 (StockPrice.company_id == latest_dates_subq.c.company_id)
-                & (StockPrice.trading_date == latest_dates_subq.c.trading_date),
+                & (StockPrice.trading_date == latest_dates_subq.c.max_date),
             )
             .options(
                 joinedload(StockCompany.stock_exchange),
@@ -133,16 +132,7 @@ class StockPriceRepository(
         )
 
         result = await self.session.execute(stmt)
-        rows = result.all()
-
-        seen = set()
-        unique_rows = []
-        for company, price in rows:
-            if company.id not in seen:
-                seen.add(company.id)
-                unique_rows.append((company, price))
-
-        return unique_rows
+        return [(company, price) for company, price in result.all()]
 
     async def get_data_range_by_company(self, company_id: int) -> dict | None:
         stmt = select(

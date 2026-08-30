@@ -105,10 +105,10 @@ export function IndexTableBody() {
     return indices.map((idx) => {
       const indexStocks = stocks.filter((s) => s.indices.includes(idx.symbol));
       const avgChange = indexStocks.length > 0
-        ? indexStocks.reduce((sum, s) => sum + s.price.change_percent, 0) / indexStocks.length
+        ? indexStocks.reduce((sum, s) => sum + Number(s.price.change_percent), 0) / indexStocks.length
         : 0;
       const avgClose = indexStocks.length > 0
-        ? indexStocks.reduce((sum, s) => sum + s.price.close, 0) / indexStocks.length
+        ? indexStocks.reduce((sum, s) => sum + Number(s.price.close), 0) / indexStocks.length
         : 0;
       return {
         symbol: idx.symbol,
