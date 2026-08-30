@@ -38,3 +38,17 @@ class RawDataResponse(BaseModel):
     page: int
     page_size: int
     data: list[RawDataEntry]
+
+
+class SchedulerEntryDTO(BaseModel):
+    id: str
+    trigger: str
+    day_of_week: str | None = None
+    hour: int | None = None
+    minute: int | None = None
+    next_run: str | None = None
+
+
+class SchedulerInfoDTO(BaseModel):
+    timezone: str
+    entries: list[SchedulerEntryDTO]

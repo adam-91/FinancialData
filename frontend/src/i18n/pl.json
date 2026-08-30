@@ -196,5 +196,39 @@
     "next": "Następna",
     "page": "Strona",
     "of": "z"
+  },
+  "rawData": {
+    "totalRecords": "Liczba rekordów",
+    "backToHealthcheck": "Wróć do zdrowia danych",
+    "date": "Data",
+    "open": "Otwarcie",
+    "high": "Najwyższy",
+    "low": "Najniższy",
+    "close": "Zamknięcie",
+    "volume": "Wolumen",
+    "page": "Strona",
+    "of": "z",
+    "previous": "Poprzednia",
+    "next": "Następna",
+    "go": "Przejdź",
+    "goToPage": "Przejdź do strony"
+  },
+  "scheduler": {
+    "title": "Harmonogram",
+    "job": "Zadanie",
+    "schedule": "Harmonogram",
+    "nextRun": "Następne uruchomienie",
+    "monFri": "pon-pt",
+    "empty": "Brak zaplanowanych zadań",
+    "trigger": {
+      "startup": "Przy starcie aplikacji",
+      "startup_manual": "Przy starcie + ręcznie (reset-tracker)"
+    },
+    "jobs": {
+      "sync_noon_tables_A_B": "Tabele NBP A i B (kursy średnie)",
+      "sync_morning_table_C": "Tabela NBP C (kursy kupna/sprzedaży)",
+      "sync_all_tables": "Pełny sync NBP (tabele A, B, C)",
+      "historical_feed": "Dane historyczne yFinance (spółki i indeksy)"
+    }
   }
 }

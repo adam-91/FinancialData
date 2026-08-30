@@ -10,10 +10,12 @@ from dto.data_health_dto import (
     DataHealthSummary,
     EntityHealthDetail,
     RawDataResponse,
+    SchedulerInfoDTO,
 )
 from services.data_health_service import DataHealthService
 from services.history_feeder import run_historical_feed
 from services.parquet_tracker import ParquetTracker
+from services.scheduler import get_scheduler_info
 
 router = APIRouter(prefix="/api/health", tags=["health"])
 
@@ -34,6 +36,11 @@ async def get_data_summary(
     service: DataHealthService = Depends(get_data_health_service),
 ):
     return await service.get_summary()
+
+
+@router.get("/scheduler", response_model=SchedulerInfoDTO)
+async def get_scheduler_info_endpoint():
+    return get_scheduler_info()
 
 
 @router.get("/data/indices", response_model=list[EntityHealthDetail])

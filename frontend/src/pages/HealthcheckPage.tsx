@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useDataHealthSummary, useAllIndicesHealth, useAllCompaniesHealth } from "../hooks/useDataHealth";
+import { useDataHealthSummary, useAllIndicesHealth, useAllCompaniesHealth, useSchedulerInfo } from "../hooks/useDataHealth";
 
 const PageContainer = styled.div`
   display: flex;
@@ -149,9 +149,41 @@ export function HealthcheckPage() {
   const { data: summary, isLoading: summaryLoading } = useDataHealthSummary();
   const { data: indices, isLoading: indicesLoading } = useAllIndicesHealth();
   const { data: companies, isLoading: companiesLoading } = useAllCompaniesHealth();
+  const { data: schedulerInfo, isLoading: schedulerLoading } = useSchedulerInfo();
 
   const entities = entityType === "index" ? indices : companies;
   const entitiesLoading = entityType === "index" ? indicesLoading : companiesLoading;
+
+  const formatTime = (hour: number | null, minute: number | null): string => {
+    if (hour === null || minute === null) return "-";
+    return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  };
+
+  const formatNextRun = (iso: string | null): string => {
+    if (!iso) return "-";
+    try {
+      return new Date(iso).toLocaleString();
+    } catch {
+      return iso;
+    }
+  };
+
+  const jobName = (id: string) => t(`scheduler.jobs.${id}`, id);
+
+  const jobSchedule = (entry: {
+    trigger: string;
+    day_of_week: string | null;
+    hour: number | null;
+    minute: number | null;
+  }): string => {
+    if (entry.trigger === "cron") {
+      return `${t("scheduler.monFri", "Mon-Fri")} ${formatTime(entry.hour, entry.minute)}`;
+    }
+    if (entry.trigger === "startup") {
+      return t("scheduler.trigger.startup", "On application startup");
+    }
+    return t("scheduler.trigger.startup_manual", "On startup + manual (reset tracker)");
+  };
 
   if (summaryLoading) {
     return <LoadingMessage>{t("common.loading", "Loading...")}</LoadingMessage>;
@@ -184,6 +216,36 @@ export function HealthcheckPage() {
           </CardSubtitle>
         </SummaryCard>
       </SummaryGrid>
+
+      <Section>
+        <SectionHeader>
+          <SectionTitle>{t("scheduler.title", "Scheduler")}</SectionTitle>
+        </SectionHeader>
+        {schedulerLoading ? (
+          <LoadingMessage>{t("common.loading", "Loading...")}</LoadingMessage>
+        ) : !schedulerInfo || schedulerInfo.entries.length === 0 ? (
+          <EmptyMessage>{t("scheduler.empty", "No scheduled jobs")}</EmptyMessage>
+        ) : (
+          <Table>
+            <thead>
+              <tr>
+                <Th>{t("scheduler.job", "Job")}</Th>
+                <Th>{t("scheduler.schedule", "Schedule")}</Th>
+                <Th>{t("scheduler.nextRun", "Next run")}</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {schedulerInfo.entries.map((entry) => (
+                <tr key={entry.id}>
+                  <Td>{jobName(entry.id)}</Td>
+                  <Td>{jobSchedule(entry)}</Td>
+                  <Td>{formatNextRun(entry.next_run)}</Td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </Section>
 
       <Section>
         <SectionHeader>

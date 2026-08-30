@@ -196,5 +196,39 @@
     "next": "Next",
     "page": "Page",
     "of": "of"
+  },
+  "rawData": {
+    "totalRecords": "Total records",
+    "backToHealthcheck": "Back to Healthcheck",
+    "date": "Date",
+    "open": "Open",
+    "high": "High",
+    "low": "Low",
+    "close": "Close",
+    "volume": "Volume",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next",
+    "go": "Go",
+    "goToPage": "Go to page"
+  },
+  "scheduler": {
+    "title": "Scheduler",
+    "job": "Job",
+    "schedule": "Schedule",
+    "nextRun": "Next run",
+    "monFri": "Mon-Fri",
+    "empty": "No scheduled jobs",
+    "trigger": {
+      "startup": "On application startup",
+      "startup_manual": "On startup + manual (reset tracker)"
+    },
+    "jobs": {
+      "sync_noon_tables_A_B": "NBP tables A & B (mid rates)",
+      "sync_morning_table_C": "NBP table C (buy/sell rates)",
+      "sync_all_tables": "Full NBP sync (tables A, B, C)",
+      "historical_feed": "yFinance historical data (companies & indices)"
+    }
   }
 }

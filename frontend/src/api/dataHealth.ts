@@ -19,11 +19,11 @@ export interface EntityHealthDetail {
 
 export interface RawDataEntry {
   trading_date: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
+  open: string | number;
+  high: string | number;
+  low: string | number;
+  close: string | number;
+  volume: string | number;
 }
 
 export interface RawDataResponse {
@@ -33,6 +33,20 @@ export interface RawDataResponse {
   page: number;
   page_size: number;
   data: RawDataEntry[];
+}
+
+export interface SchedulerEntry {
+  id: string;
+  trigger: "cron" | "startup" | "startup_manual";
+  day_of_week: string | null;
+  hour: number | null;
+  minute: number | null;
+  next_run: string | null;
+}
+
+export interface SchedulerInfo {
+  timezone: string;
+  entries: SchedulerEntry[];
 }
 
 export const getDataHealthSummary = async (): Promise<DataHealthSummary> => {
@@ -70,5 +84,10 @@ export const getRawData = async (
     `/api/health/data/raw/${entityType}/${encodeURIComponent(symbol)}`,
     { params: { page, page_size: pageSize } }
   );
+  return response.data;
+};
+
+export const getSchedulerInfo = async (): Promise<SchedulerInfo> => {
+  const response = await api.get<SchedulerInfo>("/api/health/scheduler");
   return response.data;
 };
