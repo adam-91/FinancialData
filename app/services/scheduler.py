@@ -1,6 +1,8 @@
 import structlog
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from core.config import settings
+from services.history_feeder import run_scheduled_historical_feed
 from services.startup_sync import sync_ab_tables, sync_c_table
 
 logger = structlog.get_logger()
@@ -23,6 +25,14 @@ SCHEDULED_JOBS = [
         "day_of_week": "mon-fri",
         "hour": 8,
         "minute": 15,
+    },
+]
+
+INTERVAL_JOBS = [
+    {
+        "id": "historical_feed_background",
+        "func": run_scheduled_historical_feed,
+        "interval_minutes": settings.HISTORY_FEED_INTERVAL_MINUTES,
     },
 ]
 
@@ -61,6 +71,20 @@ def start_scheduler():
             minute=job["minute"],
         )
 
+    for job in INTERVAL_JOBS:
+        scheduler.add_job(
+            job["func"],
+            id=job["id"],
+            replace_existing=True,
+            trigger="interval",
+            minutes=job["interval_minutes"],
+        )
+        logger.info(
+            "Scheduled interval job",
+            id=job["id"],
+            interval_minutes=job["interval_minutes"],
+        )
+
 
 def get_scheduler_info() -> dict:
     live_jobs = {job.id: job for job in scheduler.get_jobs()}
@@ -79,6 +103,24 @@ def get_scheduler_info() -> dict:
                 "day_of_week": job["day_of_week"],
                 "hour": job["hour"],
                 "minute": job["minute"],
+                "next_run": next_run,
+            }
+        )
+
+    for job in INTERVAL_JOBS:
+        next_run = None
+        live = live_jobs.get(job["id"])
+        if live is not None and live.next_run_time is not None:
+            next_run = live.next_run_time.isoformat()
+
+        entries.append(
+            {
+                "id": job["id"],
+                "trigger": "interval",
+                "day_of_week": None,
+                "hour": None,
+                "minute": None,
+                "interval_minutes": job["interval_minutes"],
                 "next_run": next_run,
             }
         )

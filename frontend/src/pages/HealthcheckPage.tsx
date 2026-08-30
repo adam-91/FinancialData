@@ -175,9 +175,15 @@ export function HealthcheckPage() {
     day_of_week: string | null;
     hour: number | null;
     minute: number | null;
+    interval_minutes?: number | null;
   }): string => {
     if (entry.trigger === "cron") {
       return `${t("scheduler.monFri", "Mon-Fri")} ${formatTime(entry.hour, entry.minute)}`;
+    }
+    if (entry.trigger === "interval") {
+      return t("scheduler.trigger.interval", {
+        minutes: entry.interval_minutes ?? 0,
+      });
     }
     if (entry.trigger === "startup") {
       return t("scheduler.trigger.startup", "On application startup");

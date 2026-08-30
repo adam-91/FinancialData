@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     HISTORY_FEED_RATE_LIMIT_BASE_DELAY: int = 30
     HISTORY_FEED_RATE_LIMIT_MAX_RETRIES: int = 3
     HISTORY_FEED_STALE_THRESHOLD_DAYS: int = 30
+    HISTORY_FEED_INTERVAL_MINUTES: int = 60
 
     STOCK_COMPANIES_MIN_THRESHOLD: int = 100
     STOCK_COMPANIES_DEFAULT_FILE: str = "config/default_stock_companies.json"

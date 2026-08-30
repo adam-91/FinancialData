@@ -50,6 +50,9 @@ class ParquetTracker:
             return True
 
         row = self.df[mask].iloc[0]
+        if row["status"] != "success":
+            return True
+
         last_fetched = pd.to_datetime(row["last_fetched_at"])
         now = pd.Timestamp.now()
         days_diff = (now - last_fetched).days

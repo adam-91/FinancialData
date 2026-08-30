@@ -10,10 +10,11 @@ async def test_scheduler_info_returns_200(client):
     assert response.status_code == 200
     data = response.json()
     assert data["timezone"] == "Europe/Warsaw"
-    assert len(data["entries"]) == 4
+    assert len(data["entries"]) == 5
     assert {entry["id"] for entry in data["entries"]} == {
         "sync_noon_tables_A_B",
         "sync_morning_table_C",
+        "historical_feed_background",
         "sync_all_tables",
         "historical_feed",
     }

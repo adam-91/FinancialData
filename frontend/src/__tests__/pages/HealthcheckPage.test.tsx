@@ -39,6 +39,15 @@ vi.mock("../../hooks/useDataHealth", () => ({
           next_run: "2026-08-31T08:15:00+02:00",
         },
         {
+          id: "historical_feed_background",
+          trigger: "interval",
+          day_of_week: null,
+          hour: null,
+          minute: null,
+          interval_minutes: 60,
+          next_run: null,
+        },
+        {
           id: "sync_all_tables",
           trigger: "startup",
           day_of_week: null,
@@ -72,6 +81,7 @@ describe("HealthcheckPage scheduler section", () => {
     expect(screen.getByText(i18n.t("scheduler.jobs.sync_morning_table_C"))).toBeTruthy();
     expect(screen.getByText(i18n.t("scheduler.jobs.sync_all_tables"))).toBeTruthy();
     expect(screen.getByText(i18n.t("scheduler.jobs.historical_feed"))).toBeTruthy();
+    expect(screen.getByText(i18n.t("scheduler.jobs.historical_feed_background"))).toBeTruthy();
   });
 
   it("renders cron schedule times", () => {

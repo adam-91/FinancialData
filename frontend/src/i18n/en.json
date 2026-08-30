@@ -222,13 +222,15 @@
     "empty": "No scheduled jobs",
     "trigger": {
       "startup": "On application startup",
-      "startup_manual": "On startup + manual (reset tracker)"
+      "startup_manual": "On startup + manual (reset tracker)",
+      "interval": "Every {{minutes}} minutes"
     },
     "jobs": {
       "sync_noon_tables_A_B": "NBP tables A & B (mid rates)",
       "sync_morning_table_C": "NBP table C (buy/sell rates)",
       "sync_all_tables": "Full NBP sync (tables A, B, C)",
-      "historical_feed": "yFinance historical data (companies & indices)"
+      "historical_feed": "yFinance historical data (companies & indices)",
+      "historical_feed_background": "yFinance missing data (companies & indices)"
     }
   }
 }

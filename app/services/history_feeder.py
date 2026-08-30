@@ -591,3 +591,10 @@ async def run_historical_feed() -> None:
     async with AsyncSessionFactory() as session:
         feeder = HistoricalDataFeeder(session)
         await feeder.feed_all()
+
+
+async def run_scheduled_historical_feed() -> None:
+    try:
+        await run_historical_feed()
+    except Exception as err:
+        logger.critical("Scheduled historical feed failed", error=str(err))

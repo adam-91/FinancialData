@@ -37,10 +37,11 @@ export interface RawDataResponse {
 
 export interface SchedulerEntry {
   id: string;
-  trigger: "cron" | "startup" | "startup_manual";
+  trigger: "cron" | "interval" | "startup" | "startup_manual";
   day_of_week: string | null;
   hour: number | null;
   minute: number | null;
+  interval_minutes: number | null;
   next_run: string | null;
 }
 

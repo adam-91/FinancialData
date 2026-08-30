@@ -222,13 +222,15 @@
     "empty": "Brak zaplanowanych zadań",
     "trigger": {
       "startup": "Przy starcie aplikacji",
-      "startup_manual": "Przy starcie + ręcznie (reset-tracker)"
+      "startup_manual": "Przy starcie + ręcznie (reset-tracker)",
+      "interval": "Co {{minutes}} minut"
     },
     "jobs": {
       "sync_noon_tables_A_B": "Tabele NBP A i B (kursy średnie)",
       "sync_morning_table_C": "Tabela NBP C (kursy kupna/sprzedaży)",
       "sync_all_tables": "Pełny sync NBP (tabele A, B, C)",
-      "historical_feed": "Dane historyczne yFinance (spółki i indeksy)"
+      "historical_feed": "Dane historyczne yFinance (spółki i indeksy)",
+      "historical_feed_background": "Brakujące dane yFinance (spółki i indeksy)"
     }
   }
 }

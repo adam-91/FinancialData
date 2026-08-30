@@ -9,6 +9,7 @@ def test_get_scheduler_info_returns_all_entries():
     assert ids == [
         "sync_noon_tables_A_B",
         "sync_morning_table_C",
+        "historical_feed_background",
         "sync_all_tables",
         "historical_feed",
     ]
@@ -26,12 +27,23 @@ def test_cron_entries_have_schedule():
         assert "next_run" in entry
 
 
+def test_interval_entries_have_interval():
+    info = get_scheduler_info()
+    interval = [entry for entry in info["entries"] if entry["trigger"] == "interval"]
+
+    assert len(interval) == 1
+    entry = interval[0]
+    assert entry["id"] == "historical_feed_background"
+    assert entry["interval_minutes"] is not None
+    assert "next_run" in entry
+
+
 def test_non_scheduled_entries_have_triggers():
     info = get_scheduler_info()
     triggers = {
         entry["id"]: entry["trigger"]
         for entry in info["entries"]
-        if entry["trigger"] != "cron"
+        if entry["trigger"] not in ("cron", "interval")
     }
 
     assert triggers["sync_all_tables"] == "startup"

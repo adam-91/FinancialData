@@ -39,6 +39,27 @@ def test_is_stale_true_for_old(parquet_tracker):
     assert parquet_tracker.is_stale("CDR.WA", "company", 30) is True
 
 
+def test_is_stale_true_for_non_success_status(parquet_tracker):
+    parquet_tracker.update("CDR.WA", "company", "rate_limited")
+    assert parquet_tracker.is_stale("CDR.WA", "company", 30) is True
+
+
+def test_is_stale_true_for_error_status(parquet_tracker):
+    parquet_tracker.update("CDR.WA", "company", "error")
+    assert parquet_tracker.is_stale("CDR.WA", "company", 30) is True
+
+
+def test_get_stale_symbols_includes_failed_symbols(parquet_tracker):
+    parquet_tracker.update("CDR.WA", "company", "success")
+    parquet_tracker.update("PKN.WA", "company", "rate_limited")
+
+    symbols = ["CDR.WA", "PKN.WA"]
+    stale = parquet_tracker.get_stale_symbols(symbols, "company", 30)
+
+    assert "CDR.WA" not in stale
+    assert "PKN.WA" in stale
+
+
 def test_get_stale_symbols_filters(parquet_tracker):
     parquet_tracker.update("CDR.WA", "company", "success")
     parquet_tracker.update("PKN.WA", "company", "success")

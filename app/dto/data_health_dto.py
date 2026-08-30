@@ -46,6 +46,7 @@ class SchedulerEntryDTO(BaseModel):
     day_of_week: str | None = None
     hour: int | None = None
     minute: int | None = None
+    interval_minutes: int | None = None
     next_run: str | None = None
 
 
