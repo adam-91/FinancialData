@@ -1,6 +1,7 @@
 from datetime import date
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from db.models.exchange_buy_and_sell_rate import ExchangeBuyAndSellRate
 from db.repositories.base import AsyncRepository
@@ -72,3 +73,11 @@ class ExchangeBuySellRateRepository(
         )
 
         return await self.session.scalar(stmt)
+
+    async def get_all_with_currency(self) -> list[ExchangeBuyAndSellRate]:
+        stmt = select(ExchangeBuyAndSellRate).options(
+            selectinload(ExchangeBuyAndSellRate.currency)
+        )
+
+        result = await self.session.scalars(stmt)
+        return list(result.all())

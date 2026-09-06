@@ -125,7 +125,7 @@ export function MultiLineChart({ series, height = 400 }: MultiLineChartProps) {
       lineSeries.setData(
         s.data.map((d) => ({
           time: d.time as `${number}-${number}-${number}`,
-          value: d.value,
+          value: Number(d.value),
         }))
       );
       seriesRefs.current.push(lineSeries);

@@ -103,6 +103,30 @@ class StockCompanyRepository(
         result = await self.session.execute(stmt)
         return result.scalar_one()
 
+    async def get_by_yahoo_symbol(self, yahoo_symbol: str) -> StockCompany | None:
+        stmt = select(StockCompany).where(StockCompany.yahoo_symbol == yahoo_symbol)
+        return await self.session.scalar(stmt)
+
+    async def create_company(
+        self,
+        symbol: str,
+        yahoo_symbol: str,
+        name: str,
+        exchange_id: int,
+        active: bool = True,
+    ) -> StockCompany:
+        company = StockCompany(
+            symbol=symbol,
+            yahoo_symbol=yahoo_symbol,
+            name=name,
+            exchange_id=exchange_id,
+            active=active,
+        )
+        self.session.add(company)
+        await self.session.flush()
+        await self.session.refresh(company)
+        return company
+
     async def bulk_upsert(self, companies: list[dict]) -> int:
         if not companies:
             return 0

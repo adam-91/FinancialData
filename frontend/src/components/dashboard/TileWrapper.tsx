@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 const TileContainer = styled.div`
   display: flex;
@@ -33,6 +34,20 @@ const TileTitle = styled.h3`
   margin: 0;
 `;
 
+const TileTitleLink = styled(Link)`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.accent};
+  }
+`;
+
 const DragHandle = styled.span`
   display: flex;
   align-items: center;
@@ -52,15 +67,22 @@ const TileContent = styled.div`
 
 interface TileWrapperProps {
   title: string;
+  titleLink?: string;
   children: ReactNode;
   className?: string;
 }
 
-export function TileWrapper({ title, children, className }: TileWrapperProps) {
+export function TileWrapper({ title, titleLink, children, className }: TileWrapperProps) {
   return (
     <TileContainer className={className}>
       <TileHeader>
-        <TileTitle>{title}</TileTitle>
+        {titleLink ? (
+          <TileTitleLink to={titleLink} className="no-drag">
+            {title}
+          </TileTitleLink>
+        ) : (
+          <TileTitle>{title}</TileTitle>
+        )}
         <DragHandle>
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

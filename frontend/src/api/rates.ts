@@ -1,8 +1,8 @@
 import axios from "axios";
-import { ExchangeRate } from "../types/currencyExchangeRate";
+import { ExchangeRate, CurrencySummary } from "../types/currencyExchangeRate";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "http://localhost:8001",
 });
 
 export const getLastRate = async (
@@ -39,6 +39,11 @@ export const getRate = async (
 
 export const getRates = async (): Promise<ExchangeRate[]> => {
   const response = await api.get<ExchangeRate[]>('/api/rates/all');
+  return response.data;
+};
+
+export const getCurrencySummary = async (): Promise<CurrencySummary[]> => {
+  const response = await api.get<CurrencySummary[]>('/api/rates/summary');
   return response.data;
 };
 

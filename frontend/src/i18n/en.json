@@ -33,7 +33,11 @@
     "change": "Change",
     "avgRate": "Average",
     "main": "Main",
-    "all": "All"
+    "all": "All",
+    "overview": "Currency overview",
+    "dailyChange": "Daily change (30 days)",
+    "movingAverage": "Moving average",
+    "correlation": "Correlation"
   },
   "stocks": {
     "title": "Stock Quotes",
@@ -78,9 +82,103 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "analytics": "Analytics",
     "healthcheck": "Healthcheck",
     "logs": "Logs",
-    "login": "Login"
+    "login": "Login",
+    "logout": "Logout",
+    "admin": "Admin"
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Sign in to the admin panel",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "forgotPassword": "Forgot password?",
+    "close": "Close",
+    "error": "Login failed"
+  },
+  "forgotPassword": {
+    "title": "Reset password",
+    "subtitle": "Enter your email to receive a reset link",
+    "submit": "Send reset link",
+    "back": "Back to login",
+    "success": "If the email exists, a reset link has been sent.",
+    "error": "Failed to send reset link"
+  },
+  "resetPassword": {
+    "title": "Set new password",
+    "subtitle": "Choose a new password",
+    "submit": "Update password",
+    "success": "Password updated. Redirecting to login...",
+    "error": "Failed to reset password"
+  },
+  "changePassword": {
+    "title": "Change password",
+    "forced": "You must change your password before continuing",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "submit": "Change password",
+    "logout": "Log out",
+    "mismatch": "Passwords do not match",
+    "error": "Failed to change password"
+  },
+  "admin": {
+    "title": "Admin panel",
+    "createUser": "Create user",
+    "usersList": "Users",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "status": "Status",
+    "mustChange": "Must change password",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "Yes",
+    "no": "No",
+    "create": "Create",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "resetPassword": "Reset password",
+    "logout": "Log out",
+    "loading": "Loading...",
+    "userCreated": "User created",
+    "userUpdated": "User updated",
+    "userDeleted": "User deleted",
+    "confirmDelete": "Are you sure you want to delete this user?",
+    "error": "Operation failed",
+    "addTicker": "Add company",
+    "addIndex": "Add index",
+    "symbol": "Symbol",
+    "name": "Name",
+    "exchange": "Exchange",
+    "selectExchange": "Select exchange",
+    "yahooSymbol": "Yahoo symbol",
+    "testYfinance": "Test yFinance",
+    "add": "Add",
+    "addAnyway": "Add anyway",
+    "tickerCreated": "Company added",
+    "indexCreated": "Index added",
+    "yfinanceFound": "yFinance recognizes the symbol",
+    "yfinanceNotFound": "yFinance does not recognize the symbol",
+    "lastClose": "close",
+    "updateData": "Update data",
+    "refreshCompanies": "Refresh companies data",
+    "refreshIndices": "Refresh indices data",
+    "refreshing": "Updating...",
+    "refreshCompaniesStarted": "Company data update started (running in background)",
+    "refreshIndicesStarted": "Index data update started (running in background)"
+  },
+  "analytics": {
+    "currencies": "Currencies",
+    "exchanges": "Exchanges",
+    "companies": "Companies",
+    "quotations": "Quotes"
   },
   "logs": {
     "title": "Application Logs",
@@ -104,5 +202,41 @@
     "next": "Next",
     "page": "Page",
     "of": "of"
+  },
+  "rawData": {
+    "totalRecords": "Total records",
+    "backToHealthcheck": "Back to Healthcheck",
+    "date": "Date",
+    "open": "Open",
+    "high": "High",
+    "low": "Low",
+    "close": "Close",
+    "volume": "Volume",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next",
+    "go": "Go",
+    "goToPage": "Go to page"
+  },
+  "scheduler": {
+    "title": "Scheduler",
+    "job": "Job",
+    "schedule": "Schedule",
+    "nextRun": "Next run",
+    "monFri": "Mon-Fri",
+    "empty": "No scheduled jobs",
+    "trigger": {
+      "startup": "On application startup",
+      "startup_manual": "On startup + manual (reset tracker)",
+      "interval": "Every {{minutes}} minutes"
+    },
+    "jobs": {
+      "sync_noon_tables_A_B": "NBP tables A & B (mid rates)",
+      "sync_morning_table_C": "NBP table C (buy/sell rates)",
+      "sync_all_tables": "Full NBP sync (tables A, B, C)",
+      "historical_feed": "yFinance historical data (companies & indices)",
+      "historical_feed_background": "yFinance missing data (companies & indices)"
+    }
   }
 }

@@ -361,3 +361,46 @@ async def test_validate_tracker_consistency_marks_stale(
 
     assert parquet_tracker.is_stale("CDR.WA", "company", threshold_days=30)
     assert parquet_tracker.df.iloc[0]["status"] == "stale"
+
+
+@pytest.mark.asyncio
+async def test_feed_companies_calls_company_feed_only(feeder, mock_repos):
+    mock_repos["stock_price_repo"].get_all_companies_data_summary.return_value = []
+    mock_repos["index_rate_repo"].get_all_indexes_data_summary.return_value = []
+    mock_repos["company_repo"].get_all.return_value = [
+        SimpleNamespace(id=10, active=True, exchange_id=1, yahoo_symbol="CDR.WA")
+    ]
+    mock_repos["exchange_repo"].get_all.return_value = [
+        SimpleNamespace(id=1, symbol="GPW")
+    ]
+
+    companies_batch = AsyncMock()
+    indexes_feed = AsyncMock()
+    with (
+        patch.object(feeder, "_feed_companies_batch", new=companies_batch),
+        patch.object(feeder, "_feed_exchange_indexes", new=indexes_feed),
+    ):
+        await feeder.feed_companies()
+
+    companies_batch.assert_awaited_once_with(["CDR.WA"], {"CDR.WA": 10})
+    indexes_feed.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_feed_indexes_calls_index_feed_only(feeder, mock_repos):
+    mock_repos["stock_price_repo"].get_all_companies_data_summary.return_value = []
+    mock_repos["index_rate_repo"].get_all_indexes_data_summary.return_value = []
+    mock_repos["exchange_repo"].get_all.return_value = [
+        SimpleNamespace(id=1, symbol="GPW")
+    ]
+
+    indexes_feed = AsyncMock()
+    companies_batch = AsyncMock()
+    with (
+        patch.object(feeder, "_feed_exchange_indexes", new=indexes_feed),
+        patch.object(feeder, "_feed_companies_batch", new=companies_batch),
+    ):
+        await feeder.feed_indexes()
+
+    indexes_feed.assert_awaited_once_with(1, "GPW")
+    companies_batch.assert_not_called()

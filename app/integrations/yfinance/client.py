@@ -1,9 +1,9 @@
 import asyncio
-import structlog
 from datetime import date
 
 import pandas as pd
 import requests
+import structlog
 import yfinance as yf
 from yfinance.exceptions import YFRateLimitError
 
@@ -67,6 +67,57 @@ class YahooFinanceClient:
         except Exception as e:
             logger.error("Error downloading batch", error=str(e))
             return pd.DataFrame()
+
+    async def check_symbol(self, yahoo_symbol: str) -> dict:
+        try:
+            df = await asyncio.to_thread(
+                yf.download,
+                yahoo_symbol,
+                period="1d",
+                progress=False,
+            )
+        except YFRateLimitError:
+            return {
+                "found": False,
+                "symbol": yahoo_symbol,
+                "last_close": None,
+                "last_date": None,
+                "error": "Rate limited",
+            }
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            return {
+                "found": False,
+                "symbol": yahoo_symbol,
+                "last_close": None,
+                "last_date": None,
+                "error": str(e),
+            }
+        except Exception as e:
+            return {
+                "found": False,
+                "symbol": yahoo_symbol,
+                "last_close": None,
+                "last_date": None,
+                "error": str(e),
+            }
+
+        if df is None or df.empty:
+            return {
+                "found": False,
+                "symbol": yahoo_symbol,
+                "last_close": None,
+                "last_date": None,
+                "error": None,
+            }
+
+        last = df.iloc[-1]
+        return {
+            "found": True,
+            "symbol": yahoo_symbol,
+            "last_close": float(last.get("Close")),
+            "last_date": str(df.index[-1].date()),
+            "error": None,
+        }
 
     async def get_last_session(self, yahoo_symbol: str) -> pd.DataFrame:
         try:

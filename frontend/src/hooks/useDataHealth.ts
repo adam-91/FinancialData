@@ -3,8 +3,10 @@ import {
   getDataHealthSummary,
   getAllIndicesHealth,
   getAllCompaniesHealth,
+  getSchedulerInfo,
   EntityHealthDetail,
   DataHealthSummary,
+  SchedulerInfo,
 } from "../api/dataHealth";
 
 export const useDataHealthSummary = () => {
@@ -25,5 +27,12 @@ export const useAllCompaniesHealth = () => {
   return useQuery<EntityHealthDetail[]>({
     queryKey: ["allCompaniesHealth"],
     queryFn: getAllCompaniesHealth,
+  });
+};
+
+export const useSchedulerInfo = () => {
+  return useQuery<SchedulerInfo>({
+    queryKey: ["schedulerInfo"],
+    queryFn: getSchedulerInfo,
   });
 };

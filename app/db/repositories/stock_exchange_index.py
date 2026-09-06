@@ -1,5 +1,4 @@
 import structlog
-
 from sqlalchemy import insert, select
 
 from db.models.stock_exchange import StockExchange
@@ -60,6 +59,28 @@ class StockExchangeIndexRepository(
             )
             for item in db_models
         ]
+
+    async def get_model_by_symbol(self, symbol: str) -> StockExchangeIndex | None:
+        stmt = select(StockExchangeIndex).where(StockExchangeIndex.symbol == symbol)
+        return await self.session.scalar(stmt)
+
+    async def create_index(
+        self,
+        symbol: str,
+        name: str,
+        exchange_id: int,
+        active: bool = True,
+    ) -> StockExchangeIndex:
+        index = StockExchangeIndex(
+            symbol=symbol,
+            name=name,
+            stock_exchange_id=exchange_id,
+            active=active,
+        )
+        self.session.add(index)
+        await self.session.flush()
+        await self.session.refresh(index)
+        return index
 
     async def add_exchange_indexes(
         self, indexes: list[StockExchangeIndexCreateDTO]

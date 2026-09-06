@@ -146,10 +146,10 @@ export function StockChart({ data, chartType, height = 500 }: StockChartProps) {
 
       const candleData = data.map((d) => ({
         time: d.time as `${number}-${number}-${number}`,
-        open: d.open,
-        high: d.high,
-        low: d.low,
-        close: d.close,
+        open: Number(d.open),
+        high: Number(d.high),
+        low: Number(d.low),
+        close: Number(d.close),
       }));
 
       series.setData(candleData);
@@ -163,7 +163,7 @@ export function StockChart({ data, chartType, height = 500 }: StockChartProps) {
 
       const lineData = data.map((d) => ({
         time: d.time as `${number}-${number}-${number}`,
-        value: d.close,
+        value: Number(d.close),
       }));
 
       series.setData(lineData);

@@ -110,7 +110,7 @@ export function StockTable({ stocks }: StockTableProps) {
         </Thead>
         <tbody>
           {stocks.map((stock) => {
-            const isPositive = stock.price.change >= 0;
+            const isPositive = Number(stock.price.change) >= 0;
             return (
               <Tr key={stock.symbol}>
                 <Td>
@@ -119,22 +119,22 @@ export function StockTable({ stocks }: StockTableProps) {
                 <Td style={{ fontWeight: 500 }}>{stock.name}</Td>
                 <Td>{stock.stock_exchange}</Td>
                 <Td style={{ textAlign: "right", fontFamily: "monospace", fontWeight: 600 }}>
-                  {stock.price.close.toFixed(2)}
+                  {Number(stock.price.close).toFixed(2)}
                 </Td>
                 <Td style={{ textAlign: "right" }}>
                   <ChangeBadge $positive={isPositive}>
                     {isPositive ? "+" : ""}
-                    {stock.price.change.toFixed(2)}
+                    {Number(stock.price.change).toFixed(2)}
                   </ChangeBadge>
                 </Td>
                 <Td style={{ textAlign: "right" }}>
                   <ChangeBadge $positive={isPositive}>
                     {isPositive ? "+" : ""}
-                    {stock.price.change_percent.toFixed(2)}%
+                    {Number(stock.price.change_percent).toFixed(2)}%
                   </ChangeBadge>
                 </Td>
                 <Td style={{ textAlign: "right" }}>
-                  <VolumeText>{formatVolume(stock.price.volume)}</VolumeText>
+                  <VolumeText>{formatVolume(Number(stock.price.volume))}</VolumeText>
                 </Td>
               </Tr>
             );
